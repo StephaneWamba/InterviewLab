@@ -1,0 +1,29 @@
+{
+  "scenario": "job_description_questions",
+  "interview_id": 94,
+  "job_description": "\n        We are looking for a Senior Backend Engineer with:\n        - 5+ years experience in Python and microservices\n        - Strong knowledge of distributed systems\n        - Experience with AWS, Docker, and Kubernetes\n        - Ability to design scalable APIs\n        - Leadership experience preferred\n        ",
+  "question_asked": "How did you approach the design of the Simpl Checkout system?",
+  "is_relevant": false,
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi there! I'm really glad to have you here today. I see you\u2019ve led a core communication platform team at Simpl\u2014very impressive! If you\u2019d like, you can write some code in the sandbox while we chat. Let\u2019s dive in!",
+      "timestamp": "2026-01-02T21:54:12.153467"
+    },
+    {
+      "role": "user",
+      "content": "Hi, thank you",
+      "timestamp": "2026-01-02T21:54:12.188413"
+    },
+    {
+      "role": "assistant",
+      "content": "That's great to hear! I'm curious about your experience building the Simpl Checkout system. What challenges did you face there?",
+      "timestamp": "2026-01-02T21:54:16.405135"
+    },
+    {
+      "role": "assistant",
+      "content": "How did you approach the design of the Simpl Checkout system?",
+      "timestamp": "2026-01-02T21:54:17.608552"
+    }
+  ]
+}

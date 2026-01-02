@@ -1,0 +1,9 @@
+{
+  "scenario": "no_exercise",
+  "interview_id": 101,
+  "submitted_code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b\n\nprint(fibonacci(10))",
+  "agent_feedback": "Great job on implementing the Fibonacci sequence! Your use of an iterative approach is efficient and your code is clean and easy to read. To enhance your submission, consider adding type hints and a docstring to clarify the function's purpose and parameters. Keep up the fantastic work!\n\nHow would you approach adding a docstring to enhance the clarity of this function?",
+  "mentioned_exercise_mismatch": false,
+  "expected": false,
+  "passed": true
+}

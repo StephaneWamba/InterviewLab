@@ -1,0 +1,81 @@
+{
+  "scenario": "code_review_with_job_context",
+  "interview_id": 96,
+  "job_description": "\n        Backend Engineer - Python\n        - Write efficient, scalable code\n        - Follow best practices\n        - Design clean APIs\n        - Optimize performance\n        ",
+  "code_submitted": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nprint(fibonacci(10))",
+  "code_quality": {
+    "quality_score": 0.65,
+    "correctness_score": 1.0,
+    "efficiency_score": 0.3,
+    "readability_score": 0.8,
+    "best_practices_score": 0.7,
+    "strengths": [
+      "The function correctly implements the Fibonacci sequence and returns the expected output for the given input.",
+      "The code is simple and straightforward, making it easy to understand the logic."
+    ],
+    "weaknesses": [
+      "The recursive implementation is inefficient due to repeated calculations, leading to exponential time complexity.",
+      "The function does not handle negative inputs, which could lead to unexpected behavior."
+    ],
+    "feedback": "The code successfully computes the Fibonacci number for a given input, but it suffers from inefficiency due to its recursive nature. Each call to the function results in two more calls, leading to a large number of repeated calculations. Additionally, the function does not account for negative inputs, which could cause it to return incorrect results or run indefinitely. While the code is readable, there are opportunities to enhance efficiency and robustness.",
+    "suggestions": [
+      "Consider using an iterative approach or memoization to improve the efficiency of the Fibonacci calculation.",
+      "Add input validation to handle negative numbers or non-integer inputs gracefully.",
+      "Include type hints for the function parameters and return type to improve code clarity."
+    ]
+  },
+  "execution_result": {
+    "stdout": "55\n",
+    "stderr": "",
+    "exit_code": 0,
+    "execution_time_ms": 6138.580560684204,
+    "success": true,
+    "error": null
+  },
+  "feedback_message": "Great job on correctly implementing the Fibonacci sequence\u2014your function returns the expected output, and the code is quite readable! To improve, consider optimizing the recursive approach to enhance efficiency and ensure the function can handle negative inputs gracefully. Keep up the good work; you're on the right track!\n\nHow would you implement input validation to handle negative numbers?",
+  "mentions_job_requirements": false,
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi there! It\u2019s great to meet you. I\u2019m really impressed by your experience leading the core communication platform at Simpl. Feel free to dive into the code sandbox whenever you\u2019re ready, but no pressure at all. Let\u2019s have a nice chat!",
+      "timestamp": "2026-01-02T21:54:47.142708"
+    },
+    {
+      "role": "assistant",
+      "content": "Great job on correctly implementing the Fibonacci sequence\u2014your function returns the expected output, and the code is quite readable! To improve, consider optimizing the recursive approach to enhance efficiency and ensure the function can handle negative inputs gracefully. Keep up the good work; you're on the right track!\n\nHow would you implement input validation to handle negative numbers?",
+      "timestamp": "2026-01-02T21:55:03.287904",
+      "metadata": {
+        "type": "code_review",
+        "execution_result": {
+          "stdout": "55\n",
+          "stderr": "",
+          "exit_code": 0,
+          "execution_time_ms": 6138.580560684204,
+          "success": true,
+          "error": null
+        },
+        "code_quality": {
+          "quality_score": 0.65,
+          "correctness_score": 1.0,
+          "efficiency_score": 0.3,
+          "readability_score": 0.8,
+          "best_practices_score": 0.7,
+          "strengths": [
+            "The function correctly implements the Fibonacci sequence and returns the expected output for the given input.",
+            "The code is simple and straightforward, making it easy to understand the logic."
+          ],
+          "weaknesses": [
+            "The recursive implementation is inefficient due to repeated calculations, leading to exponential time complexity.",
+            "The function does not handle negative inputs, which could lead to unexpected behavior."
+          ],
+          "feedback": "The code successfully computes the Fibonacci number for a given input, but it suffers from inefficiency due to its recursive nature. Each call to the function results in two more calls, leading to a large number of repeated calculations. Additionally, the function does not account for negative inputs, which could cause it to return incorrect results or run indefinitely. While the code is readable, there are opportunities to enhance efficiency and robustness.",
+          "suggestions": [
+            "Consider using an iterative approach or memoization to improve the efficiency of the Fibonacci calculation.",
+            "Add input validation to handle negative numbers or non-integer inputs gracefully.",
+            "Include type hints for the function parameters and return type to improve code clarity."
+          ]
+        }
+      }
+    }
+  ]
+}

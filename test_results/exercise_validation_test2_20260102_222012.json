@@ -1,0 +1,10 @@
+{
+  "scenario": "wrong_submission",
+  "interview_id": 106,
+  "exercise_description": "Design a RESTful API for a simple library system to manage books. The API should allow users to create, read, update, and delete book records. Each book should have a title, author, and ISBN. Ensure to handle basic validation for the inputs.",
+  "submitted_code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nprint(fibonacci(10))",
+  "agent_feedback": "Great job on implementing the Fibonacci sequence correctly! Your code is clear and easy to follow, which is a real strength. To enhance it further, consider optimizing the efficiency for larger values of n and adding input validation to handle edge cases like negative numbers or non-integer values. Keep up the good work!\n\nNote: I notice you submitted code that doesn't match the exercise I provided (Design a RESTful API for a simple library system to manage books. The API should allow users to crea...). I'll review what you submitted, but I'd also like to see your solution to the original exercise when you're ready.\n\nHow would you approach optimizing the recursive implementation for larger values of n?",
+  "detected_mismatch": true,
+  "expected": true,
+  "passed": true
+}

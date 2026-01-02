@@ -1,0 +1,10 @@
+{
+  "scenario": "correct_submission",
+  "interview_id": 102,
+  "exercise_description": "Design a simple RESTful API for a task management system where users can create, retrieve, update, and delete tasks. Each task should have an ID, title, description, and status (pending or completed). Implement the core functionality for these endpoints and ensure they follow REST principles.",
+  "submitted_code": "from flask import Flask, jsonify, request\n\napp = Flask(__name__)\nbooks = []\n\n@app.route('/books', methods=['POST'])\ndef create_book():\n    data = request.json\n    book = {\n        'id': len(books) + 1,\n        'title': data.get('title'),\n        'author': data.get('author'),\n        'year': data.get('year')\n    }\n    books.append(book)\n    return jsonify(book), 201\n\n@app.route('/books', methods=['GET'])\ndef get_books():\n    return jsonify(books)\n\n@app.route('/books/<int:id>', methods=['PUT'])\nde",
+  "agent_feedback": "Great job on implementing a basic RESTful API for managing books with Flask; your use of appropriate HTTP status codes and clear route definitions really stands out! To enhance your code further, consider adding input validation and error handling to ensure that all required fields are present, and think about using a more efficient data structure for managing books as your application grows. Keep up the good work\u2014you're on the right track!\n\nNote: I notice you submitted code that doesn't match the exercise I provided (Design a simple RESTful API for a task management system where users can create, retrieve, update, a...). I'll review what you submitted, but I'd also like to see your solution to the original exercise when you're ready.\n\nHow would you implement input validation for the required fields in the incoming JSON data?",
+  "detected_mismatch": true,
+  "expected": false,
+  "passed": false
+}

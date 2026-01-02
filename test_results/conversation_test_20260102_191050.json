@@ -1,0 +1,3322 @@
+{
+  "interview_id": 18,
+  "test_started_at": "2026-01-02T19:10:18.813665",
+  "turns": [
+    {
+      "turn_number": 1,
+      "user_input": null,
+      "timestamp": "2026-01-02T19:10:18.813729",
+      "state_restored": false,
+      "state_before": {
+        "turn_count": 0,
+        "last_node": "",
+        "next_node": null,
+        "phase": "intro",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 0,
+        "questions_asked_count": 0,
+        "last_response": null,
+        "next_message_preview": null
+      },
+      "execution_success": true,
+      "state_after": {
+        "turn_count": 0,
+        "last_node": "greeting",
+        "next_node": null,
+        "phase": "intro",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 1,
+        "questions_asked_count": 0,
+        "last_response": null,
+        "next_message_preview": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product enginee..."
+      },
+      "agent_response": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+      "bugs_detected": [],
+      "checkpoint_id": "2026-01-02T19:10:24.080585",
+      "checkpoint_saved": true,
+      "full_state": {
+        "interview_id": 18,
+        "user_id": 3,
+        "resume_id": 8,
+        "conversation_history": [
+          {
+            "role": "assistant",
+            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+            "timestamp": "2026-01-02T19:10:24.067997"
+          },
+          {
+            "role": "system",
+            "content": "CHECKPOINT: 2026-01-02T19:10:24.080585",
+            "timestamp": "2026-01-02T19:10:24.087979",
+            "metadata": {
+              "checkpoint_id": "2026-01-02T19:10:24.080585",
+              "last_node": "greeting",
+              "phase": "intro",
+              "state_snapshot": {
+                "interview_id": 18,
+                "user_id": 3,
+                "resume_id": 8,
+                "resume_context": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "resume_structured": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "conversation_history": [
+                  {
+                    "role": "assistant",
+                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                    "timestamp": "2026-01-02T19:10:24.067997"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Hi, thank you",
+                    "timestamp": "2026-01-02T19:10:24.098487"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                    "timestamp": "2026-01-02T19:10:27.481978"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What challenges have you faced while working on your favorite projects?",
+                    "timestamp": "2026-01-02T19:10:28.998092"
+                  },
+                  {
+                    "role": "system",
+                    "content": "CHECKPOINT: 2026-01-02T19:10:29.007241",
+                    "timestamp": "2026-01-02T19:10:29.012441",
+                    "metadata": {
+                      "checkpoint_id": "2026-01-02T19:10:29.007241",
+                      "last_node": "question",
+                      "phase": "exploration",
+                      "state_snapshot": {
+                        "interview_id": 18,
+                        "user_id": 3,
+                        "resume_id": 8,
+                        "resume_context": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "resume_structured": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "conversation_history": [
+                          {
+                            "role": "assistant",
+                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                            "timestamp": "2026-01-02T19:10:24.067997"
+                          },
+                          {
+                            "role": "user",
+                            "content": "Hi, thank you",
+                            "timestamp": "2026-01-02T19:10:24.098487"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                            "timestamp": "2026-01-02T19:10:27.481978"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What challenges have you faced while working on your favorite projects?",
+                            "timestamp": "2026-01-02T19:10:28.998092"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I've been working in product engineering for about 7 years now",
+                            "timestamp": "2026-01-02T19:10:29.019199"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                            "timestamp": "2026-01-02T19:10:34.349384"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What tools have you found most helpful in your product engineering work?",
+                            "timestamp": "2026-01-02T19:10:35.994779"
+                          },
+                          {
+                            "role": "system",
+                            "content": "CHECKPOINT: 2026-01-02T19:10:36.003302",
+                            "timestamp": "2026-01-02T19:10:36.010143",
+                            "metadata": {
+                              "checkpoint_id": "2026-01-02T19:10:36.003302",
+                              "last_node": "question",
+                              "phase": "exploration",
+                              "state_snapshot": {
+                                "interview_id": 18,
+                                "user_id": 3,
+                                "resume_id": 8,
+                                "resume_context": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "resume_structured": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "conversation_history": [
+                                  {
+                                    "role": "assistant",
+                                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                    "timestamp": "2026-01-02T19:10:24.067997"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "Hi, thank you",
+                                    "timestamp": "2026-01-02T19:10:24.098487"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                    "timestamp": "2026-01-02T19:10:27.481978"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What challenges have you faced while working on your favorite projects?",
+                                    "timestamp": "2026-01-02T19:10:28.998092"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I've been working in product engineering for about 7 years now",
+                                    "timestamp": "2026-01-02T19:10:29.019199"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                    "timestamp": "2026-01-02T19:10:34.349384"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What tools have you found most helpful in your product engineering work?",
+                                    "timestamp": "2026-01-02T19:10:35.994779"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I led the team that built and stabilized the core communication platform",
+                                    "timestamp": "2026-01-02T19:10:36.017136"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                    "timestamp": "2026-01-02T19:10:41.713298"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What was the biggest impact of the core communication platform you built?",
+                                    "timestamp": "2026-01-02T19:10:42.850218"
+                                  },
+                                  {
+                                    "role": "system",
+                                    "content": "CHECKPOINT: 2026-01-02T19:10:42.857645",
+                                    "timestamp": "2026-01-02T19:10:42.861784",
+                                    "metadata": {
+                                      "checkpoint_id": "2026-01-02T19:10:42.857645",
+                                      "last_node": "question",
+                                      "phase": "exploration",
+                                      "state_snapshot": {
+                                        "interview_id": 18,
+                                        "user_id": 3,
+                                        "resume_id": 8,
+                                        "resume_context": {
+                                          "profile": "Senior Developer Consultant",
+                                          "experience": "7+ years in product engineering"
+                                        },
+                                        "resume_structured": {
+                                          "profile": "Senior Developer Consultant",
+                                          "experience": "7+ years in product engineering"
+                                        },
+                                        "conversation_history": [
+                                          {
+                                            "role": "assistant",
+                                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                            "timestamp": "2026-01-02T19:10:24.067997"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "Hi, thank you",
+                                            "timestamp": "2026-01-02T19:10:24.098487"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                            "timestamp": "2026-01-02T19:10:27.481978"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What challenges have you faced while working on your favorite projects?",
+                                            "timestamp": "2026-01-02T19:10:28.998092"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "I've been working in product engineering for about 7 years now",
+                                            "timestamp": "2026-01-02T19:10:29.019199"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                            "timestamp": "2026-01-02T19:10:34.349384"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What tools have you found most helpful in your product engineering work?",
+                                            "timestamp": "2026-01-02T19:10:35.994779"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "I led the team that built and stabilized the core communication platform",
+                                            "timestamp": "2026-01-02T19:10:36.017136"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                            "timestamp": "2026-01-02T19:10:41.713298"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What was the biggest impact of the core communication platform you built?",
+                                            "timestamp": "2026-01-02T19:10:42.850218"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "We were handling very high volumes of communication",
+                                            "timestamp": "2026-01-02T19:10:42.867822"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                                            "timestamp": "2026-01-02T19:10:48.845352"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "How did your team approach the design of the core communication platform?",
+                                            "timestamp": "2026-01-02T19:10:50.392972"
+                                          },
+                                          {
+                                            "role": "system",
+                                            "content": "CHECKPOINT: 2026-01-02T19:10:50.403270",
+                                            "timestamp": "2026-01-02T19:10:50.415923",
+                                            "metadata": {
+                                              "checkpoint_id": "2026-01-02T19:10:50.403270",
+                                              "last_node": "question",
+                                              "phase": "exploration",
+                                              "state_snapshot": {
+                                                "interview_id": 18,
+                                                "user_id": 3,
+                                                "resume_id": 8,
+                                                "resume_context": {
+                                                  "profile": "Senior Developer Consultant",
+                                                  "experience": "7+ years in product engineering"
+                                                },
+                                                "resume_structured": {
+                                                  "profile": "Senior Developer Consultant",
+                                                  "experience": "7+ years in product engineering"
+                                                },
+                                                "conversation_history": [
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                                    "timestamp": "2026-01-02T19:10:24.067997"
+                                                  },
+                                                  {
+                                                    "role": "user",
+                                                    "content": "Hi, thank you",
+                                                    "timestamp": "2026-01-02T19:10:24.098487"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                                    "timestamp": "2026-01-02T19:10:27.481978"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "What challenges have you faced while working on your favorite projects?",
+                                                    "timestamp": "2026-01-02T19:10:28.998092"
+                                                  },
+                                                  {
+                                                    "role": "user",
+                                                    "content": "I've been working in product engineering for about 7 years now",
+                                                    "timestamp": "2026-01-02T19:10:29.019199"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                                    "timestamp": "2026-01-02T19:10:34.349384"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "What tools have you found most helpful in your product engineering work?",
+                                                    "timestamp": "2026-01-02T19:10:35.994779"
+                                                  },
+                                                  {
+                                                    "role": "user",
+                                                    "content": "I led the team that built and stabilized the core communication platform",
+                                                    "timestamp": "2026-01-02T19:10:36.017136"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                                    "timestamp": "2026-01-02T19:10:41.713298"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "What was the biggest impact of the core communication platform you built?",
+                                                    "timestamp": "2026-01-02T19:10:42.850218"
+                                                  },
+                                                  {
+                                                    "role": "user",
+                                                    "content": "We were handling very high volumes of communication",
+                                                    "timestamp": "2026-01-02T19:10:42.867822"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                                                    "timestamp": "2026-01-02T19:10:48.845352"
+                                                  },
+                                                  {
+                                                    "role": "assistant",
+                                                    "content": "How did your team approach the design of the core communication platform?",
+                                                    "timestamp": "2026-01-02T19:10:50.392972"
+                                                  }
+                                                ],
+                                                "turn_count": 12,
+                                                "questions_asked": [
+                                                  {
+                                                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                                    "text": "What challenges have you faced while working on your favorite projects?",
+                                                    "source": "resume",
+                                                    "resume_anchor": "experience_1",
+                                                    "aspect": "challenges",
+                                                    "asked_at_turn": 3
+                                                  },
+                                                  {
+                                                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                                    "text": "What tools have you found most helpful in your product engineering work?",
+                                                    "source": "resume",
+                                                    "resume_anchor": "experience_1",
+                                                    "aspect": "tools",
+                                                    "asked_at_turn": 6
+                                                  },
+                                                  {
+                                                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                                    "text": "What was the biggest impact of the core communication platform you built?",
+                                                    "source": "resume",
+                                                    "resume_anchor": "experience_1",
+                                                    "aspect": "impact",
+                                                    "asked_at_turn": 9
+                                                  },
+                                                  {
+                                                    "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                                                    "text": "How did your team approach the design of the core communication platform?",
+                                                    "source": "resume",
+                                                    "resume_anchor": "experience_1",
+                                                    "aspect": "design",
+                                                    "asked_at_turn": 12
+                                                  }
+                                                ],
+                                                "current_question": "How did your team approach the design of the core communication platform?",
+                                                "resume_exploration": {
+                                                  "experience_1": {
+                                                    "anchor_id": "experience_1",
+                                                    "anchor_type": "experience",
+                                                    "aspects_covered": "{'impact', 'challenges', 'tools', 'design'}",
+                                                    "depth_score": 4,
+                                                    "last_explored_turn": 12
+                                                  }
+                                                },
+                                                "detected_intents": [
+                                                  {
+                                                    "type": "no_intent",
+                                                    "confidence": 0.5,
+                                                    "extracted_from": "Hi, thank you",
+                                                    "turn": 1,
+                                                    "metadata": {}
+                                                  },
+                                                  {
+                                                    "type": "no_intent",
+                                                    "confidence": 0.5,
+                                                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                                                    "turn": 4,
+                                                    "metadata": {}
+                                                  },
+                                                  {
+                                                    "type": "no_intent",
+                                                    "confidence": 0.5,
+                                                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                                    "turn": 7,
+                                                    "metadata": {}
+                                                  },
+                                                  {
+                                                    "type": "no_intent",
+                                                    "confidence": 0.5,
+                                                    "extracted_from": "We were handling very high volumes of communication",
+                                                    "turn": 10,
+                                                    "metadata": {}
+                                                  }
+                                                ],
+                                                "active_user_request": null,
+                                                "sandbox": {
+                                                  "is_active": false,
+                                                  "last_activity_ts": 0.0,
+                                                  "submissions": [],
+                                                  "signals": []
+                                                },
+                                                "phase": "exploration",
+                                                "last_node": "question",
+                                                "next_node": null,
+                                                "checkpoints": [],
+                                                "answer_quality": 0.3,
+                                                "topics_covered": [],
+                                                "next_message": "How did your team approach the design of the core communication platform?",
+                                                "last_response": "We were handling very high volumes of communication",
+                                                "current_code": null,
+                                                "code_execution_result": null,
+                                                "code_quality": null,
+                                                "code_submissions": [],
+                                                "feedback": null
+                                              }
+                                            }
+                                          }
+                                        ],
+                                        "turn_count": 9,
+                                        "questions_asked": [
+                                          {
+                                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                            "text": "What challenges have you faced while working on your favorite projects?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "challenges",
+                                            "asked_at_turn": 3
+                                          },
+                                          {
+                                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                            "text": "What tools have you found most helpful in your product engineering work?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "tools",
+                                            "asked_at_turn": 6
+                                          },
+                                          {
+                                            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                            "text": "What was the biggest impact of the core communication platform you built?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "impact",
+                                            "asked_at_turn": 9
+                                          },
+                                          {
+                                            "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                                            "text": "How did your team approach the design of the core communication platform?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "design",
+                                            "asked_at_turn": 12
+                                          }
+                                        ],
+                                        "current_question": "What was the biggest impact of the core communication platform you built?",
+                                        "resume_exploration": {
+                                          "experience_1": {
+                                            "anchor_id": "experience_1",
+                                            "anchor_type": "experience",
+                                            "aspects_covered": [
+                                              "impact",
+                                              "challenges",
+                                              "tools",
+                                              "design"
+                                            ],
+                                            "depth_score": 4,
+                                            "last_explored_turn": 12
+                                          }
+                                        },
+                                        "detected_intents": [
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "Hi, thank you",
+                                            "turn": 1,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                                            "turn": 4,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                            "turn": 7,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "We were handling very high volumes of communication",
+                                            "turn": 10,
+                                            "metadata": {}
+                                          }
+                                        ],
+                                        "active_user_request": null,
+                                        "sandbox": {
+                                          "is_active": false,
+                                          "last_activity_ts": 0.0,
+                                          "submissions": [],
+                                          "signals": []
+                                        },
+                                        "phase": "exploration",
+                                        "last_node": "question",
+                                        "next_node": null,
+                                        "checkpoints": [
+                                          "2026-01-02T19:10:50.403270"
+                                        ],
+                                        "answer_quality": 0.4,
+                                        "topics_covered": [],
+                                        "next_message": "What was the biggest impact of the core communication platform you built?",
+                                        "last_response": "I led the team that built and stabilized the core communication platform",
+                                        "current_code": null,
+                                        "code_execution_result": null,
+                                        "code_quality": null,
+                                        "code_submissions": [],
+                                        "feedback": null
+                                      }
+                                    }
+                                  }
+                                ],
+                                "turn_count": 6,
+                                "questions_asked": [
+                                  {
+                                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                    "text": "What challenges have you faced while working on your favorite projects?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "challenges",
+                                    "asked_at_turn": 3
+                                  },
+                                  {
+                                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                    "text": "What tools have you found most helpful in your product engineering work?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "tools",
+                                    "asked_at_turn": 6
+                                  },
+                                  {
+                                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                    "text": "What was the biggest impact of the core communication platform you built?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "impact",
+                                    "asked_at_turn": 9
+                                  }
+                                ],
+                                "current_question": "What tools have you found most helpful in your product engineering work?",
+                                "resume_exploration": {
+                                  "experience_1": {
+                                    "anchor_id": "experience_1",
+                                    "anchor_type": "experience",
+                                    "aspects_covered": [
+                                      "impact",
+                                      "challenges",
+                                      "tools"
+                                    ],
+                                    "depth_score": 3,
+                                    "last_explored_turn": 9
+                                  }
+                                },
+                                "detected_intents": [
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "Hi, thank you",
+                                    "turn": 1,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                                    "turn": 4,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                    "turn": 7,
+                                    "metadata": {}
+                                  }
+                                ],
+                                "active_user_request": null,
+                                "sandbox": {
+                                  "is_active": false,
+                                  "last_activity_ts": 0.0,
+                                  "submissions": [],
+                                  "signals": []
+                                },
+                                "phase": "exploration",
+                                "last_node": "question",
+                                "next_node": null,
+                                "checkpoints": [
+                                  "2026-01-02T19:10:42.857645"
+                                ],
+                                "answer_quality": 0.3,
+                                "topics_covered": [],
+                                "next_message": "What tools have you found most helpful in your product engineering work?",
+                                "last_response": "I've been working in product engineering for about 7 years now",
+                                "current_code": null,
+                                "code_execution_result": null,
+                                "code_quality": null,
+                                "code_submissions": [],
+                                "feedback": null
+                              }
+                            }
+                          }
+                        ],
+                        "turn_count": 3,
+                        "questions_asked": [
+                          {
+                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                            "text": "What challenges have you faced while working on your favorite projects?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "challenges",
+                            "asked_at_turn": 3
+                          },
+                          {
+                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                            "text": "What tools have you found most helpful in your product engineering work?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "tools",
+                            "asked_at_turn": 6
+                          }
+                        ],
+                        "current_question": "What challenges have you faced while working on your favorite projects?",
+                        "resume_exploration": {
+                          "experience_1": {
+                            "anchor_id": "experience_1",
+                            "anchor_type": "experience",
+                            "aspects_covered": [
+                              "challenges",
+                              "tools"
+                            ],
+                            "depth_score": 2,
+                            "last_explored_turn": 6
+                          }
+                        },
+                        "detected_intents": [
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "Hi, thank you",
+                            "turn": 1,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                            "turn": 4,
+                            "metadata": {}
+                          }
+                        ],
+                        "active_user_request": null,
+                        "sandbox": {
+                          "is_active": false,
+                          "last_activity_ts": 0.0,
+                          "submissions": [],
+                          "signals": []
+                        },
+                        "phase": "exploration",
+                        "last_node": "question",
+                        "next_node": null,
+                        "checkpoints": [
+                          "2026-01-02T19:10:36.003302"
+                        ],
+                        "answer_quality": 0.0,
+                        "topics_covered": [],
+                        "next_message": "What challenges have you faced while working on your favorite projects?",
+                        "last_response": "Hi, thank you",
+                        "current_code": null,
+                        "code_execution_result": null,
+                        "code_quality": null,
+                        "code_submissions": [],
+                        "feedback": null
+                      }
+                    }
+                  }
+                ],
+                "turn_count": 0,
+                "questions_asked": [
+                  {
+                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                    "text": "What challenges have you faced while working on your favorite projects?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "challenges",
+                    "asked_at_turn": 3
+                  }
+                ],
+                "current_question": null,
+                "resume_exploration": {
+                  "experience_1": {
+                    "anchor_id": "experience_1",
+                    "anchor_type": "experience",
+                    "aspects_covered": [
+                      "challenges"
+                    ],
+                    "depth_score": 1,
+                    "last_explored_turn": 3
+                  }
+                },
+                "detected_intents": [
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "Hi, thank you",
+                    "turn": 1,
+                    "metadata": {}
+                  }
+                ],
+                "active_user_request": null,
+                "sandbox": {
+                  "is_active": false,
+                  "last_activity_ts": 0.0,
+                  "submissions": [],
+                  "signals": []
+                },
+                "phase": "intro",
+                "last_node": "greeting",
+                "next_node": null,
+                "checkpoints": [
+                  "2026-01-02T19:10:29.007241"
+                ],
+                "answer_quality": 0.0,
+                "topics_covered": [],
+                "next_message": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                "last_response": null,
+                "current_code": null,
+                "code_execution_result": null,
+                "code_quality": null,
+                "code_submissions": [],
+                "feedback": null
+              }
+            }
+          }
+        ],
+        "turn_count": 0,
+        "questions_asked": [],
+        "current_question": null,
+        "resume_exploration": {
+          "experience_1": {
+            "anchor_id": "experience_1",
+            "anchor_type": "experience",
+            "aspects_covered": [],
+            "depth_score": 0,
+            "last_explored_turn": -1
+          }
+        },
+        "detected_intents": [],
+        "active_user_request": null,
+        "sandbox": {
+          "is_active": false,
+          "last_activity_ts": 0.0,
+          "submissions": [],
+          "signals": []
+        },
+        "phase": "intro",
+        "last_node": "greeting",
+        "next_node": null,
+        "checkpoints": [
+          "2026-01-02T19:10:24.080585"
+        ],
+        "answer_quality": 0.0,
+        "topics_covered": [],
+        "next_message": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+        "last_response": null,
+        "current_code": null,
+        "code_execution_result": null,
+        "code_quality": null,
+        "code_submissions": [],
+        "feedback": null
+      }
+    },
+    {
+      "turn_number": 2,
+      "user_input": "Hi, thank you",
+      "timestamp": "2026-01-02T19:10:24.090288",
+      "state_restored": true,
+      "restored_state_summary": {
+        "turn_count": 0,
+        "last_node": "greeting",
+        "next_node": null,
+        "phase": "intro",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 1,
+        "questions_asked_count": 0,
+        "last_response": null,
+        "next_message_preview": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product enginee..."
+      },
+      "state_before": {
+        "turn_count": 0,
+        "last_node": "greeting",
+        "next_node": null,
+        "phase": "intro",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 1,
+        "questions_asked_count": 0,
+        "last_response": null,
+        "next_message_preview": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product enginee..."
+      },
+      "execution_success": true,
+      "state_after": {
+        "turn_count": 3,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 4,
+        "questions_asked_count": 1,
+        "last_response": "Hi, thank you",
+        "next_message_preview": "What challenges have you faced while working on your favorite projects?"
+      },
+      "agent_response": "What challenges have you faced while working on your favorite projects?",
+      "bugs_detected": [],
+      "checkpoint_id": "2026-01-02T19:10:29.007241",
+      "checkpoint_saved": true,
+      "full_state": {
+        "interview_id": 18,
+        "user_id": 3,
+        "resume_id": 8,
+        "conversation_history": [
+          {
+            "role": "assistant",
+            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+            "timestamp": "2026-01-02T19:10:24.067997"
+          },
+          {
+            "role": "user",
+            "content": "Hi, thank you",
+            "timestamp": "2026-01-02T19:10:24.098487"
+          },
+          {
+            "role": "assistant",
+            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+            "timestamp": "2026-01-02T19:10:27.481978"
+          },
+          {
+            "role": "assistant",
+            "content": "What challenges have you faced while working on your favorite projects?",
+            "timestamp": "2026-01-02T19:10:28.998092"
+          },
+          {
+            "role": "system",
+            "content": "CHECKPOINT: 2026-01-02T19:10:29.007241",
+            "timestamp": "2026-01-02T19:10:29.012441",
+            "metadata": {
+              "checkpoint_id": "2026-01-02T19:10:29.007241",
+              "last_node": "question",
+              "phase": "exploration",
+              "state_snapshot": {
+                "interview_id": 18,
+                "user_id": 3,
+                "resume_id": 8,
+                "resume_context": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "resume_structured": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "conversation_history": [
+                  {
+                    "role": "assistant",
+                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                    "timestamp": "2026-01-02T19:10:24.067997"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Hi, thank you",
+                    "timestamp": "2026-01-02T19:10:24.098487"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                    "timestamp": "2026-01-02T19:10:27.481978"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What challenges have you faced while working on your favorite projects?",
+                    "timestamp": "2026-01-02T19:10:28.998092"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I've been working in product engineering for about 7 years now",
+                    "timestamp": "2026-01-02T19:10:29.019199"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                    "timestamp": "2026-01-02T19:10:34.349384"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What tools have you found most helpful in your product engineering work?",
+                    "timestamp": "2026-01-02T19:10:35.994779"
+                  },
+                  {
+                    "role": "system",
+                    "content": "CHECKPOINT: 2026-01-02T19:10:36.003302",
+                    "timestamp": "2026-01-02T19:10:36.010143",
+                    "metadata": {
+                      "checkpoint_id": "2026-01-02T19:10:36.003302",
+                      "last_node": "question",
+                      "phase": "exploration",
+                      "state_snapshot": {
+                        "interview_id": 18,
+                        "user_id": 3,
+                        "resume_id": 8,
+                        "resume_context": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "resume_structured": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "conversation_history": [
+                          {
+                            "role": "assistant",
+                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                            "timestamp": "2026-01-02T19:10:24.067997"
+                          },
+                          {
+                            "role": "user",
+                            "content": "Hi, thank you",
+                            "timestamp": "2026-01-02T19:10:24.098487"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                            "timestamp": "2026-01-02T19:10:27.481978"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What challenges have you faced while working on your favorite projects?",
+                            "timestamp": "2026-01-02T19:10:28.998092"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I've been working in product engineering for about 7 years now",
+                            "timestamp": "2026-01-02T19:10:29.019199"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                            "timestamp": "2026-01-02T19:10:34.349384"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What tools have you found most helpful in your product engineering work?",
+                            "timestamp": "2026-01-02T19:10:35.994779"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I led the team that built and stabilized the core communication platform",
+                            "timestamp": "2026-01-02T19:10:36.017136"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                            "timestamp": "2026-01-02T19:10:41.713298"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What was the biggest impact of the core communication platform you built?",
+                            "timestamp": "2026-01-02T19:10:42.850218"
+                          },
+                          {
+                            "role": "system",
+                            "content": "CHECKPOINT: 2026-01-02T19:10:42.857645",
+                            "timestamp": "2026-01-02T19:10:42.861784",
+                            "metadata": {
+                              "checkpoint_id": "2026-01-02T19:10:42.857645",
+                              "last_node": "question",
+                              "phase": "exploration",
+                              "state_snapshot": {
+                                "interview_id": 18,
+                                "user_id": 3,
+                                "resume_id": 8,
+                                "resume_context": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "resume_structured": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "conversation_history": [
+                                  {
+                                    "role": "assistant",
+                                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                    "timestamp": "2026-01-02T19:10:24.067997"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "Hi, thank you",
+                                    "timestamp": "2026-01-02T19:10:24.098487"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                    "timestamp": "2026-01-02T19:10:27.481978"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What challenges have you faced while working on your favorite projects?",
+                                    "timestamp": "2026-01-02T19:10:28.998092"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I've been working in product engineering for about 7 years now",
+                                    "timestamp": "2026-01-02T19:10:29.019199"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                    "timestamp": "2026-01-02T19:10:34.349384"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What tools have you found most helpful in your product engineering work?",
+                                    "timestamp": "2026-01-02T19:10:35.994779"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I led the team that built and stabilized the core communication platform",
+                                    "timestamp": "2026-01-02T19:10:36.017136"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                    "timestamp": "2026-01-02T19:10:41.713298"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What was the biggest impact of the core communication platform you built?",
+                                    "timestamp": "2026-01-02T19:10:42.850218"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "We were handling very high volumes of communication",
+                                    "timestamp": "2026-01-02T19:10:42.867822"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                                    "timestamp": "2026-01-02T19:10:48.845352"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "How did your team approach the design of the core communication platform?",
+                                    "timestamp": "2026-01-02T19:10:50.392972"
+                                  },
+                                  {
+                                    "role": "system",
+                                    "content": "CHECKPOINT: 2026-01-02T19:10:50.403270",
+                                    "timestamp": "2026-01-02T19:10:50.415923",
+                                    "metadata": {
+                                      "checkpoint_id": "2026-01-02T19:10:50.403270",
+                                      "last_node": "question",
+                                      "phase": "exploration",
+                                      "state_snapshot": {
+                                        "interview_id": 18,
+                                        "user_id": 3,
+                                        "resume_id": 8,
+                                        "resume_context": {
+                                          "profile": "Senior Developer Consultant",
+                                          "experience": "7+ years in product engineering"
+                                        },
+                                        "resume_structured": {
+                                          "profile": "Senior Developer Consultant",
+                                          "experience": "7+ years in product engineering"
+                                        },
+                                        "conversation_history": [
+                                          {
+                                            "role": "assistant",
+                                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                            "timestamp": "2026-01-02T19:10:24.067997"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "Hi, thank you",
+                                            "timestamp": "2026-01-02T19:10:24.098487"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                            "timestamp": "2026-01-02T19:10:27.481978"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What challenges have you faced while working on your favorite projects?",
+                                            "timestamp": "2026-01-02T19:10:28.998092"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "I've been working in product engineering for about 7 years now",
+                                            "timestamp": "2026-01-02T19:10:29.019199"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                            "timestamp": "2026-01-02T19:10:34.349384"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What tools have you found most helpful in your product engineering work?",
+                                            "timestamp": "2026-01-02T19:10:35.994779"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "I led the team that built and stabilized the core communication platform",
+                                            "timestamp": "2026-01-02T19:10:36.017136"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                            "timestamp": "2026-01-02T19:10:41.713298"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "What was the biggest impact of the core communication platform you built?",
+                                            "timestamp": "2026-01-02T19:10:42.850218"
+                                          },
+                                          {
+                                            "role": "user",
+                                            "content": "We were handling very high volumes of communication",
+                                            "timestamp": "2026-01-02T19:10:42.867822"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                                            "timestamp": "2026-01-02T19:10:48.845352"
+                                          },
+                                          {
+                                            "role": "assistant",
+                                            "content": "How did your team approach the design of the core communication platform?",
+                                            "timestamp": "2026-01-02T19:10:50.392972"
+                                          }
+                                        ],
+                                        "turn_count": 12,
+                                        "questions_asked": [
+                                          {
+                                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                            "text": "What challenges have you faced while working on your favorite projects?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "challenges",
+                                            "asked_at_turn": 3
+                                          },
+                                          {
+                                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                            "text": "What tools have you found most helpful in your product engineering work?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "tools",
+                                            "asked_at_turn": 6
+                                          },
+                                          {
+                                            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                            "text": "What was the biggest impact of the core communication platform you built?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "impact",
+                                            "asked_at_turn": 9
+                                          },
+                                          {
+                                            "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                                            "text": "How did your team approach the design of the core communication platform?",
+                                            "source": "resume",
+                                            "resume_anchor": "experience_1",
+                                            "aspect": "design",
+                                            "asked_at_turn": 12
+                                          }
+                                        ],
+                                        "current_question": "How did your team approach the design of the core communication platform?",
+                                        "resume_exploration": {
+                                          "experience_1": {
+                                            "anchor_id": "experience_1",
+                                            "anchor_type": "experience",
+                                            "aspects_covered": "{'impact', 'challenges', 'tools', 'design'}",
+                                            "depth_score": 4,
+                                            "last_explored_turn": 12
+                                          }
+                                        },
+                                        "detected_intents": [
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "Hi, thank you",
+                                            "turn": 1,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                                            "turn": 4,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                            "turn": 7,
+                                            "metadata": {}
+                                          },
+                                          {
+                                            "type": "no_intent",
+                                            "confidence": 0.5,
+                                            "extracted_from": "We were handling very high volumes of communication",
+                                            "turn": 10,
+                                            "metadata": {}
+                                          }
+                                        ],
+                                        "active_user_request": null,
+                                        "sandbox": {
+                                          "is_active": false,
+                                          "last_activity_ts": 0.0,
+                                          "submissions": [],
+                                          "signals": []
+                                        },
+                                        "phase": "exploration",
+                                        "last_node": "question",
+                                        "next_node": null,
+                                        "checkpoints": [],
+                                        "answer_quality": 0.3,
+                                        "topics_covered": [],
+                                        "next_message": "How did your team approach the design of the core communication platform?",
+                                        "last_response": "We were handling very high volumes of communication",
+                                        "current_code": null,
+                                        "code_execution_result": null,
+                                        "code_quality": null,
+                                        "code_submissions": [],
+                                        "feedback": null
+                                      }
+                                    }
+                                  }
+                                ],
+                                "turn_count": 9,
+                                "questions_asked": [
+                                  {
+                                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                    "text": "What challenges have you faced while working on your favorite projects?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "challenges",
+                                    "asked_at_turn": 3
+                                  },
+                                  {
+                                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                    "text": "What tools have you found most helpful in your product engineering work?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "tools",
+                                    "asked_at_turn": 6
+                                  },
+                                  {
+                                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                    "text": "What was the biggest impact of the core communication platform you built?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "impact",
+                                    "asked_at_turn": 9
+                                  },
+                                  {
+                                    "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                                    "text": "How did your team approach the design of the core communication platform?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "design",
+                                    "asked_at_turn": 12
+                                  }
+                                ],
+                                "current_question": "What was the biggest impact of the core communication platform you built?",
+                                "resume_exploration": {
+                                  "experience_1": {
+                                    "anchor_id": "experience_1",
+                                    "anchor_type": "experience",
+                                    "aspects_covered": [
+                                      "impact",
+                                      "challenges",
+                                      "tools",
+                                      "design"
+                                    ],
+                                    "depth_score": 4,
+                                    "last_explored_turn": 12
+                                  }
+                                },
+                                "detected_intents": [
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "Hi, thank you",
+                                    "turn": 1,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                                    "turn": 4,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                    "turn": 7,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "We were handling very high volumes of communication",
+                                    "turn": 10,
+                                    "metadata": {}
+                                  }
+                                ],
+                                "active_user_request": null,
+                                "sandbox": {
+                                  "is_active": false,
+                                  "last_activity_ts": 0.0,
+                                  "submissions": [],
+                                  "signals": []
+                                },
+                                "phase": "exploration",
+                                "last_node": "question",
+                                "next_node": null,
+                                "checkpoints": [
+                                  "2026-01-02T19:10:50.403270"
+                                ],
+                                "answer_quality": 0.4,
+                                "topics_covered": [],
+                                "next_message": "What was the biggest impact of the core communication platform you built?",
+                                "last_response": "I led the team that built and stabilized the core communication platform",
+                                "current_code": null,
+                                "code_execution_result": null,
+                                "code_quality": null,
+                                "code_submissions": [],
+                                "feedback": null
+                              }
+                            }
+                          }
+                        ],
+                        "turn_count": 6,
+                        "questions_asked": [
+                          {
+                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                            "text": "What challenges have you faced while working on your favorite projects?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "challenges",
+                            "asked_at_turn": 3
+                          },
+                          {
+                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                            "text": "What tools have you found most helpful in your product engineering work?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "tools",
+                            "asked_at_turn": 6
+                          },
+                          {
+                            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                            "text": "What was the biggest impact of the core communication platform you built?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "impact",
+                            "asked_at_turn": 9
+                          }
+                        ],
+                        "current_question": "What tools have you found most helpful in your product engineering work?",
+                        "resume_exploration": {
+                          "experience_1": {
+                            "anchor_id": "experience_1",
+                            "anchor_type": "experience",
+                            "aspects_covered": [
+                              "impact",
+                              "challenges",
+                              "tools"
+                            ],
+                            "depth_score": 3,
+                            "last_explored_turn": 9
+                          }
+                        },
+                        "detected_intents": [
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "Hi, thank you",
+                            "turn": 1,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                            "turn": 4,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I led the team that built and stabilized the core communication platform",
+                            "turn": 7,
+                            "metadata": {}
+                          }
+                        ],
+                        "active_user_request": null,
+                        "sandbox": {
+                          "is_active": false,
+                          "last_activity_ts": 0.0,
+                          "submissions": [],
+                          "signals": []
+                        },
+                        "phase": "exploration",
+                        "last_node": "question",
+                        "next_node": null,
+                        "checkpoints": [
+                          "2026-01-02T19:10:42.857645"
+                        ],
+                        "answer_quality": 0.3,
+                        "topics_covered": [],
+                        "next_message": "What tools have you found most helpful in your product engineering work?",
+                        "last_response": "I've been working in product engineering for about 7 years now",
+                        "current_code": null,
+                        "code_execution_result": null,
+                        "code_quality": null,
+                        "code_submissions": [],
+                        "feedback": null
+                      }
+                    }
+                  }
+                ],
+                "turn_count": 3,
+                "questions_asked": [
+                  {
+                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                    "text": "What challenges have you faced while working on your favorite projects?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "challenges",
+                    "asked_at_turn": 3
+                  },
+                  {
+                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                    "text": "What tools have you found most helpful in your product engineering work?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "tools",
+                    "asked_at_turn": 6
+                  }
+                ],
+                "current_question": "What challenges have you faced while working on your favorite projects?",
+                "resume_exploration": {
+                  "experience_1": {
+                    "anchor_id": "experience_1",
+                    "anchor_type": "experience",
+                    "aspects_covered": [
+                      "challenges",
+                      "tools"
+                    ],
+                    "depth_score": 2,
+                    "last_explored_turn": 6
+                  }
+                },
+                "detected_intents": [
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "Hi, thank you",
+                    "turn": 1,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                    "turn": 4,
+                    "metadata": {}
+                  }
+                ],
+                "active_user_request": null,
+                "sandbox": {
+                  "is_active": false,
+                  "last_activity_ts": 0.0,
+                  "submissions": [],
+                  "signals": []
+                },
+                "phase": "exploration",
+                "last_node": "question",
+                "next_node": null,
+                "checkpoints": [
+                  "2026-01-02T19:10:36.003302"
+                ],
+                "answer_quality": 0.0,
+                "topics_covered": [],
+                "next_message": "What challenges have you faced while working on your favorite projects?",
+                "last_response": "Hi, thank you",
+                "current_code": null,
+                "code_execution_result": null,
+                "code_quality": null,
+                "code_submissions": [],
+                "feedback": null
+              }
+            }
+          }
+        ],
+        "turn_count": 3,
+        "questions_asked": [
+          {
+            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+            "text": "What challenges have you faced while working on your favorite projects?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "challenges",
+            "asked_at_turn": 3
+          }
+        ],
+        "current_question": "What challenges have you faced while working on your favorite projects?",
+        "resume_exploration": {
+          "experience_1": {
+            "anchor_id": "experience_1",
+            "anchor_type": "experience",
+            "aspects_covered": [
+              "challenges"
+            ],
+            "depth_score": 1,
+            "last_explored_turn": 3
+          }
+        },
+        "detected_intents": [
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "Hi, thank you",
+            "turn": 1,
+            "metadata": {}
+          }
+        ],
+        "active_user_request": null,
+        "sandbox": {
+          "is_active": false,
+          "last_activity_ts": 0.0,
+          "submissions": [],
+          "signals": []
+        },
+        "phase": "exploration",
+        "last_node": "question",
+        "next_node": null,
+        "checkpoints": [
+          "2026-01-02T19:10:29.007241"
+        ],
+        "answer_quality": 0.0,
+        "topics_covered": [],
+        "next_message": "What challenges have you faced while working on your favorite projects?",
+        "last_response": "Hi, thank you",
+        "current_code": null,
+        "code_execution_result": null,
+        "code_quality": null,
+        "code_submissions": [],
+        "feedback": null
+      }
+    },
+    {
+      "turn_number": 3,
+      "user_input": "I've been working in product engineering for about 7 years now",
+      "timestamp": "2026-01-02T19:10:29.014142",
+      "state_restored": true,
+      "restored_state_summary": {
+        "turn_count": 3,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 4,
+        "questions_asked_count": 1,
+        "last_response": "Hi, thank you",
+        "next_message_preview": "What challenges have you faced while working on your favorite projects?"
+      },
+      "state_before": {
+        "turn_count": 3,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 4,
+        "questions_asked_count": 1,
+        "last_response": "Hi, thank you",
+        "next_message_preview": "What challenges have you faced while working on your favorite projects?"
+      },
+      "execution_success": true,
+      "state_after": {
+        "turn_count": 6,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 7,
+        "questions_asked_count": 2,
+        "last_response": "I've been working in product engineering for about 7 years now",
+        "next_message_preview": "What tools have you found most helpful in your product engineering work?"
+      },
+      "agent_response": "What tools have you found most helpful in your product engineering work?",
+      "bugs_detected": [],
+      "checkpoint_id": "2026-01-02T19:10:36.003302",
+      "checkpoint_saved": true,
+      "full_state": {
+        "interview_id": 18,
+        "user_id": 3,
+        "resume_id": 8,
+        "conversation_history": [
+          {
+            "role": "assistant",
+            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+            "timestamp": "2026-01-02T19:10:24.067997"
+          },
+          {
+            "role": "user",
+            "content": "Hi, thank you",
+            "timestamp": "2026-01-02T19:10:24.098487"
+          },
+          {
+            "role": "assistant",
+            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+            "timestamp": "2026-01-02T19:10:27.481978"
+          },
+          {
+            "role": "assistant",
+            "content": "What challenges have you faced while working on your favorite projects?",
+            "timestamp": "2026-01-02T19:10:28.998092"
+          },
+          {
+            "role": "user",
+            "content": "I've been working in product engineering for about 7 years now",
+            "timestamp": "2026-01-02T19:10:29.019199"
+          },
+          {
+            "role": "assistant",
+            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+            "timestamp": "2026-01-02T19:10:34.349384"
+          },
+          {
+            "role": "assistant",
+            "content": "What tools have you found most helpful in your product engineering work?",
+            "timestamp": "2026-01-02T19:10:35.994779"
+          },
+          {
+            "role": "system",
+            "content": "CHECKPOINT: 2026-01-02T19:10:36.003302",
+            "timestamp": "2026-01-02T19:10:36.010143",
+            "metadata": {
+              "checkpoint_id": "2026-01-02T19:10:36.003302",
+              "last_node": "question",
+              "phase": "exploration",
+              "state_snapshot": {
+                "interview_id": 18,
+                "user_id": 3,
+                "resume_id": 8,
+                "resume_context": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "resume_structured": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "conversation_history": [
+                  {
+                    "role": "assistant",
+                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                    "timestamp": "2026-01-02T19:10:24.067997"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Hi, thank you",
+                    "timestamp": "2026-01-02T19:10:24.098487"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                    "timestamp": "2026-01-02T19:10:27.481978"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What challenges have you faced while working on your favorite projects?",
+                    "timestamp": "2026-01-02T19:10:28.998092"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I've been working in product engineering for about 7 years now",
+                    "timestamp": "2026-01-02T19:10:29.019199"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                    "timestamp": "2026-01-02T19:10:34.349384"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What tools have you found most helpful in your product engineering work?",
+                    "timestamp": "2026-01-02T19:10:35.994779"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I led the team that built and stabilized the core communication platform",
+                    "timestamp": "2026-01-02T19:10:36.017136"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                    "timestamp": "2026-01-02T19:10:41.713298"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What was the biggest impact of the core communication platform you built?",
+                    "timestamp": "2026-01-02T19:10:42.850218"
+                  },
+                  {
+                    "role": "system",
+                    "content": "CHECKPOINT: 2026-01-02T19:10:42.857645",
+                    "timestamp": "2026-01-02T19:10:42.861784",
+                    "metadata": {
+                      "checkpoint_id": "2026-01-02T19:10:42.857645",
+                      "last_node": "question",
+                      "phase": "exploration",
+                      "state_snapshot": {
+                        "interview_id": 18,
+                        "user_id": 3,
+                        "resume_id": 8,
+                        "resume_context": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "resume_structured": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "conversation_history": [
+                          {
+                            "role": "assistant",
+                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                            "timestamp": "2026-01-02T19:10:24.067997"
+                          },
+                          {
+                            "role": "user",
+                            "content": "Hi, thank you",
+                            "timestamp": "2026-01-02T19:10:24.098487"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                            "timestamp": "2026-01-02T19:10:27.481978"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What challenges have you faced while working on your favorite projects?",
+                            "timestamp": "2026-01-02T19:10:28.998092"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I've been working in product engineering for about 7 years now",
+                            "timestamp": "2026-01-02T19:10:29.019199"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                            "timestamp": "2026-01-02T19:10:34.349384"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What tools have you found most helpful in your product engineering work?",
+                            "timestamp": "2026-01-02T19:10:35.994779"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I led the team that built and stabilized the core communication platform",
+                            "timestamp": "2026-01-02T19:10:36.017136"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                            "timestamp": "2026-01-02T19:10:41.713298"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What was the biggest impact of the core communication platform you built?",
+                            "timestamp": "2026-01-02T19:10:42.850218"
+                          },
+                          {
+                            "role": "user",
+                            "content": "We were handling very high volumes of communication",
+                            "timestamp": "2026-01-02T19:10:42.867822"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                            "timestamp": "2026-01-02T19:10:48.845352"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "How did your team approach the design of the core communication platform?",
+                            "timestamp": "2026-01-02T19:10:50.392972"
+                          },
+                          {
+                            "role": "system",
+                            "content": "CHECKPOINT: 2026-01-02T19:10:50.403270",
+                            "timestamp": "2026-01-02T19:10:50.415923",
+                            "metadata": {
+                              "checkpoint_id": "2026-01-02T19:10:50.403270",
+                              "last_node": "question",
+                              "phase": "exploration",
+                              "state_snapshot": {
+                                "interview_id": 18,
+                                "user_id": 3,
+                                "resume_id": 8,
+                                "resume_context": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "resume_structured": {
+                                  "profile": "Senior Developer Consultant",
+                                  "experience": "7+ years in product engineering"
+                                },
+                                "conversation_history": [
+                                  {
+                                    "role": "assistant",
+                                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                                    "timestamp": "2026-01-02T19:10:24.067997"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "Hi, thank you",
+                                    "timestamp": "2026-01-02T19:10:24.098487"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                                    "timestamp": "2026-01-02T19:10:27.481978"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What challenges have you faced while working on your favorite projects?",
+                                    "timestamp": "2026-01-02T19:10:28.998092"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I've been working in product engineering for about 7 years now",
+                                    "timestamp": "2026-01-02T19:10:29.019199"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                                    "timestamp": "2026-01-02T19:10:34.349384"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What tools have you found most helpful in your product engineering work?",
+                                    "timestamp": "2026-01-02T19:10:35.994779"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "I led the team that built and stabilized the core communication platform",
+                                    "timestamp": "2026-01-02T19:10:36.017136"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                                    "timestamp": "2026-01-02T19:10:41.713298"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "What was the biggest impact of the core communication platform you built?",
+                                    "timestamp": "2026-01-02T19:10:42.850218"
+                                  },
+                                  {
+                                    "role": "user",
+                                    "content": "We were handling very high volumes of communication",
+                                    "timestamp": "2026-01-02T19:10:42.867822"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                                    "timestamp": "2026-01-02T19:10:48.845352"
+                                  },
+                                  {
+                                    "role": "assistant",
+                                    "content": "How did your team approach the design of the core communication platform?",
+                                    "timestamp": "2026-01-02T19:10:50.392972"
+                                  }
+                                ],
+                                "turn_count": 12,
+                                "questions_asked": [
+                                  {
+                                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                                    "text": "What challenges have you faced while working on your favorite projects?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "challenges",
+                                    "asked_at_turn": 3
+                                  },
+                                  {
+                                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                                    "text": "What tools have you found most helpful in your product engineering work?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "tools",
+                                    "asked_at_turn": 6
+                                  },
+                                  {
+                                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                                    "text": "What was the biggest impact of the core communication platform you built?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "impact",
+                                    "asked_at_turn": 9
+                                  },
+                                  {
+                                    "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                                    "text": "How did your team approach the design of the core communication platform?",
+                                    "source": "resume",
+                                    "resume_anchor": "experience_1",
+                                    "aspect": "design",
+                                    "asked_at_turn": 12
+                                  }
+                                ],
+                                "current_question": "How did your team approach the design of the core communication platform?",
+                                "resume_exploration": {
+                                  "experience_1": {
+                                    "anchor_id": "experience_1",
+                                    "anchor_type": "experience",
+                                    "aspects_covered": "{'impact', 'challenges', 'tools', 'design'}",
+                                    "depth_score": 4,
+                                    "last_explored_turn": 12
+                                  }
+                                },
+                                "detected_intents": [
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "Hi, thank you",
+                                    "turn": 1,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                                    "turn": 4,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                                    "turn": 7,
+                                    "metadata": {}
+                                  },
+                                  {
+                                    "type": "no_intent",
+                                    "confidence": 0.5,
+                                    "extracted_from": "We were handling very high volumes of communication",
+                                    "turn": 10,
+                                    "metadata": {}
+                                  }
+                                ],
+                                "active_user_request": null,
+                                "sandbox": {
+                                  "is_active": false,
+                                  "last_activity_ts": 0.0,
+                                  "submissions": [],
+                                  "signals": []
+                                },
+                                "phase": "exploration",
+                                "last_node": "question",
+                                "next_node": null,
+                                "checkpoints": [],
+                                "answer_quality": 0.3,
+                                "topics_covered": [],
+                                "next_message": "How did your team approach the design of the core communication platform?",
+                                "last_response": "We were handling very high volumes of communication",
+                                "current_code": null,
+                                "code_execution_result": null,
+                                "code_quality": null,
+                                "code_submissions": [],
+                                "feedback": null
+                              }
+                            }
+                          }
+                        ],
+                        "turn_count": 9,
+                        "questions_asked": [
+                          {
+                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                            "text": "What challenges have you faced while working on your favorite projects?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "challenges",
+                            "asked_at_turn": 3
+                          },
+                          {
+                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                            "text": "What tools have you found most helpful in your product engineering work?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "tools",
+                            "asked_at_turn": 6
+                          },
+                          {
+                            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                            "text": "What was the biggest impact of the core communication platform you built?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "impact",
+                            "asked_at_turn": 9
+                          },
+                          {
+                            "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                            "text": "How did your team approach the design of the core communication platform?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "design",
+                            "asked_at_turn": 12
+                          }
+                        ],
+                        "current_question": "What was the biggest impact of the core communication platform you built?",
+                        "resume_exploration": {
+                          "experience_1": {
+                            "anchor_id": "experience_1",
+                            "anchor_type": "experience",
+                            "aspects_covered": [
+                              "impact",
+                              "challenges",
+                              "tools",
+                              "design"
+                            ],
+                            "depth_score": 4,
+                            "last_explored_turn": 12
+                          }
+                        },
+                        "detected_intents": [
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "Hi, thank you",
+                            "turn": 1,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                            "turn": 4,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I led the team that built and stabilized the core communication platform",
+                            "turn": 7,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "We were handling very high volumes of communication",
+                            "turn": 10,
+                            "metadata": {}
+                          }
+                        ],
+                        "active_user_request": null,
+                        "sandbox": {
+                          "is_active": false,
+                          "last_activity_ts": 0.0,
+                          "submissions": [],
+                          "signals": []
+                        },
+                        "phase": "exploration",
+                        "last_node": "question",
+                        "next_node": null,
+                        "checkpoints": [
+                          "2026-01-02T19:10:50.403270"
+                        ],
+                        "answer_quality": 0.4,
+                        "topics_covered": [],
+                        "next_message": "What was the biggest impact of the core communication platform you built?",
+                        "last_response": "I led the team that built and stabilized the core communication platform",
+                        "current_code": null,
+                        "code_execution_result": null,
+                        "code_quality": null,
+                        "code_submissions": [],
+                        "feedback": null
+                      }
+                    }
+                  }
+                ],
+                "turn_count": 6,
+                "questions_asked": [
+                  {
+                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                    "text": "What challenges have you faced while working on your favorite projects?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "challenges",
+                    "asked_at_turn": 3
+                  },
+                  {
+                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                    "text": "What tools have you found most helpful in your product engineering work?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "tools",
+                    "asked_at_turn": 6
+                  },
+                  {
+                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                    "text": "What was the biggest impact of the core communication platform you built?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "impact",
+                    "asked_at_turn": 9
+                  }
+                ],
+                "current_question": "What tools have you found most helpful in your product engineering work?",
+                "resume_exploration": {
+                  "experience_1": {
+                    "anchor_id": "experience_1",
+                    "anchor_type": "experience",
+                    "aspects_covered": [
+                      "impact",
+                      "challenges",
+                      "tools"
+                    ],
+                    "depth_score": 3,
+                    "last_explored_turn": 9
+                  }
+                },
+                "detected_intents": [
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "Hi, thank you",
+                    "turn": 1,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                    "turn": 4,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                    "turn": 7,
+                    "metadata": {}
+                  }
+                ],
+                "active_user_request": null,
+                "sandbox": {
+                  "is_active": false,
+                  "last_activity_ts": 0.0,
+                  "submissions": [],
+                  "signals": []
+                },
+                "phase": "exploration",
+                "last_node": "question",
+                "next_node": null,
+                "checkpoints": [
+                  "2026-01-02T19:10:42.857645"
+                ],
+                "answer_quality": 0.3,
+                "topics_covered": [],
+                "next_message": "What tools have you found most helpful in your product engineering work?",
+                "last_response": "I've been working in product engineering for about 7 years now",
+                "current_code": null,
+                "code_execution_result": null,
+                "code_quality": null,
+                "code_submissions": [],
+                "feedback": null
+              }
+            }
+          }
+        ],
+        "turn_count": 6,
+        "questions_asked": [
+          {
+            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+            "text": "What challenges have you faced while working on your favorite projects?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "challenges",
+            "asked_at_turn": 3
+          },
+          {
+            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+            "text": "What tools have you found most helpful in your product engineering work?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "tools",
+            "asked_at_turn": 6
+          }
+        ],
+        "current_question": "What tools have you found most helpful in your product engineering work?",
+        "resume_exploration": {
+          "experience_1": {
+            "anchor_id": "experience_1",
+            "anchor_type": "experience",
+            "aspects_covered": [
+              "challenges",
+              "tools"
+            ],
+            "depth_score": 2,
+            "last_explored_turn": 6
+          }
+        },
+        "detected_intents": [
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "Hi, thank you",
+            "turn": 1,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "I've been working in product engineering for about 7 years now",
+            "turn": 4,
+            "metadata": {}
+          }
+        ],
+        "active_user_request": null,
+        "sandbox": {
+          "is_active": false,
+          "last_activity_ts": 0.0,
+          "submissions": [],
+          "signals": []
+        },
+        "phase": "exploration",
+        "last_node": "question",
+        "next_node": null,
+        "checkpoints": [
+          "2026-01-02T19:10:36.003302"
+        ],
+        "answer_quality": 0.3,
+        "topics_covered": [],
+        "next_message": "What tools have you found most helpful in your product engineering work?",
+        "last_response": "I've been working in product engineering for about 7 years now",
+        "current_code": null,
+        "code_execution_result": null,
+        "code_quality": null,
+        "code_submissions": [],
+        "feedback": null
+      }
+    },
+    {
+      "turn_number": 4,
+      "user_input": "I led the team that built and stabilized the core communication platform",
+      "timestamp": "2026-01-02T19:10:36.011278",
+      "state_restored": true,
+      "restored_state_summary": {
+        "turn_count": 6,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 7,
+        "questions_asked_count": 2,
+        "last_response": "I've been working in product engineering for about 7 years now",
+        "next_message_preview": "What tools have you found most helpful in your product engineering work?"
+      },
+      "state_before": {
+        "turn_count": 6,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 7,
+        "questions_asked_count": 2,
+        "last_response": "I've been working in product engineering for about 7 years now",
+        "next_message_preview": "What tools have you found most helpful in your product engineering work?"
+      },
+      "execution_success": true,
+      "state_after": {
+        "turn_count": 9,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 10,
+        "questions_asked_count": 3,
+        "last_response": "I led the team that built and stabilized the core communication platform",
+        "next_message_preview": "What was the biggest impact of the core communication platform you built?"
+      },
+      "agent_response": "What was the biggest impact of the core communication platform you built?",
+      "bugs_detected": [],
+      "checkpoint_id": "2026-01-02T19:10:42.857645",
+      "checkpoint_saved": true,
+      "full_state": {
+        "interview_id": 18,
+        "user_id": 3,
+        "resume_id": 8,
+        "conversation_history": [
+          {
+            "role": "assistant",
+            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+            "timestamp": "2026-01-02T19:10:24.067997"
+          },
+          {
+            "role": "user",
+            "content": "Hi, thank you",
+            "timestamp": "2026-01-02T19:10:24.098487"
+          },
+          {
+            "role": "assistant",
+            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+            "timestamp": "2026-01-02T19:10:27.481978"
+          },
+          {
+            "role": "assistant",
+            "content": "What challenges have you faced while working on your favorite projects?",
+            "timestamp": "2026-01-02T19:10:28.998092"
+          },
+          {
+            "role": "user",
+            "content": "I've been working in product engineering for about 7 years now",
+            "timestamp": "2026-01-02T19:10:29.019199"
+          },
+          {
+            "role": "assistant",
+            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+            "timestamp": "2026-01-02T19:10:34.349384"
+          },
+          {
+            "role": "assistant",
+            "content": "What tools have you found most helpful in your product engineering work?",
+            "timestamp": "2026-01-02T19:10:35.994779"
+          },
+          {
+            "role": "user",
+            "content": "I led the team that built and stabilized the core communication platform",
+            "timestamp": "2026-01-02T19:10:36.017136"
+          },
+          {
+            "role": "assistant",
+            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+            "timestamp": "2026-01-02T19:10:41.713298"
+          },
+          {
+            "role": "assistant",
+            "content": "What was the biggest impact of the core communication platform you built?",
+            "timestamp": "2026-01-02T19:10:42.850218"
+          },
+          {
+            "role": "system",
+            "content": "CHECKPOINT: 2026-01-02T19:10:42.857645",
+            "timestamp": "2026-01-02T19:10:42.861784",
+            "metadata": {
+              "checkpoint_id": "2026-01-02T19:10:42.857645",
+              "last_node": "question",
+              "phase": "exploration",
+              "state_snapshot": {
+                "interview_id": 18,
+                "user_id": 3,
+                "resume_id": 8,
+                "resume_context": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "resume_structured": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "conversation_history": [
+                  {
+                    "role": "assistant",
+                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                    "timestamp": "2026-01-02T19:10:24.067997"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Hi, thank you",
+                    "timestamp": "2026-01-02T19:10:24.098487"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                    "timestamp": "2026-01-02T19:10:27.481978"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What challenges have you faced while working on your favorite projects?",
+                    "timestamp": "2026-01-02T19:10:28.998092"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I've been working in product engineering for about 7 years now",
+                    "timestamp": "2026-01-02T19:10:29.019199"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                    "timestamp": "2026-01-02T19:10:34.349384"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What tools have you found most helpful in your product engineering work?",
+                    "timestamp": "2026-01-02T19:10:35.994779"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I led the team that built and stabilized the core communication platform",
+                    "timestamp": "2026-01-02T19:10:36.017136"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                    "timestamp": "2026-01-02T19:10:41.713298"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What was the biggest impact of the core communication platform you built?",
+                    "timestamp": "2026-01-02T19:10:42.850218"
+                  },
+                  {
+                    "role": "user",
+                    "content": "We were handling very high volumes of communication",
+                    "timestamp": "2026-01-02T19:10:42.867822"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                    "timestamp": "2026-01-02T19:10:48.845352"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "How did your team approach the design of the core communication platform?",
+                    "timestamp": "2026-01-02T19:10:50.392972"
+                  },
+                  {
+                    "role": "system",
+                    "content": "CHECKPOINT: 2026-01-02T19:10:50.403270",
+                    "timestamp": "2026-01-02T19:10:50.415923",
+                    "metadata": {
+                      "checkpoint_id": "2026-01-02T19:10:50.403270",
+                      "last_node": "question",
+                      "phase": "exploration",
+                      "state_snapshot": {
+                        "interview_id": 18,
+                        "user_id": 3,
+                        "resume_id": 8,
+                        "resume_context": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "resume_structured": {
+                          "profile": "Senior Developer Consultant",
+                          "experience": "7+ years in product engineering"
+                        },
+                        "conversation_history": [
+                          {
+                            "role": "assistant",
+                            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                            "timestamp": "2026-01-02T19:10:24.067997"
+                          },
+                          {
+                            "role": "user",
+                            "content": "Hi, thank you",
+                            "timestamp": "2026-01-02T19:10:24.098487"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                            "timestamp": "2026-01-02T19:10:27.481978"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What challenges have you faced while working on your favorite projects?",
+                            "timestamp": "2026-01-02T19:10:28.998092"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I've been working in product engineering for about 7 years now",
+                            "timestamp": "2026-01-02T19:10:29.019199"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                            "timestamp": "2026-01-02T19:10:34.349384"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What tools have you found most helpful in your product engineering work?",
+                            "timestamp": "2026-01-02T19:10:35.994779"
+                          },
+                          {
+                            "role": "user",
+                            "content": "I led the team that built and stabilized the core communication platform",
+                            "timestamp": "2026-01-02T19:10:36.017136"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                            "timestamp": "2026-01-02T19:10:41.713298"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "What was the biggest impact of the core communication platform you built?",
+                            "timestamp": "2026-01-02T19:10:42.850218"
+                          },
+                          {
+                            "role": "user",
+                            "content": "We were handling very high volumes of communication",
+                            "timestamp": "2026-01-02T19:10:42.867822"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                            "timestamp": "2026-01-02T19:10:48.845352"
+                          },
+                          {
+                            "role": "assistant",
+                            "content": "How did your team approach the design of the core communication platform?",
+                            "timestamp": "2026-01-02T19:10:50.392972"
+                          }
+                        ],
+                        "turn_count": 12,
+                        "questions_asked": [
+                          {
+                            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                            "text": "What challenges have you faced while working on your favorite projects?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "challenges",
+                            "asked_at_turn": 3
+                          },
+                          {
+                            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                            "text": "What tools have you found most helpful in your product engineering work?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "tools",
+                            "asked_at_turn": 6
+                          },
+                          {
+                            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                            "text": "What was the biggest impact of the core communication platform you built?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "impact",
+                            "asked_at_turn": 9
+                          },
+                          {
+                            "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                            "text": "How did your team approach the design of the core communication platform?",
+                            "source": "resume",
+                            "resume_anchor": "experience_1",
+                            "aspect": "design",
+                            "asked_at_turn": 12
+                          }
+                        ],
+                        "current_question": "How did your team approach the design of the core communication platform?",
+                        "resume_exploration": {
+                          "experience_1": {
+                            "anchor_id": "experience_1",
+                            "anchor_type": "experience",
+                            "aspects_covered": "{'impact', 'challenges', 'tools', 'design'}",
+                            "depth_score": 4,
+                            "last_explored_turn": 12
+                          }
+                        },
+                        "detected_intents": [
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "Hi, thank you",
+                            "turn": 1,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I've been working in product engineering for about 7 years now",
+                            "turn": 4,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "I led the team that built and stabilized the core communication platform",
+                            "turn": 7,
+                            "metadata": {}
+                          },
+                          {
+                            "type": "no_intent",
+                            "confidence": 0.5,
+                            "extracted_from": "We were handling very high volumes of communication",
+                            "turn": 10,
+                            "metadata": {}
+                          }
+                        ],
+                        "active_user_request": null,
+                        "sandbox": {
+                          "is_active": false,
+                          "last_activity_ts": 0.0,
+                          "submissions": [],
+                          "signals": []
+                        },
+                        "phase": "exploration",
+                        "last_node": "question",
+                        "next_node": null,
+                        "checkpoints": [],
+                        "answer_quality": 0.3,
+                        "topics_covered": [],
+                        "next_message": "How did your team approach the design of the core communication platform?",
+                        "last_response": "We were handling very high volumes of communication",
+                        "current_code": null,
+                        "code_execution_result": null,
+                        "code_quality": null,
+                        "code_submissions": [],
+                        "feedback": null
+                      }
+                    }
+                  }
+                ],
+                "turn_count": 9,
+                "questions_asked": [
+                  {
+                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                    "text": "What challenges have you faced while working on your favorite projects?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "challenges",
+                    "asked_at_turn": 3
+                  },
+                  {
+                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                    "text": "What tools have you found most helpful in your product engineering work?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "tools",
+                    "asked_at_turn": 6
+                  },
+                  {
+                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                    "text": "What was the biggest impact of the core communication platform you built?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "impact",
+                    "asked_at_turn": 9
+                  },
+                  {
+                    "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                    "text": "How did your team approach the design of the core communication platform?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "design",
+                    "asked_at_turn": 12
+                  }
+                ],
+                "current_question": "What was the biggest impact of the core communication platform you built?",
+                "resume_exploration": {
+                  "experience_1": {
+                    "anchor_id": "experience_1",
+                    "anchor_type": "experience",
+                    "aspects_covered": [
+                      "impact",
+                      "challenges",
+                      "tools",
+                      "design"
+                    ],
+                    "depth_score": 4,
+                    "last_explored_turn": 12
+                  }
+                },
+                "detected_intents": [
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "Hi, thank you",
+                    "turn": 1,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                    "turn": 4,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                    "turn": 7,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "We were handling very high volumes of communication",
+                    "turn": 10,
+                    "metadata": {}
+                  }
+                ],
+                "active_user_request": null,
+                "sandbox": {
+                  "is_active": false,
+                  "last_activity_ts": 0.0,
+                  "submissions": [],
+                  "signals": []
+                },
+                "phase": "exploration",
+                "last_node": "question",
+                "next_node": null,
+                "checkpoints": [
+                  "2026-01-02T19:10:50.403270"
+                ],
+                "answer_quality": 0.4,
+                "topics_covered": [],
+                "next_message": "What was the biggest impact of the core communication platform you built?",
+                "last_response": "I led the team that built and stabilized the core communication platform",
+                "current_code": null,
+                "code_execution_result": null,
+                "code_quality": null,
+                "code_submissions": [],
+                "feedback": null
+              }
+            }
+          }
+        ],
+        "turn_count": 9,
+        "questions_asked": [
+          {
+            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+            "text": "What challenges have you faced while working on your favorite projects?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "challenges",
+            "asked_at_turn": 3
+          },
+          {
+            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+            "text": "What tools have you found most helpful in your product engineering work?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "tools",
+            "asked_at_turn": 6
+          },
+          {
+            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+            "text": "What was the biggest impact of the core communication platform you built?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "impact",
+            "asked_at_turn": 9
+          }
+        ],
+        "current_question": "What was the biggest impact of the core communication platform you built?",
+        "resume_exploration": {
+          "experience_1": {
+            "anchor_id": "experience_1",
+            "anchor_type": "experience",
+            "aspects_covered": [
+              "impact",
+              "challenges",
+              "tools"
+            ],
+            "depth_score": 3,
+            "last_explored_turn": 9
+          }
+        },
+        "detected_intents": [
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "Hi, thank you",
+            "turn": 1,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "I've been working in product engineering for about 7 years now",
+            "turn": 4,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "I led the team that built and stabilized the core communication platform",
+            "turn": 7,
+            "metadata": {}
+          }
+        ],
+        "active_user_request": null,
+        "sandbox": {
+          "is_active": false,
+          "last_activity_ts": 0.0,
+          "submissions": [],
+          "signals": []
+        },
+        "phase": "exploration",
+        "last_node": "question",
+        "next_node": null,
+        "checkpoints": [
+          "2026-01-02T19:10:42.857645"
+        ],
+        "answer_quality": 0.4,
+        "topics_covered": [],
+        "next_message": "What was the biggest impact of the core communication platform you built?",
+        "last_response": "I led the team that built and stabilized the core communication platform",
+        "current_code": null,
+        "code_execution_result": null,
+        "code_quality": null,
+        "code_submissions": [],
+        "feedback": null
+      }
+    },
+    {
+      "turn_number": 5,
+      "user_input": "We were handling very high volumes of communication",
+      "timestamp": "2026-01-02T19:10:42.863181",
+      "state_restored": true,
+      "restored_state_summary": {
+        "turn_count": 9,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 10,
+        "questions_asked_count": 3,
+        "last_response": "I led the team that built and stabilized the core communication platform",
+        "next_message_preview": "What was the biggest impact of the core communication platform you built?"
+      },
+      "state_before": {
+        "turn_count": 9,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 10,
+        "questions_asked_count": 3,
+        "last_response": "I led the team that built and stabilized the core communication platform",
+        "next_message_preview": "What was the biggest impact of the core communication platform you built?"
+      },
+      "execution_success": true,
+      "state_after": {
+        "turn_count": 12,
+        "last_node": "question",
+        "next_node": null,
+        "phase": "exploration",
+        "_next_action": null,
+        "_should_evaluate": false,
+        "conversation_history_length": 13,
+        "questions_asked_count": 4,
+        "last_response": "We were handling very high volumes of communication",
+        "next_message_preview": "How did your team approach the design of the core communication platform?"
+      },
+      "agent_response": "How did your team approach the design of the core communication platform?",
+      "bugs_detected": [],
+      "checkpoint_id": "2026-01-02T19:10:50.403270",
+      "checkpoint_saved": true,
+      "full_state": {
+        "interview_id": 18,
+        "user_id": 3,
+        "resume_id": 8,
+        "conversation_history": [
+          {
+            "role": "assistant",
+            "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+            "timestamp": "2026-01-02T19:10:24.067997"
+          },
+          {
+            "role": "user",
+            "content": "Hi, thank you",
+            "timestamp": "2026-01-02T19:10:24.098487"
+          },
+          {
+            "role": "assistant",
+            "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+            "timestamp": "2026-01-02T19:10:27.481978"
+          },
+          {
+            "role": "assistant",
+            "content": "What challenges have you faced while working on your favorite projects?",
+            "timestamp": "2026-01-02T19:10:28.998092"
+          },
+          {
+            "role": "user",
+            "content": "I've been working in product engineering for about 7 years now",
+            "timestamp": "2026-01-02T19:10:29.019199"
+          },
+          {
+            "role": "assistant",
+            "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+            "timestamp": "2026-01-02T19:10:34.349384"
+          },
+          {
+            "role": "assistant",
+            "content": "What tools have you found most helpful in your product engineering work?",
+            "timestamp": "2026-01-02T19:10:35.994779"
+          },
+          {
+            "role": "user",
+            "content": "I led the team that built and stabilized the core communication platform",
+            "timestamp": "2026-01-02T19:10:36.017136"
+          },
+          {
+            "role": "assistant",
+            "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+            "timestamp": "2026-01-02T19:10:41.713298"
+          },
+          {
+            "role": "assistant",
+            "content": "What was the biggest impact of the core communication platform you built?",
+            "timestamp": "2026-01-02T19:10:42.850218"
+          },
+          {
+            "role": "user",
+            "content": "We were handling very high volumes of communication",
+            "timestamp": "2026-01-02T19:10:42.867822"
+          },
+          {
+            "role": "assistant",
+            "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+            "timestamp": "2026-01-02T19:10:48.845352"
+          },
+          {
+            "role": "assistant",
+            "content": "How did your team approach the design of the core communication platform?",
+            "timestamp": "2026-01-02T19:10:50.392972"
+          },
+          {
+            "role": "system",
+            "content": "CHECKPOINT: 2026-01-02T19:10:50.403270",
+            "timestamp": "2026-01-02T19:10:50.415923",
+            "metadata": {
+              "checkpoint_id": "2026-01-02T19:10:50.403270",
+              "last_node": "question",
+              "phase": "exploration",
+              "state_snapshot": {
+                "interview_id": 18,
+                "user_id": 3,
+                "resume_id": 8,
+                "resume_context": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "resume_structured": {
+                  "profile": "Senior Developer Consultant",
+                  "experience": "7+ years in product engineering"
+                },
+                "conversation_history": [
+                  {
+                    "role": "assistant",
+                    "content": "Hi there! It\u2019s great to meet you. I see you\u2019ve got over seven years of experience in product engineering\u2014really impressive! Feel free to hop into the code sandbox anytime if you want to share your skills. Let\u2019s dive in and have a great conversation!",
+                    "timestamp": "2026-01-02T19:10:24.067997"
+                  },
+                  {
+                    "role": "user",
+                    "content": "Hi, thank you",
+                    "timestamp": "2026-01-02T19:10:24.098487"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's awesome! With your background, I'm curious about the projects you've enjoyed the most.",
+                    "timestamp": "2026-01-02T19:10:27.481978"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What challenges have you faced while working on your favorite projects?",
+                    "timestamp": "2026-01-02T19:10:28.998092"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I've been working in product engineering for about 7 years now",
+                    "timestamp": "2026-01-02T19:10:29.019199"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's great to hear! Speaking of your experience, what\u2019s been the most challenging project you've worked on recently?",
+                    "timestamp": "2026-01-02T19:10:34.349384"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What tools have you found most helpful in your product engineering work?",
+                    "timestamp": "2026-01-02T19:10:35.994779"
+                  },
+                  {
+                    "role": "user",
+                    "content": "I led the team that built and stabilized the core communication platform",
+                    "timestamp": "2026-01-02T19:10:36.017136"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "That's fantastic! Given your experience, I'd love to hear about a project you\u2019re particularly proud of.",
+                    "timestamp": "2026-01-02T19:10:41.713298"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "What was the biggest impact of the core communication platform you built?",
+                    "timestamp": "2026-01-02T19:10:42.850218"
+                  },
+                  {
+                    "role": "user",
+                    "content": "We were handling very high volumes of communication",
+                    "timestamp": "2026-01-02T19:10:42.867822"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "It sounds like you\u2019ve really tackled some tough projects. How has your role as a Senior Developer Consultant shaped your approach to those challenges?",
+                    "timestamp": "2026-01-02T19:10:48.845352"
+                  },
+                  {
+                    "role": "assistant",
+                    "content": "How did your team approach the design of the core communication platform?",
+                    "timestamp": "2026-01-02T19:10:50.392972"
+                  }
+                ],
+                "turn_count": 12,
+                "questions_asked": [
+                  {
+                    "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+                    "text": "What challenges have you faced while working on your favorite projects?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "challenges",
+                    "asked_at_turn": 3
+                  },
+                  {
+                    "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+                    "text": "What tools have you found most helpful in your product engineering work?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "tools",
+                    "asked_at_turn": 6
+                  },
+                  {
+                    "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+                    "text": "What was the biggest impact of the core communication platform you built?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "impact",
+                    "asked_at_turn": 9
+                  },
+                  {
+                    "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+                    "text": "How did your team approach the design of the core communication platform?",
+                    "source": "resume",
+                    "resume_anchor": "experience_1",
+                    "aspect": "design",
+                    "asked_at_turn": 12
+                  }
+                ],
+                "current_question": "How did your team approach the design of the core communication platform?",
+                "resume_exploration": {
+                  "experience_1": {
+                    "anchor_id": "experience_1",
+                    "anchor_type": "experience",
+                    "aspects_covered": "{'impact', 'challenges', 'tools', 'design'}",
+                    "depth_score": 4,
+                    "last_explored_turn": 12
+                  }
+                },
+                "detected_intents": [
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "Hi, thank you",
+                    "turn": 1,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I've been working in product engineering for about 7 years now",
+                    "turn": 4,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "I led the team that built and stabilized the core communication platform",
+                    "turn": 7,
+                    "metadata": {}
+                  },
+                  {
+                    "type": "no_intent",
+                    "confidence": 0.5,
+                    "extracted_from": "We were handling very high volumes of communication",
+                    "turn": 10,
+                    "metadata": {}
+                  }
+                ],
+                "active_user_request": null,
+                "sandbox": {
+                  "is_active": false,
+                  "last_activity_ts": 0.0,
+                  "submissions": [],
+                  "signals": []
+                },
+                "phase": "exploration",
+                "last_node": "question",
+                "next_node": null,
+                "checkpoints": [],
+                "answer_quality": 0.3,
+                "topics_covered": [],
+                "next_message": "How did your team approach the design of the core communication platform?",
+                "last_response": "We were handling very high volumes of communication",
+                "current_code": null,
+                "code_execution_result": null,
+                "code_quality": null,
+                "code_submissions": [],
+                "feedback": null
+              }
+            }
+          }
+        ],
+        "turn_count": 12,
+        "questions_asked": [
+          {
+            "id": "e65d08a9-645f-42cf-b64c-d230343a9f16",
+            "text": "What challenges have you faced while working on your favorite projects?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "challenges",
+            "asked_at_turn": 3
+          },
+          {
+            "id": "76d563d5-a87b-496c-8cf7-1248556e4543",
+            "text": "What tools have you found most helpful in your product engineering work?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "tools",
+            "asked_at_turn": 6
+          },
+          {
+            "id": "d02ca5a3-f489-4c20-b241-659421270ccd",
+            "text": "What was the biggest impact of the core communication platform you built?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "impact",
+            "asked_at_turn": 9
+          },
+          {
+            "id": "ebfc72a3-44a1-44eb-9660-bb84e59aeb4f",
+            "text": "How did your team approach the design of the core communication platform?",
+            "source": "resume",
+            "resume_anchor": "experience_1",
+            "aspect": "design",
+            "asked_at_turn": 12
+          }
+        ],
+        "current_question": "How did your team approach the design of the core communication platform?",
+        "resume_exploration": {
+          "experience_1": {
+            "anchor_id": "experience_1",
+            "anchor_type": "experience",
+            "aspects_covered": [
+              "impact",
+              "challenges",
+              "tools",
+              "design"
+            ],
+            "depth_score": 4,
+            "last_explored_turn": 12
+          }
+        },
+        "detected_intents": [
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "Hi, thank you",
+            "turn": 1,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "I've been working in product engineering for about 7 years now",
+            "turn": 4,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "I led the team that built and stabilized the core communication platform",
+            "turn": 7,
+            "metadata": {}
+          },
+          {
+            "type": "no_intent",
+            "confidence": 0.5,
+            "extracted_from": "We were handling very high volumes of communication",
+            "turn": 10,
+            "metadata": {}
+          }
+        ],
+        "active_user_request": null,
+        "sandbox": {
+          "is_active": false,
+          "last_activity_ts": 0.0,
+          "submissions": [],
+          "signals": []
+        },
+        "phase": "exploration",
+        "last_node": "question",
+        "next_node": null,
+        "checkpoints": [
+          "2026-01-02T19:10:50.403270"
+        ],
+        "answer_quality": 0.3,
+        "topics_covered": [],
+        "next_message": "How did your team approach the design of the core communication platform?",
+        "last_response": "We were handling very high volumes of communication",
+        "current_code": null,
+        "code_execution_result": null,
+        "code_quality": null,
+        "code_submissions": [],
+        "feedback": null
+      }
+    }
+  ],
+  "test_completed_at": "2026-01-02T19:10:50.429214"
+}

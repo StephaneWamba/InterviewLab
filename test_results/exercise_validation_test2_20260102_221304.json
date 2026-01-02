@@ -1,0 +1,10 @@
+{
+  "scenario": "wrong_submission",
+  "interview_id": 100,
+  "exercise_description": "Design a RESTful API endpoint that allows users to manage a collection of books. The API should support operations to add a new book, list all books, and retrieve details of a specific book by its ID. Each book should have a title, author, and publication year.",
+  "submitted_code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n-1) + fibonacci(n-2)\n\nprint(fibonacci(10))",
+  "agent_feedback": "Great job on implementing the Fibonacci function\u2014it works perfectly for positive integers and is easy to follow. To enhance your code further, consider switching to an iterative approach for better efficiency with larger values of n, and adding input validation to handle negative numbers or non-integer types. Keep up the good work, and I\u2019m excited to see how you tackle these improvements!\n\nNote: I notice you submitted code that doesn't match the exercise I provided (Design a RESTful API endpoint that allows users to manage a collection of books. The API should supp...). I'll review what you submitted, but I'd also like to see your solution to the original exercise when you're ready.\n\nHow would you implement input validation to handle cases like negative numbers or non-integer values?",
+  "detected_mismatch": true,
+  "expected": true,
+  "passed": true
+}

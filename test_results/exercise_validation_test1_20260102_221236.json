@@ -1,0 +1,10 @@
+{
+  "scenario": "correct_submission",
+  "interview_id": 99,
+  "exercise_description": "Design a RESTful API for a simple book catalog system. The API should allow users to create, read, update, and delete books. Each book should have a title, author, and publication year. Implement the necessary endpoints to handle these operations.",
+  "submitted_code": "from flask import Flask, jsonify, request\n\napp = Flask(__name__)\nbooks = []\n\n@app.route('/books', methods=['POST'])\ndef create_book():\n    data = request.json\n    book = {\n        'id': len(books) + 1,\n        'title': data.get('title'),\n        'author': data.get('author'),\n        'year': data.get('year')\n    }\n    books.append(book)\n    return jsonify(book), 201\n\n@app.route('/books', methods=['GET'])\ndef get_books():\n    return jsonify(books)\n\n@app.route('/books/<int:id>', methods=['PUT'])\nde",
+  "agent_feedback": "Great job on successfully implementing the basic CRUD operations for your book management system using Flask! To strengthen your code, consider adding error handling and input validation to manage missing fields and invalid data types. Additionally, transitioning to a database for storage would enhance scalability and performance\u2014keep up the good work and continue refining your skills!\n\nHow would you implement input validation for the required fields in the request body?",
+  "detected_mismatch": false,
+  "expected": false,
+  "passed": true
+}

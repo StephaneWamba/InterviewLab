@@ -1,0 +1,9 @@
+{
+  "scenario": "no_exercise",
+  "interview_id": 104,
+  "submitted_code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b\n\nprint(fibonacci(10))",
+  "agent_feedback": "Great job on your Fibonacci sequence implementation! You handled edge cases beautifully, and your code is clean and easy to follow. To enhance your solution further, consider optimizing for larger values of n and adding type hints for better clarity. Keep up the good work!\n\nWhat approach do you think would be most effective for optimizing the Fibonacci calculation for larger values of n?",
+  "mentioned_exercise_mismatch": false,
+  "expected": false,
+  "passed": true
+}

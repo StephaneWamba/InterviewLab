@@ -1,0 +1,41 @@
+{
+  "scenario": "exercise_generation",
+  "interview_id": 95,
+  "job_description": "\n        Senior Python Backend Engineer\n        - Design and implement RESTful APIs\n        - Build microservices architecture\n        - Optimize database queries\n        - Write clean, maintainable code\n        ",
+  "exercise_generated": true,
+  "exercise_code": "from flask import Flask, jsonify, request\n\napp = Flask(__name__)\n\nbooks = []\n\n@app.route('/books', methods=['POST'])\ndef create_book():\n    \"\"\"\n    Create a new book entry.\n    \n    Request body should contain 'title', 'author', and 'year'.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books', methods=['GET'])\ndef get_books():\n    \"\"\"\n    Retrieve a list of all books.\n    \n    Returns:\n        A JSON list of all books.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books/<int:id>', methods=['PUT'])\ndef update_book(id):\n    \"\"\"\n    Update an existing book entry by ID.\n    \n    Request body should contain 'title', 'author', and 'year'.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books/<int:id>', methods=['DELETE'])\ndef delete_book(id):\n    \"\"\"\n    Delete a book entry by ID.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\nif __name__ == '__main__':\n    app.run(debug=True)",
+  "exercise_description": "Design a simple RESTful API for a book management system. Implement endpoints to create, retrieve, update, and delete books. Each book should have a title, author, and publication year. Use an in-memory data structure to store the book information.",
+  "sandbox_state": {
+    "is_active": true,
+    "last_activity_ts": 0.0,
+    "submissions": [],
+    "signals": [],
+    "initial_code": "from flask import Flask, jsonify, request\n\napp = Flask(__name__)\n\nbooks = []\n\n@app.route('/books', methods=['POST'])\ndef create_book():\n    \"\"\"\n    Create a new book entry.\n    \n    Request body should contain 'title', 'author', and 'year'.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books', methods=['GET'])\ndef get_books():\n    \"\"\"\n    Retrieve a list of all books.\n    \n    Returns:\n        A JSON list of all books.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books/<int:id>', methods=['PUT'])\ndef update_book(id):\n    \"\"\"\n    Update an existing book entry by ID.\n    \n    Request body should contain 'title', 'author', and 'year'.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\n@app.route('/books/<int:id>', methods=['DELETE'])\ndef delete_book(id):\n    \"\"\"\n    Delete a book entry by ID.\n    \"\"\"\n    # TODO: Implement your solution here\n    pass\n\nif __name__ == '__main__':\n    app.run(debug=True)",
+    "exercise_description": "Design a simple RESTful API for a book management system. Implement endpoints to create, retrieve, update, and delete books. Each book should have a title, author, and publication year. Use an in-memory data structure to store the book information.",
+    "exercise_difficulty": "medium",
+    "exercise_hints": [
+      "Use a list of dictionaries to store the book data, where each dictionary represents a book.",
+      "Remember to handle cases where a book ID does not exist in the update and delete functions.",
+      "You can use Flask's jsonify to return the data in JSON format."
+    ],
+    "last_code_snapshot": "",
+    "last_poll_time": 0.0
+  },
+  "conversation_history": [
+    {
+      "role": "assistant",
+      "content": "Hi there! It's great to meet you today. I see you\u2019ve led a core communication platform team at Simpl\u2014that's impressive! Feel free to use the code sandbox if you'd like to show off your skills. Let\u2019s dive in and have a good chat!",
+      "timestamp": "2026-01-02T21:54:22.544022"
+    },
+    {
+      "role": "user",
+      "content": "I'd like to write some code to demonstrate my skills",
+      "timestamp": "2026-01-02T21:54:22.560204"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I've set up a coding exercise for you in the sandbox. You'll design a simple RESTful API for a book management system. Please work on it in the code sandbox on the right side of your screen. Take your time, and submit it when you're ready for me to review.",
+      "timestamp": "2026-01-02T21:54:34.844597"
+    }
+  ]
+}

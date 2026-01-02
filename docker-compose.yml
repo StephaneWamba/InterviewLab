@@ -1,0 +1,101 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: interviewlab_db
+    environment:
+      POSTGRES_USER: interviewlab
+      POSTGRES_PASSWORD: interviewlab_dev
+      POSTGRES_DB: interviewlab
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U interviewlab"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: interviewlab_redis
+    ports:
+      - "6381:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: interviewlab_api
+    ports:
+      - "8003:8000"
+    user: "0:0"  # Run as root to access Docker socket (for sandbox)
+    environment:
+      DATABASE_URL: postgresql://interviewlab:interviewlab_dev@db:5432/interviewlab
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      ELEVENLABS_API_KEY: ${ELEVENLABS_API_KEY}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      LIVEKIT_URL: ${LIVEKIT_URL}
+      UPLOAD_DIR: /app/uploads
+    volumes:
+      - ./uploads:/app/uploads
+      - ./src:/app/src
+      - ./test_extraction.py:/app/test_extraction.py
+      - ./test_sandbox.py:/app/test_sandbox.py
+      - ./test_code_review.py:/app/test_code_review.py
+      - ./assets:/app/assets
+      # Docker socket for sandbox (development only - use separate service in production)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Note: --reload is disabled in Docker to avoid memory issues with file watchers
+    # For development with hot reload, run uvicorn locally: uvicorn src.main:app --reload
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: interviewlab_agent
+    environment:
+      DATABASE_URL: postgresql://interviewlab:interviewlab_dev@db:5432/interviewlab
+      REDIS_URL: redis://redis:6379/0
+      SECRET_KEY: ${SECRET_KEY:-dev-secret-key-change-in-production}
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      OPENAI_TTS_MODEL: ${OPENAI_TTS_MODEL:-tts-1-hd}
+      OPENAI_TTS_VOICE: ${OPENAI_TTS_VOICE:-alloy}
+      LIVEKIT_URL: ${LIVEKIT_URL}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET}
+      LIVEKIT_WS_URL: ${LIVEKIT_WS_URL}
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: ["python", "-m", "src.agents.interview_agent", "start"]
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+

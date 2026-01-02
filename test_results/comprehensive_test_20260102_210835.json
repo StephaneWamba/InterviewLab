@@ -1,0 +1,1039 @@
+{
+  "test_started_at": "2026-01-02T21:04:55.895291",
+  "scenarios": [
+    {
+      "scenario_name": "basic_conversation",
+      "interview_id": 82,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to have you here today. With your seven years in product engineering, I\u2019m reall..."
+          },
+          "agent_response": "Hi there! It\u2019s great to have you here today. With your seven years in product engineering, I\u2019m really looking forward to our chat. And just so you know, feel free to use the code sandbox if you want to share any ideas. Let's dive in!",
+          "checkpoint_id": "2026-01-02T21:05:00.061847"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hi, thank you",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Hi, thank you",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hi, thank you",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What was the most challenging project you worked on in product engineering?"
+          },
+          "agent_response": "What was the most challenging project you worked on in product engineering?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hi, thank you",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:05:06.962451"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "I've been working in product engineering for about 7 years now",
+          "execution_success": true,
+          "state": {
+            "turn_count": 6,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 7,
+            "questions_asked_count": 2,
+            "last_response": "I've been working in product engineering for about 7 years now",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I've been working in product engineering for about 7 years now",
+              "turn": 4,
+              "metadata": {
+                "years_of_experience": 7,
+                "context": "responding to a question about challenging projects"
+              }
+            },
+            "next_message_preview": "What tools did you find most helpful in your product engineering projects?"
+          },
+          "agent_response": "What tools did you find most helpful in your product engineering projects?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I've been working in product engineering for about 7 years now",
+            "turn": 4,
+            "metadata": {
+              "years_of_experience": 7,
+              "context": "responding to a question about challenging projects"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:05:16.606865"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "I led the team that built and stabilized the core communication platform",
+          "execution_success": true,
+          "state": {
+            "turn_count": 9,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 10,
+            "questions_asked_count": 3,
+            "last_response": "I led the team that built and stabilized the core communication platform",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I led the team that built and stabilized the core communication platform",
+              "turn": 7,
+              "metadata": {
+                "project": "core communication platform",
+                "experience_years": 7
+              }
+            },
+            "next_message_preview": "What impact did your core communication platform have on your team or the company?"
+          },
+          "agent_response": "What impact did your core communication platform have on your team or the company?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I led the team that built and stabilized the core communication platform",
+            "turn": 7,
+            "metadata": {
+              "project": "core communication platform",
+              "experience_years": 7
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:05:25.341715"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "We were handling very high volumes of communication",
+          "execution_success": true,
+          "state": {
+            "turn_count": 12,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 13,
+            "questions_asked_count": 4,
+            "last_response": "We were handling very high volumes of communication",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "We were handling very high volumes of communication",
+              "turn": 10,
+              "metadata": {
+                "context": "interview",
+                "question": "What impact did your core communication platform have on your team or the company?",
+                "user_response": "We were handling very high volumes of communication"
+              }
+            },
+            "next_message_preview": "Can you tell me about the design process for the core communication platform you worked on?"
+          },
+          "agent_response": "Can you tell me about the design process for the core communication platform you worked on?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "We were handling very high volumes of communication",
+            "turn": 10,
+            "metadata": {
+              "context": "interview",
+              "question": "What impact did your core communication platform have on your team or the company?",
+              "user_response": "We were handling very high volumes of communication"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:05:37.053259"
+        }
+      ]
+    },
+    {
+      "scenario_name": "code_request",
+      "interview_id": 83,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to meet you. I see you have over seven years in product engineering\u2014impressive!..."
+          },
+          "agent_response": "Hi there! It\u2019s great to meet you. I see you have over seven years in product engineering\u2014impressive! Feel free to dive into the code sandbox whenever you like. Let\u2019s have a fun conversation today!",
+          "checkpoint_id": "2026-01-02T21:05:39.909167"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hi",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Hi",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hi",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What tools did you use in that project to achieve your goals?"
+          },
+          "agent_response": "What tools did you use in that project to achieve your goals?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hi",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:05:45.817322"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "I'd like to write some code to demonstrate my approach",
+          "execution_success": true,
+          "state": {
+            "turn_count": 4,
+            "last_node": "sandbox_guidance",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 6,
+            "questions_asked_count": 1,
+            "last_response": "I'd like to write some code to demonstrate my approach",
+            "active_user_request": null,
+            "next_message_preview": "Sure! Go ahead and use the code sandbox on the right side of your screen. You can write code related..."
+          },
+          "agent_response": "Sure! Go ahead and use the code sandbox on the right side of your screen. You can write code related to your projects or any technical questions you have. I\u2019ll review it as soon as you submit it!",
+          "checkpoint_id": "2026-01-02T21:05:50.229095"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "Can I use the sandbox?",
+          "execution_success": true,
+          "state": {
+            "turn_count": 5,
+            "last_node": "sandbox_guidance",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 8,
+            "questions_asked_count": 1,
+            "last_response": "Can I use the sandbox?",
+            "active_user_request": null,
+            "next_message_preview": "Of course! Please use the code sandbox on the right side of your screen. You can write code related ..."
+          },
+          "agent_response": "Of course! Please use the code sandbox on the right side of your screen. You can write code related to your projects or any technical questions you have. I\u2019ll be here to review it when you submit!",
+          "checkpoint_id": "2026-01-02T21:05:54.625363"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "Here's my code implementation...",
+          "execution_success": true,
+          "state": {
+            "turn_count": 6,
+            "last_node": "sandbox_guidance",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 10,
+            "questions_asked_count": 1,
+            "last_response": "Here's my code implementation...",
+            "active_user_request": null,
+            "next_message_preview": "Of course! Go ahead and use the code sandbox on the right side of your screen. Write some code relat..."
+          },
+          "agent_response": "Of course! Go ahead and use the code sandbox on the right side of your screen. Write some code related to your projects or any technical questions you have. I\u2019ll be here to review it when you\u2019re done!",
+          "checkpoint_id": "2026-01-02T21:06:01.078284"
+        }
+      ]
+    },
+    {
+      "scenario_name": "topic_change",
+      "interview_id": 84,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to meet you. I see you have over seven years of experience in product engineeri..."
+          },
+          "agent_response": "Hi there! It\u2019s great to meet you. I see you have over seven years of experience in product engineering\u2014that\u2019s impressive! Feel free to use the code sandbox if you\u2019d like to show us some of your work. Let\u2019s dive in and have a great conversation!",
+          "checkpoint_id": "2026-01-02T21:06:04.261154"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hello",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Hello",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hello",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What is a challenging project you've worked on, and how did you overcome those challenges?"
+          },
+          "agent_response": "What is a challenging project you've worked on, and how did you overcome those challenges?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hello",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:06:15.313893"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "I've worked on distributed systems",
+          "execution_success": true,
+          "state": {
+            "turn_count": 6,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 7,
+            "questions_asked_count": 2,
+            "last_response": "I've worked on distributed systems",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I've worked on distributed systems",
+              "turn": 4,
+              "metadata": {
+                "project_type": "distributed systems",
+                "response_type": "answer"
+              }
+            },
+            "next_message_preview": "What tools did you use in that project, and why did you choose them?"
+          },
+          "agent_response": "What tools did you use in that project, and why did you choose them?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I've worked on distributed systems",
+            "turn": 4,
+            "metadata": {
+              "project_type": "distributed systems",
+              "response_type": "answer"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:06:24.159055"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "Can we talk about something else?",
+          "execution_success": true,
+          "state": {
+            "turn_count": 9,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 10,
+            "questions_asked_count": 3,
+            "last_response": "Can we talk about something else?",
+            "active_user_request": null,
+            "next_message_preview": "What impact did your work on that project have on the team or the company?"
+          },
+          "agent_response": "What impact did your work on that project have on the team or the company?",
+          "checkpoint_id": "2026-01-02T21:06:28.963343"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "I'd like to discuss my leadership experience",
+          "execution_success": true,
+          "state": {
+            "turn_count": 12,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 13,
+            "questions_asked_count": 4,
+            "last_response": "I'd like to discuss my leadership experience",
+            "active_user_request": null,
+            "next_message_preview": "How did you approach the design of the systems you worked on?"
+          },
+          "agent_response": "How did you approach the design of the systems you worked on?",
+          "checkpoint_id": "2026-01-02T21:06:34.239796"
+        }
+      ]
+    },
+    {
+      "scenario_name": "short_responses",
+      "interview_id": 85,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It's great to meet you today. With over seven years in product engineering, I\u2019m excited to..."
+          },
+          "agent_response": "Hi there! It's great to meet you today. With over seven years in product engineering, I\u2019m excited to hear about your journey. Feel free to code in the sandbox if you\u2019d like, but no pressure! Let\u2019s dive in.",
+          "checkpoint_id": "2026-01-02T21:06:37.125538"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Yes",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Yes",
+            "active_user_request": {
+              "type": "continue",
+              "confidence": 0.9,
+              "extracted_from": "Yes",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What tools did you use in that challenging project?"
+          },
+          "agent_response": "What tools did you use in that challenging project?",
+          "detected_intent": {
+            "type": "continue",
+            "confidence": 0.9,
+            "extracted_from": "Yes",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:06:42.682589"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "Sure",
+          "execution_success": true,
+          "state": {
+            "turn_count": 6,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 7,
+            "questions_asked_count": 2,
+            "last_response": "Sure",
+            "active_user_request": {
+              "type": "continue",
+              "confidence": 0.9,
+              "extracted_from": "Sure",
+              "turn": 4,
+              "metadata": {
+                "last_question": "What tools did you use in that challenging project?",
+                "user_response": "Sure"
+              }
+            },
+            "next_message_preview": "What results did you achieve from that project you\u2019re proud of?"
+          },
+          "agent_response": "What results did you achieve from that project you\u2019re proud of?",
+          "detected_intent": {
+            "type": "continue",
+            "confidence": 0.9,
+            "extracted_from": "Sure",
+            "turn": 4,
+            "metadata": {
+              "last_question": "What tools did you use in that challenging project?",
+              "user_response": "Sure"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:06:49.868319"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "Okay",
+          "execution_success": true,
+          "state": {
+            "turn_count": 8,
+            "last_node": "followup",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 9,
+            "questions_asked_count": 3,
+            "last_response": "Okay",
+            "active_user_request": {
+              "type": "continue",
+              "confidence": 0.85,
+              "extracted_from": "Okay",
+              "turn": 7,
+              "metadata": {
+                "last_question": "What results did you achieve from that project you\u2019re proud of?",
+                "user_response": "Okay"
+              }
+            },
+            "next_message_preview": "What specific challenge did you overcome during that project?"
+          },
+          "agent_response": "What specific challenge did you overcome during that project?",
+          "detected_intent": {
+            "type": "continue",
+            "confidence": 0.85,
+            "extracted_from": "Okay",
+            "turn": 7,
+            "metadata": {
+              "last_question": "What results did you achieve from that project you\u2019re proud of?",
+              "user_response": "Okay"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:06:56.044213"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "That's correct",
+          "execution_success": true,
+          "state": {
+            "turn_count": 11,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 12,
+            "questions_asked_count": 4,
+            "last_response": "That's correct",
+            "active_user_request": {
+              "type": "continue",
+              "confidence": 0.85,
+              "extracted_from": "That's correct",
+              "turn": 9,
+              "metadata": {
+                "context": "interview",
+                "last_question": "What specific challenge did you overcome during that project?"
+              }
+            },
+            "next_message_preview": "How did you handle team dynamics during that project?"
+          },
+          "agent_response": "How did you handle team dynamics during that project?",
+          "detected_intent": {
+            "type": "continue",
+            "confidence": 0.85,
+            "extracted_from": "That's correct",
+            "turn": 9,
+            "metadata": {
+              "context": "interview",
+              "last_question": "What specific challenge did you overcome during that project?"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:07:04.347650"
+        }
+      ]
+    },
+    {
+      "scenario_name": "long_detailed_response",
+      "interview_id": 86,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to meet you today. With over seven years in product engineering, I\u2019m excited to..."
+          },
+          "agent_response": "Hi there! It\u2019s great to meet you today. With over seven years in product engineering, I\u2019m excited to hear about your journey. If you feel inspired, you can jot down some code in the sandbox later. Let\u2019s dive in!",
+          "checkpoint_id": "2026-01-02T21:07:07.432492"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hi there",
+          "execution_success": true,
+          "state": {
+            "turn_count": 2,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 3,
+            "questions_asked_count": 1,
+            "last_response": "Hi there",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hi there",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What has been your biggest challenge in product engineering so far?"
+          },
+          "agent_response": "What has been your biggest challenge in product engineering so far?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hi there",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:07:14.075310"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "I've been working in product engineering for about 7 years now. I started as a junior developer \n        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems \n        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, \n        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced \n        costs by 40% while improving latency.",
+          "execution_success": true,
+          "state": {
+            "turn_count": 5,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 6,
+            "questions_asked_count": 2,
+            "last_response": "I've been working in product engineering for about 7 years now. I started as a junior developer \n        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems \n        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, \n        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced \n        costs by 40% while improving latency.",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I've been working in product engineering for about 7 years now. I started as a junior developer \n        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems \n        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, \n        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced \n        costs by 40% while improving latency.",
+              "turn": 3,
+              "metadata": {
+                "experience_years": 7,
+                "roles": [
+                  "junior developer",
+                  "senior staff engineer"
+                ],
+                "skills": [
+                  "Golang",
+                  "Python",
+                  "Node.js",
+                  "AWS",
+                  "Kafka",
+                  "Redis",
+                  "Postgres"
+                ],
+                "project": "communication platform at Simpl",
+                "outcomes": "reduced costs by 40% and improved latency"
+              }
+            },
+            "next_message_preview": "What tools or technologies did you use in that project?"
+          },
+          "agent_response": "What tools or technologies did you use in that project?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I've been working in product engineering for about 7 years now. I started as a junior developer \n        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems \n        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, \n        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced \n        costs by 40% while improving latency.",
+            "turn": 3,
+            "metadata": {
+              "experience_years": 7,
+              "roles": [
+                "junior developer",
+                "senior staff engineer"
+              ],
+              "skills": [
+                "Golang",
+                "Python",
+                "Node.js",
+                "AWS",
+                "Kafka",
+                "Redis",
+                "Postgres"
+              ],
+              "project": "communication platform at Simpl",
+              "outcomes": "reduced costs by 40% and improved latency"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:07:27.315167"
+        }
+      ]
+    },
+    {
+      "scenario_name": "clarification_request",
+      "interview_id": 87,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to have you here today. I see you have over seven years in product engineering\u2014..."
+          },
+          "agent_response": "Hi there! It\u2019s great to have you here today. I see you have over seven years in product engineering\u2014that's impressive! Feel free to dive into the code sandbox if you\u2019d like during our chat. Let\u2019s have a fun conversation!",
+          "checkpoint_id": "2026-01-02T21:07:32.980874"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hello",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Hello",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hello",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "Can you tell me about a challenging project you worked on recently?"
+          },
+          "agent_response": "Can you tell me about a challenging project you worked on recently?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hello",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:07:38.976622"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "What do you mean by that?",
+          "execution_success": true,
+          "state": {
+            "turn_count": 5,
+            "last_node": "followup",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 6,
+            "questions_asked_count": 2,
+            "last_response": "What do you mean by that?",
+            "active_user_request": null,
+            "next_message_preview": "Can you share a recent project that was difficult for you? What made it challenging?"
+          },
+          "agent_response": "Can you share a recent project that was difficult for you? What made it challenging?",
+          "checkpoint_id": "2026-01-02T21:07:45.973498"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "Can you clarify the question?",
+          "execution_success": true,
+          "state": {
+            "turn_count": 7,
+            "last_node": "followup",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 8,
+            "questions_asked_count": 3,
+            "last_response": "Can you clarify the question?",
+            "active_user_request": null,
+            "next_message_preview": "Can you tell me about a project you worked on recently that was hard for you? What made it so tough?"
+          },
+          "agent_response": "Can you tell me about a project you worked on recently that was hard for you? What made it so tough?",
+          "checkpoint_id": "2026-01-02T21:07:54.833637"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "I'm not sure I understand",
+          "execution_success": true,
+          "state": {
+            "turn_count": 9,
+            "last_node": "followup",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 10,
+            "questions_asked_count": 4,
+            "last_response": "I'm not sure I understand",
+            "active_user_request": null,
+            "next_message_preview": "Can you share a recent project that you found challenging? What specific parts of that project were ..."
+          },
+          "agent_response": "Can you share a recent project that you found challenging? What specific parts of that project were difficult for you?",
+          "checkpoint_id": "2026-01-02T21:08:02.845512"
+        }
+      ]
+    },
+    {
+      "scenario_name": "mixed_intents",
+      "interview_id": 88,
+      "turns": [
+        {
+          "turn_number": 1,
+          "user_input": null,
+          "execution_success": true,
+          "state": {
+            "turn_count": 0,
+            "last_node": "greeting",
+            "next_node": null,
+            "phase": "intro",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 1,
+            "questions_asked_count": 0,
+            "last_response": null,
+            "active_user_request": null,
+            "next_message_preview": "Hi there! It\u2019s great to meet you. I see you have over seven years in product engineering\u2014that\u2019s impr..."
+          },
+          "agent_response": "Hi there! It\u2019s great to meet you. I see you have over seven years in product engineering\u2014that\u2019s impressive! Feel free to use the code sandbox if you want to share any of your work. Let\u2019s dive in!",
+          "checkpoint_id": "2026-01-02T21:08:05.744045"
+        },
+        {
+          "turn_number": 2,
+          "user_input": "Hi",
+          "execution_success": true,
+          "state": {
+            "turn_count": 3,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 4,
+            "questions_asked_count": 1,
+            "last_response": "Hi",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "Hi",
+              "turn": 1,
+              "metadata": {}
+            },
+            "next_message_preview": "What challenges did you face in your recent projects?"
+          },
+          "agent_response": "What challenges did you face in your recent projects?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "Hi",
+            "turn": 1,
+            "metadata": {}
+          },
+          "checkpoint_id": "2026-01-02T21:08:10.594971"
+        },
+        {
+          "turn_number": 3,
+          "user_input": "I've worked on microservices",
+          "execution_success": true,
+          "state": {
+            "turn_count": 6,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 7,
+            "questions_asked_count": 2,
+            "last_response": "I've worked on microservices",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I've worked on microservices",
+              "turn": 4,
+              "metadata": {
+                "topic": "microservices",
+                "reason": "user is answering the question"
+              }
+            },
+            "next_message_preview": "What tools did you find most useful while working on microservices?"
+          },
+          "agent_response": "What tools did you find most useful while working on microservices?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I've worked on microservices",
+            "turn": 4,
+            "metadata": {
+              "topic": "microservices",
+              "reason": "user is answering the question"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:08:19.855016"
+        },
+        {
+          "turn_number": 4,
+          "user_input": "Can I show you some code?",
+          "execution_success": true,
+          "state": {
+            "turn_count": 7,
+            "last_node": "sandbox_guidance",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 9,
+            "questions_asked_count": 2,
+            "last_response": "Can I show you some code?",
+            "active_user_request": null,
+            "next_message_preview": "Sure! I\u2019d love to see your code. Please use the code sandbox on the right side of your screen. You c..."
+          },
+          "agent_response": "Sure! I\u2019d love to see your code. Please use the code sandbox on the right side of your screen. You can write about your projects or any technical questions. I\u2019ll review it as soon as you submit it!",
+          "checkpoint_id": "2026-01-02T21:08:23.915151"
+        },
+        {
+          "turn_number": 5,
+          "user_input": "Actually, let's talk about my team leadership instead",
+          "execution_success": true,
+          "state": {
+            "turn_count": 10,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 12,
+            "questions_asked_count": 3,
+            "last_response": "Actually, let's talk about my team leadership instead",
+            "active_user_request": null,
+            "next_message_preview": "How did you lead your team through the development of those microservices?"
+          },
+          "agent_response": "How did you lead your team through the development of those microservices?",
+          "checkpoint_id": "2026-01-02T21:08:27.851260"
+        },
+        {
+          "turn_number": 6,
+          "user_input": "I managed a team of 5 engineers",
+          "execution_success": true,
+          "state": {
+            "turn_count": 13,
+            "last_node": "question",
+            "next_node": null,
+            "phase": "exploration",
+            "_next_action": null,
+            "_should_evaluate": false,
+            "conversation_history_length": 15,
+            "questions_asked_count": 4,
+            "last_response": "I managed a team of 5 engineers",
+            "active_user_request": {
+              "type": "no_intent",
+              "confidence": 0.9,
+              "extracted_from": "I managed a team of 5 engineers",
+              "turn": 11,
+              "metadata": {
+                "topic": "leadership",
+                "response": "managed a team of 5 engineers"
+              }
+            },
+            "next_message_preview": "What impact did your leadership have on the success of your projects?"
+          },
+          "agent_response": "What impact did your leadership have on the success of your projects?",
+          "detected_intent": {
+            "type": "no_intent",
+            "confidence": 0.9,
+            "extracted_from": "I managed a team of 5 engineers",
+            "turn": 11,
+            "metadata": {
+              "topic": "leadership",
+              "response": "managed a team of 5 engineers"
+            }
+          },
+          "checkpoint_id": "2026-01-02T21:08:35.781843"
+        }
+      ]
+    }
+  ],
+  "test_completed_at": "2026-01-02T21:08:35.792510"
+}

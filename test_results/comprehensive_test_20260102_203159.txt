@@ -1,0 +1,546 @@
+================================================================================
+COMPREHENSIVE AGENT BEHAVIOR TEST RESULTS
+================================================================================
+
+Test Date: 2026-01-02T20:29:13.842714
+Total Scenarios: 7
+
+
+================================================================================
+SCENARIO: BASIC_CONVERSATION
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to have you here today. I see you have over seven years of experience in product engineering—that’s impressive! Feel free to dive into the code sandbox if you’d like. Let’s chat!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hi, thank you
+Agent: What challenges have you faced in your projects, and how did you overcome them?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': 'Hi, thank you', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: I've been working in product engineering for about 7 years now
+Agent: What tools have you found most helpful in your product engineering work?
+
+State:
+  Turn Count: 6
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 7 messages
+  Questions Asked: 2
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.9, 'extracted_from': "I've been working in product engineering for about 7 years now", 'turn': 4, 'metadata': {}}
+
+
+--- Turn 4 ---
+User: I led the team that built and stabilized the core communication platform
+Agent: What impact did your core communication platform have on the team and the company?
+
+State:
+  Turn Count: 9
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 10 messages
+  Questions Asked: 3
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': 'I led the team that built and stabilized the core communication platform', 'turn': 7, 'metadata': {}}
+
+
+--- Turn 5 ---
+User: We were handling very high volumes of communication
+Agent: What results did your team achieve after launching the core communication platform?
+
+State:
+  Turn Count: 12
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 13 messages
+  Questions Asked: 4
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': 'We were handling very high volumes of communication', 'turn': 10, 'metadata': {}}
+
+
+Scenario Summary:
+  Total Turns: 5
+  Final Turn Count: 12
+  Final Phase: exploration
+  Total Questions: 4
+
+================================================================================
+SCENARIO: CODE_REQUEST
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to meet you today. I see you have over seven years in product engineering—impressive! Feel free to use the code sandbox if you’d like to show us something. Let’s dive in and have a great conversation!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hi
+Agent: What were some challenges you faced in your recent projects?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.9, 'extracted_from': 'Hi', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: I'd like to write some code to demonstrate my approach
+Agent: Sure! I’d love to see your code. Please use the code sandbox on the right side of your screen. Feel free to write anything related to your projects or questions. I’ll review it once you submit!
+
+State:
+  Turn Count: 4
+  Last Node: sandbox_guidance
+  Next Action: None
+  Phase: exploration
+  Conversation History: 6 messages
+  Questions Asked: 1
+
+
+--- Turn 4 ---
+User: Can I use the sandbox?
+Agent: Sure! I’d love to see your code. Please use the code sandbox on the right side of your screen. You can write anything related to your projects or questions. I’ll review it as soon as you submit!
+
+State:
+  Turn Count: 5
+  Last Node: sandbox_guidance
+  Next Action: None
+  Phase: exploration
+  Conversation History: 8 messages
+  Questions Asked: 1
+
+
+--- Turn 5 ---
+User: Here's my code implementation...
+Agent: That sounds great! Please use the code sandbox on the right side of your screen. Write any code related to your projects or questions. I’ll review it once you submit.
+
+State:
+  Turn Count: 6
+  Last Node: sandbox_guidance
+  Next Action: None
+  Phase: exploration
+  Conversation History: 10 messages
+  Questions Asked: 1
+
+
+Scenario Summary:
+  Total Turns: 5
+  Final Turn Count: 6
+  Final Phase: exploration
+  Total Questions: 1
+
+================================================================================
+SCENARIO: TOPIC_CHANGE
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to meet you today. I see you have over seven years in product engineering—that's impressive! If you feel like it, you can write some code in the sandbox while we chat. Let’s dive in!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hello
+Agent: What was a challenging problem you faced in a project, and how did you solve it?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.95, 'extracted_from': 'Hello', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: I've worked on distributed systems
+Agent: What tools did you use in that project, and how did they help you?
+
+State:
+  Turn Count: 6
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 7 messages
+  Questions Asked: 2
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': "I've worked on distributed systems", 'turn': 4, 'metadata': {}}
+
+
+--- Turn 4 ---
+User: Can we talk about something else?
+Agent: Can you describe the impact your favorite project had on the team or the company?
+
+State:
+  Turn Count: 9
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 10 messages
+  Questions Asked: 3
+
+
+--- Turn 5 ---
+User: I'd like to discuss my leadership experience
+Agent: How did you implement a new feature in one of your projects, and what was the process like?
+
+State:
+  Turn Count: 12
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 13 messages
+  Questions Asked: 4
+
+
+Scenario Summary:
+  Total Turns: 5
+  Final Turn Count: 12
+  Final Phase: exploration
+  Total Questions: 4
+
+================================================================================
+SCENARIO: SHORT_RESPONSES
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to meet you. I see you’ve got over seven years in product engineering—that's impressive! Feel free to use the sandbox if you’d like to share any code during our chat. Let’s dive in!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Yes
+Agent: What tools did you use in that project you’re proud of?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'continue', 'confidence': 0.95, 'extracted_from': 'Yes', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: Sure
+Agent: What was the biggest challenge you faced in that project?
+
+State:
+  Turn Count: 6
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 7 messages
+  Questions Asked: 2
+  Detected Intent: {'type': 'continue', 'confidence': 0.9, 'extracted_from': 'Sure', 'turn': 4, 'metadata': {}}
+
+
+--- Turn 4 ---
+User: Okay
+Agent: What impact did that project have on your team or the company?
+
+State:
+  Turn Count: 9
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 10 messages
+  Questions Asked: 3
+  Detected Intent: {'type': 'continue', 'confidence': 0.9, 'extracted_from': 'Okay', 'turn': 7, 'metadata': {}}
+
+
+--- Turn 5 ---
+User: That's correct
+Agent: What results did you achieve in that project you enjoyed the most?
+
+State:
+  Turn Count: 12
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 13 messages
+  Questions Asked: 4
+  Detected Intent: {'type': 'continue', 'confidence': 0.85, 'extracted_from': "That's correct", 'turn': 10, 'metadata': {}}
+
+
+Scenario Summary:
+  Total Turns: 5
+  Final Turn Count: 12
+  Final Phase: exploration
+  Total Questions: 4
+
+================================================================================
+SCENARIO: LONG_DETAILED_RESPONSE
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to meet you. I see you have over seven years in product engineering—that’s impressive! Feel free to use the code sandbox if you’d like to show off your skills. Let’s dive in and chat!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hi there
+Agent: Can you share a project where you faced significant challenges in product engineering?
+
+State:
+  Turn Count: 2
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 3 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': 'Hi there', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: I've been working in product engineering for about 7 years now. I started as a junior developer 
+        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems 
+        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, 
+        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced 
+        costs by 40% while improving latency.
+Agent: What impact did your work have on the teams you led?
+
+State:
+  Turn Count: 5
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 6 messages
+  Questions Asked: 2
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.85, 'extracted_from': "I've been working in product engineering for about 7 years now. I started as a junior developer \n        and worked my way up to senior staff engineer. I've led multiple teams, built scalable systems \n        handling millions of requests, and have experience with Golang, Python, Node.js, AWS, Kafka, Redis, \n        and Postgres. I'm particularly proud of the communication platform I built at Simpl, which reduced \n        costs by 40% while improving latency.", 'turn': 3, 'metadata': {}}
+
+
+Scenario Summary:
+  Total Turns: 3
+  Final Turn Count: 5
+  Final Phase: exploration
+  Total Questions: 2
+
+================================================================================
+SCENARIO: CLARIFICATION_REQUEST
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! I'm really glad you're here today. With over seven years in product engineering, I’m excited to hear about your journey. Feel free to use the code sandbox if you'd like—it's there for you!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hello
+Agent: What was one of the biggest challenges you faced in a project, and how did you overcome it?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': 'Hello', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: What do you mean by that?
+Agent: What was a big challenge you faced in a project? How did you deal with it?
+
+State:
+  Turn Count: 5
+  Last Node: followup
+  Next Action: None
+  Phase: exploration
+  Conversation History: 6 messages
+  Questions Asked: 2
+
+
+--- Turn 4 ---
+User: Can you clarify the question?
+Agent: Can you tell me about a tough problem you encountered in a project? How did you handle that situation?
+
+State:
+  Turn Count: 7
+  Last Node: followup
+  Next Action: None
+  Phase: exploration
+  Conversation History: 8 messages
+  Questions Asked: 3
+
+
+--- Turn 5 ---
+User: I'm not sure I understand
+Agent: Can you share a difficult problem you faced while working on a project? How did you deal with it?
+
+State:
+  Turn Count: 9
+  Last Node: followup
+  Next Action: None
+  Phase: exploration
+  Conversation History: 10 messages
+  Questions Asked: 4
+
+
+Scenario Summary:
+  Total Turns: 5
+  Final Turn Count: 9
+  Final Phase: exploration
+  Total Questions: 4
+
+================================================================================
+SCENARIO: MIXED_INTENTS
+================================================================================
+
+
+--- Turn 1 ---
+User: (no input)
+Agent: Hi there! It’s great to meet you today. I see you have over seven years in product engineering—that’s impressive! Feel free to use the code sandbox if you'd like to show us something. Let’s dive in!
+
+State:
+  Turn Count: 0
+  Last Node: greeting
+  Next Action: None
+  Phase: intro
+  Conversation History: 1 messages
+  Questions Asked: 0
+
+
+--- Turn 2 ---
+User: Hi
+Agent: What challenges did you face in that project?
+
+State:
+  Turn Count: 3
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 4 messages
+  Questions Asked: 1
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.9, 'extracted_from': 'Hi', 'turn': 1, 'metadata': {}}
+
+
+--- Turn 3 ---
+User: I've worked on microservices
+Agent: What tools did you use in your microservices projects?
+
+State:
+  Turn Count: 6
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 7 messages
+  Questions Asked: 2
+  Detected Intent: {'type': 'no_intent', 'confidence': 0.8, 'extracted_from': "I've worked on microservices", 'turn': 4, 'metadata': {}}
+
+
+--- Turn 4 ---
+User: Can I show you some code?
+Agent: Absolutely! I’d love to see your code. Please use the code sandbox on the right side of your screen. Write about any project or technical question you have. I’ll review it as soon as you submit!
+
+State:
+  Turn Count: 7
+  Last Node: sandbox_guidance
+  Next Action: None
+  Phase: exploration
+  Conversation History: 9 messages
+  Questions Asked: 2
+
+
+--- Turn 5 ---
+User: Actually, let's talk about my team leadership instead
+Agent: What impact did your leadership have on your team's performance?
+
+State:
+  Turn Count: 10
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 12 messages
+  Questions Asked: 3
+
+
+--- Turn 6 ---
+User: I managed a team of 5 engineers
+Agent: What results did you achieve with your team in that project?
+
+State:
+  Turn Count: 13
+  Last Node: question
+  Next Action: None
+  Phase: exploration
+  Conversation History: 15 messages
+  Questions Asked: 4
+
+
+Scenario Summary:
+  Total Turns: 6
+  Final Turn Count: 13
+  Final Phase: exploration
+  Total Questions: 4

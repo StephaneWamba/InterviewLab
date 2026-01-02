@@ -1,0 +1,205 @@
+================================================================================
+INTERVIEW AGENT CONVERSATION TEST RESULTS
+================================================================================
+
+Test Date: 2026-01-02T19:06:45.224100
+Interview ID: 17
+Total Turns: 5
+
+
+================================================================================
+TURN 1
+================================================================================
+
+User Input: (none - initial greeting)
+
+State Before Execution:
+  turn_count: 0
+  last_node: 
+  next_node: None
+  phase: intro
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 0
+  questions_asked_count: 0
+  last_response: None
+  next_message_preview: None
+
+State After Execution:
+  turn_count: 0
+  last_node: greeting
+  next_node: None
+  phase: intro
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 1
+  questions_asked_count: 0
+  last_response: None
+  next_message_preview: Hi there! It’s great to meet you. I see you have over seven years in product engineering—impressive!...
+
+Agent Response:
+Hi there! It’s great to meet you. I see you have over seven years in product engineering—impressive! Feel free to dive into the code sandbox if you'd like. Let’s have a chat!
+
+Bugs Detected: None
+
+Checkpoint ID: 2026-01-02T19:06:51.773331
+
+
+================================================================================
+TURN 2
+================================================================================
+
+User Input: Hi, thank you
+
+State Before Execution:
+  turn_count: 0
+  last_node: greeting
+  next_node: None
+  phase: intro
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 1
+  questions_asked_count: 0
+  last_response: None
+  next_message_preview: Hi there! It’s great to meet you. I see you have over seven years in product engineering—impressive!...
+
+State After Execution:
+  turn_count: 1
+  last_node: greeting
+  next_node: None
+  phase: intro
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 3
+  questions_asked_count: 0
+  last_response: Hi, thank you
+  next_message_preview: Hi there! It's great to have you here today. I see you have over seven years of experience in produc...
+
+Agent Response:
+Hi there! It's great to have you here today. I see you have over seven years of experience in product engineering—that’s impressive! Feel free to use the code sandbox if you’d like to share any of your work. Let’s dive in and chat!
+
+Bugs Detected: None
+
+Checkpoint ID: 2026-01-02T19:06:57.520705
+
+
+================================================================================
+TURN 3
+================================================================================
+
+User Input: I've been working in product engineering for about 7 years now
+
+State Before Execution:
+  turn_count: 1
+  last_node: greeting
+  next_node: None
+  phase: intro
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 3
+  questions_asked_count: 0
+  last_response: Hi, thank you
+  next_message_preview: Hi there! It's great to have you here today. I see you have over seven years of experience in produc...
+
+State After Execution:
+  turn_count: 3
+  last_node: question
+  next_node: None
+  phase: exploration
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 5
+  questions_asked_count: 1
+  last_response: I've been working in product engineering for about 7 years now
+  next_message_preview: What has been the biggest challenge you faced in product engineering?
+
+Agent Response:
+What has been the biggest challenge you faced in product engineering?
+
+Bugs Detected: None
+
+Checkpoint ID: 2026-01-02T19:07:02.043660
+
+
+================================================================================
+TURN 4
+================================================================================
+
+User Input: I led the team that built and stabilized the core communication platform
+
+State Before Execution:
+  turn_count: 3
+  last_node: question
+  next_node: None
+  phase: exploration
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 5
+  questions_asked_count: 1
+  last_response: I've been working in product engineering for about 7 years now
+  next_message_preview: What has been the biggest challenge you faced in product engineering?
+
+State After Execution:
+  turn_count: 6
+  last_node: question
+  next_node: None
+  phase: exploration
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 8
+  questions_asked_count: 2
+  last_response: I led the team that built and stabilized the core communication platform
+  next_message_preview: What project are you most proud of in your product engineering career?
+
+Agent Response:
+What project are you most proud of in your product engineering career?
+
+Bugs Detected: None
+
+Checkpoint ID: 2026-01-02T19:07:10.867356
+
+
+================================================================================
+TURN 5
+================================================================================
+
+User Input: We were handling very high volumes of communication
+
+State Before Execution:
+  turn_count: 6
+  last_node: question
+  next_node: None
+  phase: exploration
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 8
+  questions_asked_count: 2
+  last_response: I led the team that built and stabilized the core communication platform
+  next_message_preview: What project are you most proud of in your product engineering career?
+
+State After Execution:
+  turn_count: 9
+  last_node: question
+  next_node: None
+  phase: exploration
+  _next_action: None
+  _should_evaluate: False
+  conversation_history_length: 11
+  questions_asked_count: 3
+  last_response: We were handling very high volumes of communication
+  next_message_preview: What tools have you found most useful in your product engineering work?
+
+Agent Response:
+What tools have you found most useful in your product engineering work?
+
+Bugs Detected: None
+
+Checkpoint ID: 2026-01-02T19:07:17.659441
+
+
+================================================================================
+SUMMARY
+================================================================================
+
+Total Bugs Detected: 0
+
