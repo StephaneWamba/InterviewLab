@@ -62,9 +62,11 @@ export function TranscriptionDisplay({ room }: TranscriptionDisplayProps) {
           const newMessages = [...prev];
           
           if (isFinal) {
-            // Add final transcription
+            // Add final transcription with unique ID
+            // Use segmentId + timestamp + speaker + counter to ensure uniqueness
+            const uniqueId = `${segmentId || 'final'}-${speakerName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             newMessages.push({
-              id: `${segmentId || 'final'}-${Date.now()}`,
+              id: uniqueId,
               text: fullText,
               speaker: speakerName,
               timestamp: new Date(),
@@ -73,7 +75,7 @@ export function TranscriptionDisplay({ room }: TranscriptionDisplayProps) {
           } else {
             // Update or add interim transcription
             const existingIndex = newMessages.findIndex(
-              (m) => !m.isFinal && m.speaker === speakerName && segmentId && m.id.startsWith(segmentId)
+              (m) => !m.isFinal && m.speaker === speakerName && segmentId && m.id.startsWith(`${segmentId}-${speakerName}`)
             );
             
             if (existingIndex >= 0) {
@@ -82,8 +84,10 @@ export function TranscriptionDisplay({ room }: TranscriptionDisplayProps) {
                 text: fullText,
               };
             } else {
+              // Create unique ID for interim messages
+              const uniqueId = `${segmentId || 'interim'}-${speakerName}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
               newMessages.push({
-                id: `${segmentId || 'interim'}-${Date.now()}`,
+                id: uniqueId,
                 text: fullText,
                 speaker: speakerName,
                 timestamp: new Date(),

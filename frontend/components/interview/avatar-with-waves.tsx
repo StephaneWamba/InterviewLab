@@ -29,14 +29,6 @@ export function AvatarWithWaves({ room, avatarSrc = '/avatar.jpg' }: AvatarWithW
             </div>
           )}
         </div>
-        {/* Big Waves Visualizer at Bottom */}
-        {room && (
-          <div className="bg-primary/10 border-t border-border/50 py-4 relative overflow-hidden">
-            <div className="flex items-center justify-center h-full">
-              <AudioVisualizer room={room} />
-            </div>
-          </div>
-        )}
       </CardContent>
     </Card>
   );

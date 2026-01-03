@@ -138,14 +138,18 @@ class CheckpointService:
                 logger.warning(f"No conversation history for interview {interview_id}")
                 return None
 
-            # Look for checkpoint messages
+            # OPTIMIZATION: Look for checkpoint messages more efficiently
+            # Start from the end and work backwards (most recent checkpoints are at the end)
             checkpoint_msg = None
-            for msg in reversed(interview.conversation_history):
-                if (msg.get("role") == "system" and 
-                    msg.get("content", "").startswith("CHECKPOINT:")):
-                    if checkpoint_id is None or checkpoint_id in msg.get("content", ""):
-                        checkpoint_msg = msg
-                        break
+            if interview.conversation_history:
+                # Use reversed() with index for early exit optimization
+                for i in range(len(interview.conversation_history) - 1, -1, -1):
+                    msg = interview.conversation_history[i]
+                    if (msg.get("role") == "system" and 
+                        msg.get("content", "").startswith("CHECKPOINT:")):
+                        if checkpoint_id is None or checkpoint_id in msg.get("content", ""):
+                            checkpoint_msg = msg
+                            break
 
             if checkpoint_msg and checkpoint_msg.get("metadata", {}).get("state_snapshot"):
                 # Restore from checkpoint

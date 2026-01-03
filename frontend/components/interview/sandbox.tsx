@@ -123,56 +123,77 @@ print(fibonacci(10))`;
     }
   }, [interview?.status, id, code]);
 
-  // Submit code to interview (for review by agent)
+  // Execute code in sandbox to show results
+  const executeCodeMutation = useMutation({
+    mutationFn: async (data: { code: string; language: string }) => {
+      const { apiClient } = await import('@/lib/api/client');
+      return apiClient.post<ExecutionResult>('/api/v1/sandbox/execute', {
+        code: data.code,
+        language: data.language,
+      });
+    },
+    onSuccess: (data: ExecutionResult) => {
+      // Always show execution result in the right pane
+      setResult(data);
+      if (data.success && data.exit_code === 0) {
+        toast.success('Code executed successfully!');
+      } else {
+        toast.error(data.error || 'Code execution failed');
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to execute code');
+      setResult({
+        stdout: '',
+        stderr: error.message || 'Execution failed',
+        exit_code: 1,
+        execution_time_ms: 0,
+        success: false,
+        error: error.message,
+      });
+    },
+  });
+
+  // Submit code to interview (for review by agent) - only if interview ID exists
   const submitCodeMutation = useMutation({
     mutationFn: async (data: { code: string; language: string }) => {
       if (id) {
         return interviewsApi.submitCode(id, data.code, data.language);
-      } else {
-        // Fallback to sandbox execute if no interview ID
-        const { apiClient } = await import('@/lib/api/client');
-        return apiClient.post<ExecutionResult>('/api/v1/sandbox/execute', {
-          code: data.code,
-          language: data.language,
-        });
       }
+      return Promise.resolve(null);
     },
-    onSuccess: (data: any) => {
+    onSuccess: () => {
       if (id) {
-        // Code submitted to interview - agent will review
-        toast.success('Code submitted! The interviewer will review it shortly.');
-        setResult(null); // Clear local result, agent will provide feedback
-      } else {
-        // Direct execution result
-        setResult(data);
-        if (data.success && data.exit_code === 0) {
-          toast.success('Code executed successfully!');
-        } else {
-          toast.error(data.error || 'Code execution failed');
-        }
+        toast.success('Code submitted to interviewer for review!');
       }
     },
     onError: (error: any) => {
-      toast.error(error.message || 'Failed to submit code');
-      if (!id) {
-        setResult({
-          stdout: '',
-          stderr: error.message || 'Execution failed',
-          exit_code: 1,
-          execution_time_ms: 0,
-          success: false,
-          error: error.message,
-        });
-      }
+      toast.error(error.message || 'Failed to submit code to interviewer');
     },
   });
 
-  const handleSubmit = () => {
+  const handleRun = async () => {
     if (!code.trim()) {
       toast.error('Please enter some code');
       return;
     }
-    submitCodeMutation.mutate({ code, language });
+    
+    // Execute code to show results in right pane
+    executeCodeMutation.mutate({ code, language });
+  };
+
+  const handleSubmit = async () => {
+    if (!code.trim()) {
+      toast.error('Please enter some code');
+      return;
+    }
+    
+    // Only submit to interview (for agent review) - don't execute
+    if (id) {
+      submitCodeMutation.mutate({ code, language });
+    } else {
+      toast.error('No interview ID found');
+    }
   };
 
   const handleCopy = () => {
@@ -236,11 +257,27 @@ print(fibonacci(10))`;
               <Button variant="outline" size="sm" onClick={handleDownload}>
                 <Download className="h-4 w-4" />
               </Button>
-              {id ? (
+              <Button
+                onClick={handleRun}
+                disabled={executeCodeMutation.isPending || !code.trim()}
+                size="sm"
+                variant="default"
+              >
+                {executeCodeMutation.isPending ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Play className="h-4 w-4 mr-1" />
+                    Run
+                  </>
+                )}
+              </Button>
+              {id && (
                 <Button
                   onClick={handleSubmit}
                   disabled={submitCodeMutation.isPending || !code.trim()}
                   size="sm"
+                  variant="outline"
                 >
                   {submitCodeMutation.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -249,18 +286,6 @@ print(fibonacci(10))`;
                       <Send className="h-4 w-4 mr-1" />
                       Submit
                     </>
-                  )}
-                </Button>
-              ) : (
-                <Button
-                  onClick={handleSubmit}
-                  disabled={submitCodeMutation.isPending || !code.trim()}
-                  size="sm"
-                >
-                  {submitCodeMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Play className="h-4 w-4" />
                   )}
                 </Button>
               )}

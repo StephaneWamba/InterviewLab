@@ -13,6 +13,8 @@ import {
   Video,
   ArrowLeft,
   Volume2,
+  RefreshCw,
+  AlertCircle,
 } from 'lucide-react';
 import { interviewsApi, Interview } from '@/lib/api/interviews';
 import { voiceApi } from '@/lib/api/voice';
@@ -52,6 +54,7 @@ export default function InterviewDetailPage() {
   const [isStarting, setIsStarting] = useState(false);
   const [voiceToken, setVoiceToken] = useState<{ token: string; url: string } | null>(null);
   const [showVoiceVideo, setShowVoiceVideo] = useState(false);
+  const [agentReady, setAgentReady] = useState(false);
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
@@ -67,9 +70,76 @@ export default function InterviewDetailPage() {
     token: voiceToken?.token || null,
     url: voiceToken?.url || null,
     onConnected: async (room) => {
+      // Reset agent ready state when connecting to new room
+      setAgentReady(false);
+      
+      // Check for agent participant (agent appears as remote participant)
+      const checkAgent = () => {
+        const hasAgent = Array.from(room.remoteParticipants.values()).length > 0;
+        if (hasAgent) {
+          setAgentReady(true);
+          console.log('✅ Agent detected in room');
+          return true;
+        }
+        return false;
+      };
+      
+      // Check immediately
+      if (!checkAgent()) {
+        // Listen for participant added event (agent joining)
+        let intervalId: NodeJS.Timeout | null = null;
+        
+        const handleParticipantConnected = () => {
+          if (checkAgent()) {
+            // Clean up listener and interval once agent is detected
+            room.off('participantConnected', handleParticipantConnected);
+            if (intervalId) {
+              clearInterval(intervalId);
+              intervalId = null;
+            }
+          }
+        };
+        room.on('participantConnected', handleParticipantConnected);
+        
+        // Also check periodically for agent (in case event was missed)
+        intervalId = setInterval(() => {
+          if (checkAgent()) {
+            if (intervalId) {
+              clearInterval(intervalId);
+              intervalId = null;
+            }
+            room.off('participantConnected', handleParticipantConnected);
+          }
+        }, 500);
+        
+        // Cleanup interval after 30 seconds
+        setTimeout(() => {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+          room.off('participantConnected', handleParticipantConnected);
+        }, 30000);
+      }
+      
       console.log('Room connected, enabling tracks...');
       // Wait for engine to be ready
       await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      // Check camera permission before enabling
+      try {
+        const permissionStatus = await navigator.permissions.query({ 
+          name: 'camera' as PermissionName 
+        });
+        console.log('Camera permission status:', permissionStatus.state);
+        if (permissionStatus.state === 'denied') {
+          console.warn('⚠️ Camera permission denied - video may not work');
+          toast.warning('Camera permission denied. Please allow camera access in browser settings.');
+        }
+      } catch (error) {
+        // Permissions API not supported or camera permission not queryable
+        console.log('Could not query camera permission:', error);
+      }
       
       // Enable tracks with retry
       const enableTrackWithRetry = async (
@@ -101,11 +171,16 @@ export default function InterviewDetailPage() {
       // Wait before enabling camera
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Enable camera
-      enableTrackWithRetry(
+      // Enable camera (async - must await the promise)
+      const cameraEnabled = await enableTrackWithRetry(
         () => room.localParticipant.setCameraEnabled(true),
         'Camera'
-      ).catch(() => {});
+      );
+      
+      if (!cameraEnabled) {
+        console.error('Failed to enable camera after retries');
+        toast.error('Failed to enable camera. Please check browser permissions.');
+      }
     },
     onDisconnected: (reason) => {
       console.warn('Room disconnected:', reason);
@@ -343,12 +418,22 @@ export default function InterviewDetailPage() {
               )}
               {roomState === 'disconnected' && (
                 <Button
-                  variant="outline"
+                  variant="default"
                   onClick={reconnectRoom}
                   title="Reconnect to room"
+                  disabled={isConnecting}
                 >
-                  <Video className="mr-2 h-4 w-4" />
-                  Reconnect
+                  {isConnecting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Reconnecting...
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Reconnect
+                    </>
+                  )}
                 </Button>
               )}
               {isConnected && roomInstance && (
@@ -384,6 +469,40 @@ export default function InterviewDetailPage() {
           )}
         </div>
       </div>
+
+      {/* Disconnect Banner - Always visible at top when disconnected */}
+      {showVoiceVideo && roomState === 'disconnected' && (
+        <div className="bg-destructive text-white px-4 py-3 flex items-center justify-between border-b border-destructive/20 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <AlertCircle className="h-5 w-5 shrink-0" />
+            <div>
+              <p className="font-semibold text-sm">Room Disconnected</p>
+              <p className="text-xs text-destructive-foreground/80">
+                Your connection to the interview room has been lost. Click reconnect to continue.
+              </p>
+            </div>
+          </div>
+          <Button 
+            size="sm" 
+            variant="secondary"
+            className="bg-white text-destructive hover:bg-white/90 font-semibold"
+            onClick={reconnectRoom}
+            disabled={isConnecting}
+          >
+            {isConnecting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Reconnecting...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Reconnect Now
+              </>
+            )}
+          </Button>
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex min-h-0">
@@ -462,16 +581,47 @@ export default function InterviewDetailPage() {
             <div className="w-1/3 border-r border-border flex flex-col">
               {/* Connection Status Banner */}
               {showVoiceVideo && roomState === 'disconnected' && (
-                <div className="bg-destructive/10 border-b border-destructive/20 px-4 py-2 flex items-center justify-between">
-                  <span className="text-sm text-destructive">Room is disconnected. Please reconnect.</span>
-                  <Button size="sm" variant="outline" onClick={reconnectRoom}>
-                    Reconnect
+                <div className="bg-destructive/10 border-b border-destructive/20 px-4 py-3 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <AlertCircle className="h-5 w-5 text-destructive" />
+                    <span className="text-sm font-medium text-destructive">Room disconnected. Click reconnect to continue.</span>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    variant="default"
+                    className="bg-destructive hover:bg-destructive/90 text-white"
+                    onClick={reconnectRoom}
+                    disabled={isConnecting}
+                  >
+                    {isConnecting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Reconnecting...
+                      </>
+                    ) : (
+                      <>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Reconnect
+                      </>
+                    )}
                   </Button>
                 </div>
               )}
               {showVoiceVideo && isConnecting && (
-                <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-2">
-                  <span className="text-sm text-blue-600">Connecting to room...</span>
+                <div className="bg-blue-500/10 border-b border-blue-500/20 px-4 py-2 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                    <span className="text-sm text-blue-600">Connecting to room...</span>
+                  </div>
+                </div>
+              )}
+              {/* Show "Interviewer is preparing" when connected but agent not ready yet */}
+              {showVoiceVideo && isConnected && roomInstance && !agentReady && (
+                <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-2 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
+                    <span className="text-sm text-amber-700">Interviewer is preparing... Please wait a moment.</span>
+                  </div>
                 </div>
               )}
               

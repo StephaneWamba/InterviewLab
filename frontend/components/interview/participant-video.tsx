@@ -14,25 +14,42 @@ export function ParticipantVideo({ room, userName = 'You' }: ParticipantVideoPro
   const [hasVideo, setHasVideo] = useState(false);
 
   useEffect(() => {
-    if (!room || !localVideoRef.current) return;
+    // Only run when room is connected and video element exists
+    if (!room || room.state !== 'connected' || !localVideoRef.current) return;
 
-    // The ONLY reliable event for local video: LocalTrackPublished
-    // Local tracks are NOT subscribed - they're published and immediately available
+    // Idempotent attachment function - handles both event-based and reconciliation cases
+    const attachIfExists = () => {
+      for (const pub of room.localParticipant.videoTrackPublications.values()) {
+        if (
+          pub.source === Track.Source.Camera &&
+          pub.track &&
+          localVideoRef.current
+        ) {
+          try {
+            console.log('🎥 Attaching local camera track');
+            pub.track.attach(localVideoRef.current);
+            setHasVideo(true);
+            console.log('✅ Video track attached successfully');
+            return true;
+          } catch (error) {
+            console.error('❌ Failed to attach video track:', error);
+            setHasVideo(false);
+            return false;
+          }
+        }
+      }
+      return false;
+    };
+
+    // Event handler for when tracks are published after listener is registered
     const handleLocalTrackPublished = (publication: any) => {
       if (
         publication?.source === Track.Source.Camera &&
-        publication?.track &&
+        publication.track &&
         localVideoRef.current
       ) {
-        console.log('🎥 Local camera track published, attaching...');
-        try {
-          publication.track.attach(localVideoRef.current);
-          setHasVideo(true);
-          console.log('✅ Video track attached successfully');
-        } catch (error) {
-          console.error('Failed to attach video track:', error);
-          setHasVideo(false);
-        }
+        console.log('🎥 Local camera track published event received');
+        attachIfExists();
       }
     };
 
@@ -47,53 +64,42 @@ export function ParticipantVideo({ room, userName = 'You' }: ParticipantVideoPro
       }
     };
 
+    // Register event listeners
     room.on(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
     room.on(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
 
-    // Check if camera was already enabled BEFORE listener was set up
-    // This handles the case where camera is enabled before component mounts
-    if (room.state === 'connected') {
-      for (const pub of room.localParticipant.videoTrackPublications.values()) {
-        if (pub.source === Track.Source.Camera && pub.track && localVideoRef.current) {
-          console.log('🎥 Camera already published, attaching...');
-          try {
-            pub.track.attach(localVideoRef.current);
-            setHasVideo(true);
-            console.log('✅ Video track attached (already published)');
-          } catch (error) {
-            console.error('Failed to attach existing video track:', error);
-          }
-          break;
-        }
-      }
-    }
+    // 🔑 CRITICAL: Reconcile immediately - handles case where track was published
+    // before component mounted or before listener was registered
+    attachIfExists();
 
     return () => {
+      room.off(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
+      room.off(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
+      // Cleanup: detach track on unmount
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = null;
       }
-      room.off(RoomEvent.LocalTrackPublished, handleLocalTrackPublished);
-      room.off(RoomEvent.LocalTrackUnpublished, handleLocalTrackUnpublished);
     };
-  }, [room]);
+  }, [room, room?.state]); // Re-run when room or room state changes
 
   return (
     <Card className="h-full w-full">
       <CardContent className="h-full p-0 relative bg-black rounded-lg overflow-hidden">
-        {hasVideo ? (
-          <video
-            ref={localVideoRef}
-            autoPlay
-            playsInline
-            muted
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-muted">
+        {/* Always render video element - track attachment happens regardless */}
+        <video
+          ref={localVideoRef}
+          autoPlay
+          playsInline
+          muted
+          className="w-full h-full object-cover"
+        />
+        {/* Show overlay when no video track is available */}
+        {!hasVideo && (
+          <div className="absolute inset-0 flex items-center justify-center bg-muted/80 pointer-events-none">
             <p className="text-muted-foreground text-sm">No video</p>
           </div>
         )}
-        <div className="absolute bottom-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+        <div className="absolute bottom-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-xs z-10">
           {userName}
         </div>
       </CardContent>

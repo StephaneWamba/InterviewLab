@@ -9,10 +9,14 @@ if TYPE_CHECKING:
 
 def interview_to_state(interview: Interview) -> "InterviewState":
     """Convert Interview model to LangGraph state with robust structure."""
-    # Extract code submissions from conversation history
+    # OPTIMIZATION: Single pass through conversation_history to extract all needed data
     code_submissions = []
+    checkpoints = []
+    questions_asked = []
+    
     if interview.conversation_history:
         for msg in interview.conversation_history:
+            # Extract code submissions
             if msg.get("metadata", {}).get("type") == "code_review":
                 code_submissions.append({
                     "code": msg.get("metadata", {}).get("code", ""),
@@ -21,23 +25,22 @@ def interview_to_state(interview: Interview) -> "InterviewState":
                     "code_quality": msg.get("metadata", {}).get("code_quality"),
                     "timestamp": msg.get("timestamp"),
                 })
-    
-    # Extract sandbox submissions
-    sandbox_submissions = []
-    for submission in code_submissions:
-        sandbox_submissions.append(submission)
-    
-    # Initialize resume exploration (will be populated by orchestrator if needed)
-    resume_exploration = {}
-    
-    # Extract checkpoints from conversation history
-    checkpoints = []
-    if interview.conversation_history:
-        for msg in interview.conversation_history:
+            
+            # Extract checkpoints
             if (msg.get("role") == "system" and 
                 msg.get("content", "").startswith("CHECKPOINT:")):
                 checkpoint_id = msg.get("content", "").replace("CHECKPOINT: ", "")
                 checkpoints.append(checkpoint_id)
+            
+            # Extract questions_asked
+            if msg.get("role") == "assistant" and msg.get("metadata", {}).get("question_record"):
+                questions_asked.append(msg["metadata"]["question_record"])
+    
+    # Extract sandbox submissions (same as code_submissions for now)
+    sandbox_submissions = code_submissions.copy()
+    
+    # Initialize resume exploration (will be populated by orchestrator if needed)
+    resume_exploration = {}
     
     # Build state with new robust structure
     state: "InterviewState" = {
@@ -49,7 +52,7 @@ def interview_to_state(interview: Interview) -> "InterviewState":
         "job_description": interview.job_description,
         "conversation_history": interview.conversation_history or [],
         "turn_count": interview.turn_count,
-        "questions_asked": [],  # Will be populated from conversation_history metadata
+        "questions_asked": questions_asked,  # Already extracted in single pass above
         "current_question": None,
         "resume_exploration": resume_exploration,
         "detected_intents": [],
@@ -81,13 +84,6 @@ def interview_to_state(interview: Interview) -> "InterviewState":
         "code_submissions": code_submissions,
         "feedback": interview.feedback,
     }
-    
-    # Extract questions_asked from conversation_history metadata
-    if interview.conversation_history:
-        for msg in interview.conversation_history:
-            if msg.get("role") == "assistant" and msg.get("metadata", {}).get("question_record"):
-                question_record = msg["metadata"]["question_record"]
-                state["questions_asked"].append(question_record)
     
     return state
 
