@@ -10,7 +10,7 @@ All heavy imports are lazy-loaded after handshake completes.
 import asyncio
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 # Only stdlib + livekit core imports at module level
 from livekit.agents import (
@@ -20,18 +20,12 @@ from livekit.agents import (
     AutoSubscribe,
     JobContext,
     cli,
-    llm,
-    stt,
-    tts,
-    vad,
+    room_io,
 )
-from livekit.agents.voice import room_io
 
 # Type hints only - never executed at runtime
 if TYPE_CHECKING:
-    from sqlalchemy.ext.asyncio import AsyncSession
-    from src.models.interview import Interview
-    from src.services.interview_orchestrator import InterviewOrchestrator
+    from src.agents.resources import AgentResources
 
 # Add src to path for imports (only if needed, should be in PYTHONPATH)
 import sys
@@ -39,566 +33,22 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 logger = logging.getLogger(__name__)
 
-
-def prepare_text_for_tts(text: str) -> str:
-    """
-    Prepare text for natural TTS delivery.
-
-    Based on best practices:
-    - Normalize punctuation for better prosody
-    - Fix common formatting issues
-    - Ensure proper sentence structure
-    """
-    if not text:
-        return text
-
-    # Strip whitespace
-    text = text.strip()
-
-    # Replace colons with periods (colons can sound awkward in TTS)
-    text = text.replace(":", ".")
-
-    # Normalize em dashes to commas (better for natural pauses)
-    text = text.replace("—", ",")
-    text = text.replace("–", ",")
-
-    # Remove multiple spaces
-    while "  " in text:
-        text = text.replace("  ", " ")
-
-    # Ensure sentences end with proper punctuation
-    if text and text[-1] not in ".!?":
-        text += "."
-
-    return text
-
-
-def normalize_numbers_and_symbols(text: str) -> str:
-    """
-    Normalize numbers and symbols for better TTS pronunciation.
-
-    This helps with:
-    - Percentage pronunciation (5% -> "5 percent")
-    - Clean up common formatting issues
-    """
-    import re
-
-    # Normalize percentages: 5% -> 5 percent (for better pronunciation)
-    text = re.sub(r'(\d+)%', r'\1 percent', text)
-
-    return text
-
-
-def split_into_sentences(text: str, max_length: int = 200) -> list[str]:
-    """
-    Split text into sentences for chunked delivery.
-
-    Shorter sentences = better TTS naturalness
-    Max length ensures we don't send overly long chunks
-    """
-    import re
-
-    # Split on sentence boundaries (. ! ?)
-    sentences = re.split(r'([.!?]+)', text)
-
-    # Recombine sentences with their punctuation
-    result = []
-    i = 0
-    while i < len(sentences):
-        sentence = sentences[i].strip()
-        if i + 1 < len(sentences):
-            punctuation = sentences[i + 1]
-            sentence += punctuation
-            i += 2
-        else:
-            i += 1
-
-        if not sentence:
-            continue
-
-        # If sentence is too long, split on commas or conjunctions
-        if len(sentence) > max_length:
-            # Try splitting on commas first
-            parts = re.split(r'(,+)', sentence)
-            current = ""
-            for part in parts:
-                if len(current + part) > max_length and current:
-                    result.append(current.strip())
-                    current = part
-                else:
-                    current += part
-            if current:
-                result.append(current.strip())
-        else:
-            result.append(sentence)
-
-    return [s.strip() for s in result if s.strip()]
-
-
-async def _checkpoint_greeting_in_background(
-    state: dict,
-    interview_id: int,
-    orchestrator: "InterviewOrchestrator"
-) -> None:
-    """Background task to checkpoint greeting state without blocking.
-
-    Args:
-        state: Interview state to checkpoint
-        interview_id: Interview ID
-        orchestrator: Orchestrator instance for logging
-    """
-    try:
-        # Lazy import - only when function is called
-        from src.core.database import AsyncSessionLocal
-        from src.services.checkpoint_service import get_checkpoint_service
-
-        async with AsyncSessionLocal() as bg_db:
-            checkpoint_service = get_checkpoint_service()
-            checkpoint_id = await checkpoint_service.checkpoint(state, bg_db)
-            logger.info(
-                f"Checkpointed greeting state in background: {checkpoint_id}")
-
-            # Log checkpoint
-            if orchestrator._interview_logger:
-                orchestrator._interview_logger.log_checkpoint(
-                    {"checkpoint_id": checkpoint_id,
-                        "turn": state.get("turn_count", 0)},
-                    "saved_after_greeting_background"
-                )
-    except Exception as e:
-        logger.warning(
-            f"Failed to checkpoint greeting in background: {e}", exc_info=True)
-        if orchestrator._interview_logger:
-            orchestrator._interview_logger.log_error(
-                "checkpoint_greeting_background",
-                e,
-                {"interview_id": interview_id}
-            )
-
-
-class OrchestratorLLMStream(llm.LLMStream):
-    """Custom LLMStream for the interview orchestrator."""
-
-    def __init__(
-        self,
-        llm_instance: "OrchestratorLLM",
-        chat_ctx: llm.ChatContext,
-        tools: list[Any],
-        conn_options,
-    ):
-        super().__init__(llm_instance, chat_ctx=chat_ctx,
-                         tools=tools, conn_options=conn_options)
-        self._llm_instance = llm_instance
-
-    async def _run(self) -> None:
-        """Run the orchestrator and push results to the stream."""
-        try:
-            # Lazy imports - only when method is called (after handshake)
-            from src.services.checkpoint_service import CheckpointService
-            from src.core.database import AsyncSessionLocal
-            from src.models.interview import Interview
-            from src.services.state_manager import interview_to_state, state_to_interview
-            from sqlalchemy import select
-
-            logger.debug(
-                f"OrchestratorLLMStream._run started for interview {self._llm_instance.interview_id}")
-
-            # OPTIMIZATION: Get user message more efficiently
-            user_message = ""
-            if self._chat_ctx.items:
-                # Find the last user message - iterate backwards for efficiency
-                for item in reversed(self._chat_ctx.items):
-                    if item.type == "message" and item.role == "user":
-                        user_message = item.text_content or ""
-                        break
-
-            logger.debug(
-                f"Processing user message: {user_message[:100] if user_message else '(empty)'}")
-
-            checkpoint_service = CheckpointService()
-
-            # Create separate functions with proper session handling
-            async def load_interview():
-                """Load interview using the main session."""
-                result = await self._llm_instance.db.execute(
-                    select(Interview).where(Interview.id ==
-                                            self._llm_instance.interview_id)
-                )
-                return result.scalar_one_or_none()
-
-            async def load_checkpoint():
-                """Load checkpoint using a separate session to avoid concurrent operation errors."""
-                try:
-                    async with AsyncSessionLocal() as checkpoint_db:
-                        return await checkpoint_service.restore(
-                            self._llm_instance.interview_id, checkpoint_db
-                        )
-                except Exception as e:
-                    logger.warning(f"Failed to restore checkpoint: {e}")
-                    return None
-
-            # Parallelize database queries using separate sessions
-            interview_result, checkpoint_state = await asyncio.gather(
-                load_interview(),
-                load_checkpoint(),
-                return_exceptions=True
-            )
-
-            # Ensure orchestrator is initialized
-            if not self._llm_instance._initialized or not self._llm_instance.orchestrator:
-                logger.error("OrchestratorLLM not initialized")
-                self._event_ch.send_nowait(llm.ChatChunk(
-                    id="error",
-                    delta=llm.ChoiceDelta(
-                        content="I'm sorry, the interview session is not properly initialized.")
-                ))
-                return
-
-            # Handle interview load result
-            if isinstance(interview_result, Exception):
-                logger.error(
-                    f"Failed to load interview: {interview_result}", exc_info=True)
-                self._event_ch.send_nowait(llm.ChatChunk(
-                    id="error",
-                    delta=llm.ChoiceDelta(
-                        content="I'm sorry, I encountered an error loading the interview session.")
-                ))
-                return
-
-            interview = interview_result
-            if not interview:
-                logger.error(
-                    f"Interview {self._llm_instance.interview_id} not found")
-                self._event_ch.send_nowait(llm.ChatChunk(
-                    id="error",
-                    delta=llm.ChoiceDelta(
-                        content="I'm sorry, I couldn't find the interview session.")
-                ))
-                return
-
-            # Handle checkpoint restore result
-            state = None if isinstance(
-                checkpoint_state, Exception) else checkpoint_state
-            if isinstance(checkpoint_state, Exception):
-                logger.warning(
-                    f"Failed to restore checkpoint, will initialize from interview: {checkpoint_state}")
-
-            if not state:
-                # No checkpoint found, initialize from interview
-                logger.debug(
-                    f"No checkpoint found, initializing state from interview {self._llm_instance.interview_id}")
-                state = interview_to_state(interview)
-                if self._llm_instance.orchestrator._interview_logger:
-                    self._llm_instance.orchestrator._interview_logger.log_state(
-                        "state_initialized_from_interview", state)
-            else:
-                logger.debug(
-                    f"Loaded state from checkpoint for interview {self._llm_instance.interview_id}")
-                if self._llm_instance.orchestrator._interview_logger:
-                    self._llm_instance.orchestrator._interview_logger.log_checkpoint(
-                        {"interview_id": self._llm_instance.interview_id,
-                            "state_keys": list(state.keys())},
-                        "loaded"
-                    )
-                    self._llm_instance.orchestrator._interview_logger.log_state(
-                        "state_restored_from_checkpoint", state)
-
-            # Execute orchestrator step with user response
-            logger.debug("Executing orchestrator step...")
-            state = await self._llm_instance.orchestrator.execute_step(state, user_response=user_message)
-
-            # Get the response message
-            response = state.get(
-                "next_message", "I'm here to help with your interview.")
-
-            logger.debug(f"Generated response (raw): {response[:100]}...")
-
-            # Post-process text for natural TTS delivery
-            response = normalize_numbers_and_symbols(response)
-            response = prepare_text_for_tts(response)
-
-            logger.debug(
-                f"Generated response (processed): {response[:100]}...")
-
-            # Update interview and commit
-            state_to_interview(state, interview)
-            await self._llm_instance.db.commit()
-
-            # Push response to stream FIRST (before checkpointing)
-            logger.debug("Sending response chunk to stream for TTS...")
-            self._event_ch.send_nowait(llm.ChatChunk(
-                id="response",
-                delta=llm.ChoiceDelta(content=response)
-            ))
-            logger.debug("Response chunk sent successfully")
-
-            # Checkpoint in background after response is sent
-            asyncio.create_task(self._checkpoint_in_background(
-                state, interview, checkpoint_service
-            ))
-
-        except Exception as e:
-            logger.error(
-                f"Error in OrchestratorLLMStream._run: {e}", exc_info=True)
-            self._event_ch.send_nowait(llm.ChatChunk(
-                id="error",
-                delta=llm.ChoiceDelta(
-                    content="I'm sorry, I encountered an error. Please try again.")
-            ))
-
-    async def _checkpoint_in_background(
-        self,
-        state: dict,
-        interview: "Interview",
-        checkpoint_service
-    ) -> None:
-        """Background task to checkpoint state without blocking response.
-
-        Args:
-            state: Interview state to checkpoint
-            interview: Interview object (already committed)
-            checkpoint_service: Checkpoint service instance to reuse
-        """
-        try:
-            # Lazy import - only when function is called
-            from src.core.database import AsyncSessionLocal
-            from src.models.interview import Interview
-            from sqlalchemy import select
-
-            async with AsyncSessionLocal() as bg_db:
-                # Reload interview in background session
-                result = await bg_db.execute(
-                    select(Interview).where(
-                        Interview.id == state["interview_id"])
-                )
-                bg_interview = result.scalar_one_or_none()
-
-                if not bg_interview:
-                    logger.warning(
-                        f"Interview {state['interview_id']} not found in background checkpoint task")
-                    return
-
-                checkpoint_id = await checkpoint_service.checkpoint(state, bg_db)
-                logger.info(
-                    f"Checkpointed state in background: {checkpoint_id}")
-
-                # Log checkpoint operation
-                if self._llm_instance.orchestrator._interview_logger:
-                    self._llm_instance.orchestrator._interview_logger.log_checkpoint(
-                        {
-                            "checkpoint_id": checkpoint_id,
-                            "turn": state.get("turn_count", 0),
-                            "last_node": state.get("last_node"),
-                            "phase": state.get("phase"),
-                        },
-                        "saved_background"
-                    )
-        except Exception as e:
-            logger.warning(
-                f"Failed to checkpoint state in background: {e}", exc_info=True)
-            if self._llm_instance.orchestrator._interview_logger:
-                self._llm_instance.orchestrator._interview_logger.log_error(
-                    "checkpoint_save_background",
-                    e,
-                    {"interview_id": self._llm_instance.interview_id}
-                )
-
-
-class OrchestratorLLM(llm.LLM):
-    """Custom LLM that uses the interview orchestrator instead of OpenAI.
-
-    Uses two-phase initialization to avoid blocking during handshake.
-    """
-
-    def __init__(self, interview_id: int):
-        super().__init__()
-        self.interview_id = interview_id
-        self.db: "AsyncSession | None" = None
-        self.orchestrator: "InterviewOrchestrator | None" = None
-        self._initialized = False
-
-    async def init(self, db: "AsyncSession"):
-        """Initialize orchestrator and load interview state.
-
-        Called after handshake completes to avoid blocking initialization.
-        """
-        # Lazy imports - only when init is called (after handshake)
-        from src.services.interview_orchestrator import InterviewOrchestrator
-        from src.services.interview_logger import InterviewLogger
-
-        self.db = db
-        self.orchestrator = InterviewOrchestrator()
-
-        # Initialize interview logger
-        interview_logger = InterviewLogger(self.interview_id)
-        self.orchestrator.set_interview_logger(interview_logger)
-
-        self._initialized = True
-        logger.info(
-            f"OrchestratorLLM initialized for interview {self.interview_id}")
-
-    def chat(
-        self,
-        *,
-        chat_ctx: llm.ChatContext,
-        tools: list[Any] | None = None,
-        conn_options=None,
-        parallel_tool_calls=None,
-        tool_choice=None,
-        extra_kwargs=None,
-    ) -> llm.LLMStream:
-        """Process chat using the interview orchestrator."""
-        if not self._initialized:
-            raise RuntimeError(
-                "OrchestratorLLM must be initialized with init() before use")
-
-        from livekit.agents.types import DEFAULT_API_CONNECT_OPTIONS
-
-        conn_options = conn_options or DEFAULT_API_CONNECT_OPTIONS
-
-        return OrchestratorLLMStream(
-            self,
-            chat_ctx=chat_ctx,
-            tools=tools or [],
-            conn_options=conn_options
-        )
-
-
 # Create server instance (OK at module level - AgentServer is lightweight)
 server = AgentServer()
-
-# Per-process VAD cache (lazy loaded, async, with lock protection)
-_vad: vad.VAD | None = None
-_vad_lock = asyncio.Lock()
-
-
-async def get_vad() -> vad.VAD | None:
-    """Get VAD instance with per-process lazy caching.
-
-    Loads Silero VAD asynchronously in executor to avoid blocking event loop.
-    Returns None if loading fails (graceful degradation).
-
-    CRITICAL: Only called after handshake completes.
-    """
-    global _vad
-
-    # Fast path - already loaded
-    if _vad is not None:
-        return _vad
-
-    # Lock-protected lazy load (only once per process)
-    async with _vad_lock:
-        # Double-check after acquiring lock
-        if _vad is not None:
-            return _vad
-
-        try:
-            # Lazy import - only when function is called (after handshake)
-            from livekit.plugins import silero
-
-            logger.info("Loading VAD model asynchronously...")
-            loop = asyncio.get_running_loop()
-            _vad = await loop.run_in_executor(None, silero.VAD.load)
-            logger.info("VAD model loaded successfully")
-            return _vad
-        except Exception as e:
-            logger.error(f"VAD loading failed: {e}", exc_info=True)
-            # Return None for graceful degradation
-            return None
-
-
-class AgentResources:
-    """Resource container for agent components with proper cleanup."""
-
-    def __init__(self):
-        self.db: "AsyncSession | None" = None
-        self.orchestrator_llm: OrchestratorLLM | None = None
-        self.tts: tts.TTS | None = None
-        self.stt: stt.STT | None = None
-        self.vad: vad.VAD | None = None
-        self.session: AgentSession | None = None
-
-    async def aclose(self):
-        """Clean up all resources."""
-        if self.db:
-            await self.db.close()
-            self.db = None
-        logger.debug("Agent resources cleaned up")
-
-
-async def bootstrap_resources(ctx: JobContext, interview_id: int) -> AgentResources:
-    """Bootstrap all agent resources after handshake completes.
-
-    This is the SAFE ZONE - handshake is complete, we can do heavy operations.
-    All heavy imports happen here, not at module level.
-    """
-    import time
-    t0 = time.monotonic()
-    logger.info(f"bootstrap_start (interview_id={interview_id})")
-
-    resources = AgentResources()
-
-    try:
-        # Lazy imports - only when bootstrap is called (after handshake)
-        from src.core.database import AsyncSessionLocal
-        from src.core.config import settings
-        from livekit.plugins import openai
-
-        # Create database session (async-safe, per-process pool)
-        resources.db = AsyncSessionLocal()
-        logger.debug("Database session created")
-
-        # Create and initialize orchestrator LLM (two-phase init)
-        resources.orchestrator_llm = OrchestratorLLM(interview_id)
-        await resources.orchestrator_llm.init(resources.db)
-        logger.debug("Orchestrator LLM initialized")
-
-        # Create TTS with graceful degradation
-        try:
-            resources.tts = openai.TTS(
-                voice=settings.OPENAI_TTS_VOICE or "alloy",
-                model=settings.OPENAI_TTS_MODEL or "tts-1-hd"
-            )
-            logger.debug("TTS instance created")
-        except Exception as e:
-            logger.exception("TTS creation failed, will retry later")
-            resources.tts = None
-
-        # Create STT
-        try:
-            resources.stt = openai.STT()
-            logger.debug("STT instance created")
-        except Exception as e:
-            logger.exception("STT creation failed, will retry later")
-            resources.stt = None
-
-        # VAD DISABLED - Skip loading entirely to avoid timeout issues
-        # Silero VAD inference takes 4-7 seconds, causing "process is unresponsive" warnings
-        # Agent will work fine without VAD in controlled interview environments
-        resources.vad = None
-        logger.info(
-            "VAD disabled - skipping Silero VAD loading to avoid performance issues")
-
-        elapsed = time.monotonic() - t0
-        logger.info(
-            f"bootstrap_complete (elapsed={elapsed:.3f}s, interview_id={interview_id})")
-        return resources
-
-    except Exception as e:
-        logger.error(f"Bootstrap failed: {e}", exc_info=True)
-        await resources.aclose()
-        raise
 
 
 @server.rtc_session()
 async def entrypoint(ctx: JobContext):
     """Entry point for the LiveKit agent job.
 
-    Production-ready pattern:
-    1. Handshake completes at ctx.connect() (must be fast)
-    2. Bootstrap resources after handshake (heavy operations safe here)
-    3. Start session with all resources ready
-    4. Clean up on exit
+    Production-ready pattern (per LiveKit best practices):
+    1. Extract metadata BEFORE connection (room.name available without connecting)
+    2. Bootstrap resources BEFORE ctx.connect() (agent ready before handshake)
+    3. Connect to room (handshake completes, agent is already initialized)
+    4. Start session with all resources ready
+    5. Clean up on exit
+
+    This ensures frontend doesn't show agent participant before it's ready to listen.
     """
     import time
     t0 = time.monotonic()
@@ -610,33 +60,47 @@ async def entrypoint(ctx: JobContext):
     except Exception:
         pass
 
-    logger.info("handshake_start")
-
-    # CRITICAL: ctx.connect() must return quickly (handshake completes here)
-    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
-
-    t_connect = time.monotonic()
-    logger.info(f"ctx_connected (elapsed={(t_connect - t0):.3f}s)")
-
-    # ---- SAFE ZONE: Handshake complete, can do heavy imports now ----
-
-    # Extract interview_id from room name (format: "interview-{id}")
+    # Extract interview_id from room name BEFORE connection
+    # Room name is available without connecting (format: "interview-{id}")
     try:
         interview_id = int(ctx.room.name.replace("interview-", ""))
+        logger.info(
+            f"Extracted interview_id: {interview_id} from room: {ctx.room.name}")
     except ValueError:
         logger.error(
             f"Could not extract interview_id from room name: {ctx.room.name}")
         return
 
+    # Bootstrap all resources BEFORE connection (per LiveKit best practices)
+    # This ensures agent is ready before frontend shows it as connected
+    logger.info("bootstrap_start (before connection)")
+
+    # Lazy import - only when needed (after metadata extraction, before connection)
+    from src.agents.resources import bootstrap_resources
+    from src.agents.tts_utils import prepare_text_for_tts, normalize_numbers_and_symbols
+    from src.agents.checkpoint_utils import checkpoint_greeting_in_background
+
+    resources: "AgentResources | None" = None
+    try:
+        resources = await bootstrap_resources(ctx, interview_id)
+    except Exception as e:
+        logger.error(f"Bootstrap failed before connection: {e}", exc_info=True)
+        return
+
+    logger.info("handshake_start")
+
+    # CRITICAL: Connect AFTER bootstrap (agent is ready, frontend won't show it until ready)
+    await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
+
+    t_connect = time.monotonic()
+    logger.info(f"ctx_connected (elapsed={(t_connect - t0):.3f}s)")
+
+    # ---- SAFE ZONE: Handshake complete, agent already initialized ----
+
     logger.info(
         f"Agent connected to room: {ctx.room.name} (interview_id={interview_id})")
 
-    resources: AgentResources | None = None
-
     try:
-        # Bootstrap all resources (VAD, DB, orchestrator, TTS, STT)
-        resources = await bootstrap_resources(ctx, interview_id)
-
         # Create agent session with bootstrapped resources
         # DISABLED: VAD causing 4-7 second inference delays, making processes unresponsive
         # resources.vad loaded but not used - Silero VAD too slow for real-time voice processing
@@ -688,7 +152,6 @@ async def entrypoint(ctx: JobContext):
             """Handle data messages, including test audio requests."""
             try:
                 import json
-                import asyncio
                 if data_packet.user and data_packet.user.payload:
                     data = data_packet.user.payload
                     message = json.loads(data.decode('utf-8'))
@@ -791,7 +254,7 @@ async def entrypoint(ctx: JobContext):
                             logger.info("Greeting sent successfully")
 
                             asyncio.create_task(
-                                _checkpoint_greeting_in_background(
+                                checkpoint_greeting_in_background(
                                     state, interview_id, resources.orchestrator_llm.orchestrator)
                             )
                         else:
