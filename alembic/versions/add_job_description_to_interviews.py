@@ -26,3 +26,4 @@ def downgrade() -> None:
     # Remove job_description column
     op.drop_column('interviews', 'job_description')
 
+

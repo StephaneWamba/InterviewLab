@@ -52,9 +52,6 @@ services:
     volumes:
       - ./uploads:/app/uploads
       - ./src:/app/src
-      - ./test_extraction.py:/app/test_extraction.py
-      - ./test_sandbox.py:/app/test_sandbox.py
-      - ./test_code_review.py:/app/test_code_review.py
       - ./assets:/app/assets
       # Docker socket for sandbox (development only - use separate service in production)
       - /var/run/docker.sock:/var/run/docker.sock:ro

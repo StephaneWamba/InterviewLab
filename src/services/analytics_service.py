@@ -62,6 +62,8 @@ class InterviewAnalytics:
         avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0.0
 
         # Collect all topics covered
+        # Note: topics_covered in feedback is now extracted from resume_exploration
+        # during feedback generation, but stored in feedback for backward compatibility
         all_topics = []
         for interview in completed:
             if interview.feedback and isinstance(interview.feedback, dict):
@@ -429,6 +431,8 @@ class InterviewAnalytics:
             insights["duration_minutes"] = round(duration.total_seconds() / 60, 1)
 
         # Extract topics
+        # Note: topics_covered in feedback is now extracted from resume_exploration
+        # during feedback generation, but stored in feedback for backward compatibility
         if interview.feedback and isinstance(interview.feedback, dict):
             insights["topics_covered"] = interview.feedback.get("topics_covered", [])
             insights["conversation_quality"] = {

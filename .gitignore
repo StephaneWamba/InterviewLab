@@ -54,6 +54,9 @@ private/
 # Logs
 *.log
 logs/
+interview_*_log.txt
+interview_*_parsed.txt
+parse_interview_log.py
 
 # Docker
 .dockerignore

@@ -153,16 +153,7 @@ class OrchestratorLLMStream(llm.LLMStream):
             response = state.get(
                 "next_message", "I'm here to help with your interview.")
 
-            logger.debug(f"Generated response (raw): {response[:100]}...")
-
-            # Post-process text for natural TTS delivery
-            # Lazy import - only when needed
-            from src.agents import tts_utils
-            response = tts_utils.normalize_numbers_and_symbols(response)
-            response = tts_utils.prepare_text_for_tts(response)
-
-            logger.debug(
-                f"Generated response (processed): {response[:100]}...")
+            logger.debug(f"Generated response: {response[:100]}...")
 
             # Update interview and commit
             state_to_interview(state, interview)

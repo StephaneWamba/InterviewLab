@@ -1,9 +1,0 @@
-{
-  "scenario": "no_exercise",
-  "interview_id": 107,
-  "submitted_code": "def fibonacci(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(2, n + 1):\n        a, b = b, a + b\n    return b\n\nprint(fibonacci(10))",
-  "agent_feedback": "Great job on correctly implementing the Fibonacci sequence calculation and effectively handling edge cases! To enhance your code further, consider adding type hints and a docstring to clarify the function's purpose. Overall, you're on the right track\u2014keep up the good work!\n\nHow would you approach adding type hints to enhance the clarity of your function?",
-  "mentioned_exercise_mismatch": false,
-  "expected": false,
-  "passed": true
-}

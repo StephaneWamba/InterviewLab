@@ -124,12 +124,19 @@ async def bootstrap_resources(ctx: JobContext, interview_id: int) -> AgentResour
             logger.exception("STT creation failed, will retry later")
             resources.stt = None
 
-        # VAD DISABLED - Skip loading entirely to avoid timeout issues
-        # Silero VAD inference takes 4-7 seconds, causing "process is unresponsive" warnings
-        # Agent will work fine without VAD in controlled interview environments
-        resources.vad = None
-        logger.info(
-            "VAD disabled - skipping Silero VAD loading to avoid performance issues")
+        # Load VAD - REQUIRED for OpenAI STT (non-streaming STT needs VAD)
+        # Loading happens during bootstrap (before connection), so delay is acceptable
+        # VAD is loaded asynchronously in executor to avoid blocking event loop
+        try:
+            resources.vad = await get_vad()
+            if resources.vad:
+                logger.info("VAD loaded successfully")
+            else:
+                logger.warning(
+                    "VAD loading failed - STT may not work properly without VAD")
+        except Exception as e:
+            logger.exception("VAD loading failed, STT may not work properly")
+            resources.vad = None
 
         elapsed = time.monotonic() - t0
         logger.info(

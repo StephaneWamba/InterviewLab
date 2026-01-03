@@ -324,10 +324,10 @@ Generate ONE simple, focused follow-up question that:
 - Is SIMPLE and FOCUSED - ONE question only
 - Can be about: optimization, edge cases, testing, best practices, or alternative approaches
 
-CRITICAL RULES:
-❌ NEVER use "and" to connect two questions
-❌ NEVER ask multiple questions in one sentence
-✅ ONLY ask ONE simple, focused question
+GUIDELINES:
+- Prefer ONE simple, focused question for clarity
+- Compound questions (with "and") are acceptable when exploring related aspects naturally
+- Keep questions clear and specific, especially for technical discussions
 
 Examples of good questions:
 - "How would you handle edge cases like empty input or negative numbers?"
@@ -343,7 +343,7 @@ Return ONLY the question, no prefix or explanation."""
                 messages=[
                     {
                         "role": "system",
-                        "content": "You are an expert interviewer asking follow-up questions after code review. Be conversational and natural. CRITICAL: Always generate ONE simple question only - never combine multiple questions with 'and'.",
+                        "content": "You are an expert interviewer asking follow-up questions after code review. Be conversational and natural. Prefer single, focused questions for clarity, but compound questions (with 'and') are acceptable when exploring related technical aspects naturally.",
                     },
                     {"role": "user", "content": prompt},
                 ],

@@ -102,10 +102,9 @@ async def entrypoint(ctx: JobContext):
 
     try:
         # Create agent session with bootstrapped resources
-        # DISABLED: VAD causing 4-7 second inference delays, making processes unresponsive
-        # resources.vad loaded but not used - Silero VAD too slow for real-time voice processing
+        # VAD is required for OpenAI STT (non-streaming STT needs VAD for streaming)
         resources.session = AgentSession(
-            vad=None,  # Disabled - causes unresponsive processes due to slow inference
+            vad=resources.vad,  # Required for non-streaming STT to work
             stt=resources.stt,
             llm=resources.orchestrator_llm,
             tts=resources.tts,
@@ -240,11 +239,8 @@ async def entrypoint(ctx: JobContext):
                                 "greeting_generated", state)
 
                         if greeting:
-                            greeting = normalize_numbers_and_symbols(greeting)
-                            greeting = prepare_text_for_tts(greeting)
-
                             logger.info(
-                                f"Sending greeting (processed): {greeting[:100]}...")
+                                f"Sending greeting: {greeting[:100]}...")
                             state_to_interview(state, interview)
                             if resources.db:
                                 await resources.db.commit()

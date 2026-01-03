@@ -47,8 +47,7 @@ def interview_to_state(interview: Interview) -> "InterviewState":
         "interview_id": interview.id,
         "user_id": interview.user_id,
         "resume_id": interview.resume_id,
-        "resume_context": interview.resume_context or {},
-        "resume_structured": interview.resume_context or {},  # Same for now
+        "resume_structured": interview.resume_context or {},
         "job_description": interview.job_description,
         "conversation_history": interview.conversation_history or [],
         "turn_count": interview.turn_count,
@@ -73,9 +72,9 @@ def interview_to_state(interview: Interview) -> "InterviewState":
         "last_node": "",
         "next_node": None,
         "checkpoints": checkpoints,
-        # Legacy fields
+        # Legacy fields (kept for backward compatibility during migration)
         "answer_quality": 0.0,
-        "topics_covered": [],  # Deprecated
+        # topics_covered removed - now extracted from resume_exploration when needed
         "next_message": None,
         "last_response": None,
         "current_code": None,
@@ -94,7 +93,7 @@ def state_to_interview(state: "InterviewState", interview: Interview) -> None:
     interview.turn_count = state.get("turn_count", 0)
     interview.feedback = state.get("feedback")
     
-    # Update resume_context if resume_structured changed
+    # Update resume_context from resume_structured
     if state.get("resume_structured"):
         interview.resume_context = state["resume_structured"]
     

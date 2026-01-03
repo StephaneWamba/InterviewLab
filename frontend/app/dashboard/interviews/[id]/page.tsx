@@ -73,52 +73,53 @@ export default function InterviewDetailPage() {
       // Reset agent ready state when connecting to new room
       setAgentReady(false);
       
-      // Check for agent participant (agent appears as remote participant)
-      const checkAgent = () => {
-        const hasAgent = Array.from(room.remoteParticipants.values()).length > 0;
-        if (hasAgent) {
-          setAgentReady(true);
-          console.log('✅ Agent detected in room');
-          return true;
+      // Check if agent has audio tracks playing (agent is speaking)
+      const checkAgentSpeaking = () => {
+        for (const participant of room.remoteParticipants.values()) {
+          // Check if participant has audio tracks
+          for (const publication of participant.audioTrackPublications.values()) {
+            if (publication.track && publication.track.mediaStreamTrack) {
+              // Check if track is actually playing (has active media stream)
+              const mediaStreamTrack = publication.track.mediaStreamTrack;
+              if (mediaStreamTrack.readyState === 'live' && !mediaStreamTrack.muted) {
+                setAgentReady(true);
+                console.log('✅ Agent is speaking (audio track active)');
+                return true;
+              }
+            }
+          }
         }
         return false;
       };
       
+      // Listen for track subscribed events (when agent starts publishing audio)
+      const handleTrackSubscribed = (track: any, publication: any, participant: any) => {
+        if (track.kind === 'audio' && !participant.isLocal) {
+          // Wait a bit for track to be ready
+          setTimeout(() => {
+            if (checkAgentSpeaking()) {
+              room.off('trackSubscribed', handleTrackSubscribed);
+            }
+          }, 100);
+        }
+      };
+      
+      room.on('trackSubscribed', handleTrackSubscribed);
+      
       // Check immediately
-      if (!checkAgent()) {
-        // Listen for participant added event (agent joining)
-        let intervalId: NodeJS.Timeout | null = null;
-        
-        const handleParticipantConnected = () => {
-          if (checkAgent()) {
-            // Clean up listener and interval once agent is detected
-            room.off('participantConnected', handleParticipantConnected);
-            if (intervalId) {
-              clearInterval(intervalId);
-              intervalId = null;
-            }
-          }
-        };
-        room.on('participantConnected', handleParticipantConnected);
-        
-        // Also check periodically for agent (in case event was missed)
-        intervalId = setInterval(() => {
-          if (checkAgent()) {
-            if (intervalId) {
-              clearInterval(intervalId);
-              intervalId = null;
-            }
-            room.off('participantConnected', handleParticipantConnected);
+      if (!checkAgentSpeaking()) {
+        // Also check periodically for agent audio (in case event was missed)
+        const intervalId = setInterval(() => {
+          if (checkAgentSpeaking()) {
+            clearInterval(intervalId);
+            room.off('trackSubscribed', handleTrackSubscribed);
           }
         }, 500);
         
         // Cleanup interval after 30 seconds
         setTimeout(() => {
-          if (intervalId) {
-            clearInterval(intervalId);
-            intervalId = null;
-          }
-          room.off('participantConnected', handleParticipantConnected);
+          clearInterval(intervalId);
+          room.off('trackSubscribed', handleTrackSubscribed);
         }, 30000);
       }
       
