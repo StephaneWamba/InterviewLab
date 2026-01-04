@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, FileText, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, XCircle, Loader2, AlertCircle, Trash2 } from 'lucide-react';
 import { resumesApi } from '@/lib/api/resumes';
 import { toast } from 'sonner';
 import Link from 'next/link';
@@ -89,6 +89,26 @@ export default function ResumesPage() {
     if (bytes < 1024) return bytes + ' B';
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  };
+
+  // Delete mutation
+  const deleteMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return resumesApi.delete(id);
+    },
+    onSuccess: () => {
+      toast.success('Resume deleted successfully!');
+      queryClient.invalidateQueries({ queryKey: ['resumes'] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to delete resume');
+    },
+  });
+
+  const handleDelete = (id: number, fileName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${fileName}"? This action cannot be undone.`)) {
+      deleteMutation.mutate(id);
+    }
   };
 
   return (
@@ -193,19 +213,34 @@ export default function ResumesPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   {getStatusBadge(resume.analysis_status)}
-                  {resume.analysis_status === 'completed' && (
+                  <div className="flex items-center gap-2">
+                    {resume.analysis_status === 'completed' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        asChild
+                      >
+                        <Link href={`/dashboard/resumes/${resume.id}`}>
+                          View Resume
+                        </Link>
+                      </Button>
+                    )}
                     <Button
-                      variant="outline"
+                      variant="destructive"
                       size="sm"
-                      asChild
+                      onClick={() => handleDelete(resume.id, resume.file_name)}
+                      disabled={deleteMutation.isPending}
+                      title="Delete resume"
                     >
-                      <Link href={`/dashboard/resumes/${resume.id}`}>
-                        View Resume
-                      </Link>
+                      {deleteMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
                     </Button>
-                  )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
