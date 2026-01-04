@@ -715,7 +715,7 @@ export default function InterviewDetailPage() {
                   <Card>
                     <CardContent className="py-12 text-center">
                       <p className="text-muted-foreground">
-                        Start the interview to access the code sandbox
+                        Start the interview to access the code editor
                       </p>
                     </CardContent>
                   </Card>

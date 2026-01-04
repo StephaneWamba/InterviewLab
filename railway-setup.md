@@ -3,6 +3,7 @@
 ## Overview
 
 This guide explains how to deploy InterviewLab to Railway with multiple services:
+
 - **API Service**: FastAPI backend
 - **Agent Service**: LiveKit agent (optional, can run separately)
 
@@ -58,18 +59,18 @@ railway up
 
 In Railway dashboard → Variables, set:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | Auto-set by PostgreSQL service | `postgresql://...` |
-| `REDIS_URL` | Auto-set by Redis service | `redis://...` |
-| `SECRET_KEY` | JWT secret key | Generate: `openssl rand -hex 32` |
-| `OPENAI_API_KEY` | OpenAI API key | `sk-...` |
-| `LIVEKIT_URL` | LiveKit server URL | `wss://your-project.livekit.cloud` |
-| `LIVEKIT_API_KEY` | LiveKit API key | `...` |
-| `LIVEKIT_API_SECRET` | LiveKit API secret | `...` |
-| `ENVIRONMENT` | Environment name | `production` |
-| `LOG_LEVEL` | Logging level | `INFO` |
-| `CORS_ORIGINS` | Allowed origins | `https://your-frontend.vercel.app` |
+| Variable             | Description                    | Example                            |
+| -------------------- | ------------------------------ | ---------------------------------- |
+| `DATABASE_URL`       | Auto-set by PostgreSQL service | `postgresql://...`                 |
+| `REDIS_URL`          | Auto-set by Redis service      | `redis://...`                      |
+| `SECRET_KEY`         | JWT secret key                 | Generate: `openssl rand -hex 32`   |
+| `OPENAI_API_KEY`     | OpenAI API key                 | `sk-...`                           |
+| `LIVEKIT_URL`        | LiveKit server URL             | `wss://your-project.livekit.cloud` |
+| `LIVEKIT_API_KEY`    | LiveKit API key                | `...`                              |
+| `LIVEKIT_API_SECRET` | LiveKit API secret             | `...`                              |
+| `ENVIRONMENT`        | Environment name               | `production`                       |
+| `LOG_LEVEL`          | Logging level                  | `INFO`                             |
+| `CORS_ORIGINS`       | Allowed origins                | `https://your-frontend.vercel.app` |
 
 ## Step 5: Deploy Agent Service (Optional)
 
@@ -92,6 +93,7 @@ Deploy agent separately (e.g., on a VPS) for better isolation.
 Migrations run automatically on startup (see `railway.json` startCommand).
 
 To run manually:
+
 ```bash
 railway run alembic upgrade head
 ```
@@ -105,12 +107,14 @@ railway run alembic upgrade head
 ## Service Configuration Files
 
 ### `railway.json` (API Service)
+
 - Builds from Dockerfile
 - Runs migrations on startup
 - Starts uvicorn server
 - Health check on `/health`
 
 ### `railway-agent.json` (Agent Service)
+
 - Builds from same Dockerfile
 - Starts LiveKit agent
 - Requires same environment variables
@@ -118,6 +122,7 @@ railway run alembic upgrade head
 ## Resource Limits
 
 Default Railway configuration:
+
 - **CPU**: 1.0 vCPU
 - **Memory**: 2GB
 - **Disk**: 10GB
@@ -132,16 +137,15 @@ Adjust in Railway dashboard → Settings → Resources.
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| **Build fails** | Check Dockerfile, verify dependencies |
-| **Database connection error** | Verify `DATABASE_URL` is set |
-| **Agent won't connect** | Check LiveKit credentials |
-| **High memory usage** | Increase memory limit or optimize code |
-| **Port binding error** | Ensure using `$PORT` environment variable |
+| Issue                         | Solution                                  |
+| ----------------------------- | ----------------------------------------- |
+| **Build fails**               | Check Dockerfile, verify dependencies     |
+| **Database connection error** | Verify `DATABASE_URL` is set              |
+| **Agent won't connect**       | Check LiveKit credentials                 |
+| **High memory usage**         | Increase memory limit or optimize code    |
+| **Port binding error**        | Ensure using `$PORT` environment variable |
 
 ## Next Steps
 
 - [Deployment Guide](docs/DEPLOYMENT.md) - Detailed deployment instructions
 - [Local Development](docs/LOCAL_DEVELOPMENT.md) - Development setup
-

@@ -79,11 +79,3 @@ out/
 uploads/
 *.pdf
 assets/*.pdf
-
-# Markdown files (ignore all except docs/ and README.md)
-*.md
-!README.md
-!docs/**/*.md
-
-# Gitignore itself
-.gitignore

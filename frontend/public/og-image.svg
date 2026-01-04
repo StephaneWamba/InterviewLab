@@ -1,0 +1,47 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"/>
+  <defs>
+    <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bgGradient)"/>
+  
+  <!-- Decorative circles -->
+  <circle cx="200" cy="150" r="100" fill="white" opacity="0.1"/>
+  <circle cx="1000" cy="480" r="150" fill="white" opacity="0.1"/>
+  
+  <!-- Main content -->
+  <g transform="translate(100, 200)">
+    <!-- Icon -->
+    <rect x="0" y="0" width="120" height="120" rx="24" fill="white" opacity="0.2"/>
+    <path d="M30 40C30 35.5817 33.5817 32 38 32H82C86.4183 32 90 35.5817 90 40V80C90 84.4183 86.4183 88 82 88H38C33.5817 88 30 84.4183 30 80V40Z" fill="white" opacity="0.9"/>
+    <path d="M40 50H80M40 60H70M40 70H55" stroke="#667eea" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="80" cy="70" r="8" fill="#667eea"/>
+    
+    <!-- Title -->
+    <text x="150" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="64" font-weight="bold" fill="white">
+      InterviewLab
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="150" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="white" opacity="0.9">
+      AI-Powered Interview Preparation
+    </text>
+    
+    <!-- Features -->
+    <g transform="translate(150, 140)">
+      <circle cx="0" cy="0" r="6" fill="white"/>
+      <text x="20" y="5" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="white" opacity="0.9">Voice Practice Sessions</text>
+      
+      <circle cx="0" cy="40" r="6" fill="white"/>
+      <text x="20" y="45" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="white" opacity="0.9">Resume Analysis</text>
+      
+      <circle cx="0" cy="80" r="6" fill="white"/>
+      <text x="20" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="24" fill="white" opacity="0.9">Live Code Practice</text>
+    </g>
+  </g>
+</svg>
+

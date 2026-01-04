@@ -2,14 +2,14 @@
 
 ## Prerequisites
 
-| Requirement | Version | Installation |
-|-------------|---------|--------------|
-| **Python** | 3.11+ | [python.org](https://www.python.org/downloads/) |
-| **Node.js** | 18+ | [nodejs.org](https://nodejs.org/) |
-| **PostgreSQL** | 14+ | [postgresql.org](https://www.postgresql.org/download/) |
-| **Redis** | 7+ | [redis.io](https://redis.io/download) |
-| **Docker** | 20+ | [docker.com](https://www.docker.com/get-started) |
-| **LiveKit Server** | Latest | [livekit.io](https://livekit.io/docs/deployment/) |
+| Requirement        | Version | Installation                                           |
+| ------------------ | ------- | ------------------------------------------------------ |
+| **Python**         | 3.11+   | [python.org](https://www.python.org/downloads/)        |
+| **Node.js**        | 18+     | [nodejs.org](https://nodejs.org/)                      |
+| **PostgreSQL**     | 14+     | [postgresql.org](https://www.postgresql.org/download/) |
+| **Redis**          | 7+      | [redis.io](https://redis.io/download)                  |
+| **Docker**         | 20+     | [docker.com](https://www.docker.com/get-started)       |
+| **LiveKit Server** | Latest  | [livekit.io](https://livekit.io/docs/deployment/)      |
 
 ## Environment Setup
 
@@ -111,47 +111,53 @@ docker run -d \
 ### Development Mode
 
 **Terminal 1: Backend API**
+
 ```bash
 cd src
 uvicorn main:app --reload --port 8000
 ```
 
 **Terminal 2: Frontend**
+
 ```bash
 cd frontend
 npm run dev
 ```
 
 **Terminal 3: LiveKit Agent**
+
 ```bash
 cd src
 python -m src.agents.interview_agent dev
 ```
 
 **Terminal 4: Redis (if not running)**
+
 ```bash
 redis-server
 ```
 
 ### Access Points
 
-| Service | URL |
-|---------|-----|
-| **Frontend** | http://localhost:3000 |
-| **Backend API** | http://localhost:8000 |
-| **API Docs** | http://localhost:8000/docs |
-| **LiveKit Server** | ws://localhost:7880 |
+| Service            | URL                        |
+| ------------------ | -------------------------- |
+| **Frontend**       | http://localhost:3000      |
+| **Backend API**    | http://localhost:8000      |
+| **API Docs**       | http://localhost:8000/docs |
+| **LiveKit Server** | ws://localhost:7880        |
 
 ## Development Workflow
 
 ### Making Changes
 
 1. **Backend Changes**
+
    - Edit Python files in `src/`
    - API auto-reloads (uvicorn --reload)
    - Run tests: `pytest`
 
 2. **Frontend Changes**
+
    - Edit files in `frontend/`
    - Hot reload enabled
    - Type checking: `npm run type-check`
@@ -177,6 +183,7 @@ alembic downgrade -1
 ### Testing
 
 **Backend Tests:**
+
 ```bash
 pytest tests/
 pytest tests/ -v  # Verbose
@@ -184,6 +191,7 @@ pytest tests/ -k test_name  # Specific test
 ```
 
 **Frontend Tests:**
+
 ```bash
 npm test
 npm run test:watch
@@ -194,17 +202,20 @@ npm run test:watch
 ### Backend Debugging
 
 **Enable Debug Logging:**
+
 ```python
 # src/core/logging.py
 LOG_LEVEL = "DEBUG"
 ```
 
 **View Logs:**
+
 ```bash
 tail -f logs/interviewlab.log
 ```
 
 **Database Inspection:**
+
 ```bash
 psql interviewlab
 SELECT * FROM interviews;
@@ -213,35 +224,39 @@ SELECT * FROM interviews;
 ### Agent Debugging
 
 **Enable Agent Logs:**
+
 ```bash
 export LIVEKIT_LOG=debug
 python -m src.agents.interview_agent dev
 ```
 
 **Check Agent State:**
+
 - Logs show state transitions
 - Check `src/services/logging/interview_logger.py` output
 
 ### Frontend Debugging
 
 **React DevTools:**
+
 - Install browser extension
 - Inspect component state
 
 **Network Inspection:**
+
 - Chrome DevTools → Network tab
 - Check API requests/responses
 
 ## Common Issues
 
-| Issue | Solution |
-|-------|----------|
-| **Port already in use** | Change port or kill process: `lsof -ti:8000 \| xargs kill` |
-| **Database connection error** | Verify PostgreSQL running: `pg_isready` |
-| **Redis connection error** | Start Redis: `redis-server` |
-| **Agent won't connect** | Check LiveKit server running, verify credentials |
-| **Import errors** | Activate venv, reinstall dependencies |
-| **Migration conflicts** | Reset DB: `alembic downgrade base && alembic upgrade head` |
+| Issue                         | Solution                                                   |
+| ----------------------------- | ---------------------------------------------------------- |
+| **Port already in use**       | Change port or kill process: `lsof -ti:8000 \| xargs kill` |
+| **Database connection error** | Verify PostgreSQL running: `pg_isready`                    |
+| **Redis connection error**    | Start Redis: `redis-server`                                |
+| **Agent won't connect**       | Check LiveKit server running, verify credentials           |
+| **Import errors**             | Activate venv, reinstall dependencies                      |
+| **Migration conflicts**       | Reset DB: `alembic downgrade base && alembic upgrade head` |
 
 ## Code Submission Flow (Development)
 
@@ -257,7 +272,7 @@ sequenceDiagram
     A->>D: Save code to interview
     A->>D: Update conversation_history
     A->>F: 200 OK
-    
+
     Note over F,AG: User speaks "I submitted code"
     F->>AG: Audio stream
     AG->>O: execute_step(code=...)
@@ -272,6 +287,7 @@ sequenceDiagram
 ## State Inspection
 
 **View Interview State:**
+
 ```python
 # In Python shell
 from src.services.data.state_manager import interview_to_state
@@ -285,6 +301,7 @@ print(state)
 ```
 
 **Check LangGraph State:**
+
 - Agent logs show state transitions
 - Database checkpoints contain full state
 - Redis cache (if enabled) shows current state
@@ -292,6 +309,7 @@ print(state)
 ## Performance Testing
 
 **Load Testing:**
+
 ```bash
 # Install locust
 pip install locust
@@ -301,6 +319,7 @@ locust -f tests/load_test.py
 ```
 
 **Monitor Resources:**
+
 ```bash
 # CPU/Memory
 htop
@@ -317,4 +336,3 @@ redis-cli info memory
 - [API Reference](API.md)
 - [LangGraph Guide](LANGGRAPH.md)
 - [Deployment Guide](DEPLOYMENT.md)
-

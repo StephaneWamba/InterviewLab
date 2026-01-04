@@ -15,7 +15,8 @@ async def lifespan(app: FastAPI):
     """Application lifespan events."""
     # Startup
     setup_logging()
-    # Create database tables
+    # Create database tables if they don't exist (migrations handle schema changes)
+    # This ensures tables exist even if migrations haven't run yet
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield

@@ -3,6 +3,7 @@
 ## Overview
 
 InterviewLab uses **LangGraph** to manage interview state and flow. LangGraph provides:
+
 - **Explicit state machine** with nodes and edges
 - **Reducers** for append-only fields (prevents race conditions)
 - **Checkpointing** for state persistence
@@ -18,19 +19,19 @@ class InterviewState(TypedDict):
     interview_id: int
     user_id: int
     resume_id: int | None
-    
+
     # Append-only (reducers)
     conversation_history: Annotated[list[dict], operator.add]
     questions_asked: Annotated[list[QuestionRecord], operator.add]
     detected_intents: Annotated[list[UserIntent], operator.add]
     code_submissions: Annotated[list[dict], operator.add]
-    
+
     # Single-writer fields
     next_message: str | None
     phase: str  # intro | exploration | technical | closing
     last_node: str
     next_node: str | None
-    
+
     # Runtime
     turn_count: int
     answer_quality: float
@@ -40,11 +41,11 @@ class InterviewState(TypedDict):
 
 ### Field Types
 
-| Type | Fields | Behavior |
-|------|--------|----------|
-| **Reducer** | `conversation_history`, `questions_asked`, `detected_intents`, `code_submissions` | Append-only, atomic merge |
-| **Single Writer** | `next_message`, `phase`, `last_node` | One node writes, others read |
-| **Mutable** | `topics_covered`, `sandbox` | Manual merge in nodes |
+| Type              | Fields                                                                            | Behavior                     |
+| ----------------- | --------------------------------------------------------------------------------- | ---------------------------- |
+| **Reducer**       | `conversation_history`, `questions_asked`, `detected_intents`, `code_submissions` | Append-only, atomic merge    |
+| **Single Writer** | `next_message`, `phase`, `last_node`                                              | One node writes, others read |
+| **Mutable**       | `topics_covered`, `sandbox`                                                       | Manual merge in nodes        |
 
 ## Graph Structure
 
@@ -76,25 +77,25 @@ graph TD
 
 ### Control Nodes
 
-| Node | Purpose | Input | Output |
-|------|---------|-------|--------|
-| **initialize** | Set default values | Partial state | Defaults for missing fields |
-| **ingest_input** | Entry point for external data | `last_response`, `current_code` | Incremented `turn_count` |
-| **detect_intent** | Analyze user intent | `last_response` | `detected_intents`, `active_user_request` |
-| **decide_next_action** | Choose next node | Full state | `next_node` |
-| **finalize_turn** | Write to conversation_history | Full state | `conversation_history`, `conversation_summary` |
+| Node                   | Purpose                       | Input                           | Output                                         |
+| ---------------------- | ----------------------------- | ------------------------------- | ---------------------------------------------- |
+| **initialize**         | Set default values            | Partial state                   | Defaults for missing fields                    |
+| **ingest_input**       | Entry point for external data | `last_response`, `current_code` | Incremented `turn_count`                       |
+| **detect_intent**      | Analyze user intent           | `last_response`                 | `detected_intents`, `active_user_request`      |
+| **decide_next_action** | Choose next node              | Full state                      | `next_node`                                    |
+| **finalize_turn**      | Write to conversation_history | Full state                      | `conversation_history`, `conversation_summary` |
 
 ### Action Nodes
 
-| Node | Purpose | Trigger | Output |
-|------|---------|---------|--------|
-| **greeting** | Initial welcome | First turn | Personalized greeting |
-| **question** | Resume-based question | `decide_next_action` → question | Question text, `topics_covered` |
-| **followup** | Deep dive question | `decide_next_action` → followup | Follow-up question |
-| **sandbox_guidance** | Guide to code sandbox | `decide_next_action` → sandbox_guidance | Exercise, hints |
-| **code_review** | Review submitted code | Code in state | Execution results, quality analysis |
-| **evaluation** | Generate feedback | `decide_next_action` → evaluation | Comprehensive feedback |
-| **closing** | End interview | `decide_next_action` → closing | Closing message |
+| Node                 | Purpose               | Trigger                                 | Output                              |
+| -------------------- | --------------------- | --------------------------------------- | ----------------------------------- |
+| **greeting**         | Initial welcome       | First turn                              | Personalized greeting               |
+| **question**         | Resume-based question | `decide_next_action` → question         | Question text, `topics_covered`     |
+| **followup**         | Deep dive question    | `decide_next_action` → followup         | Follow-up question                  |
+| **sandbox_guidance** | Guide to code sandbox | `decide_next_action` → sandbox_guidance | Exercise, hints                     |
+| **code_review**      | Review submitted code | Code in state                           | Execution results, quality analysis |
+| **evaluation**       | Generate feedback     | `decide_next_action` → evaluation       | Comprehensive feedback              |
+| **closing**          | End interview         | `decide_next_action` → closing          | Closing message                     |
 
 ## State Flow Example
 
@@ -129,11 +130,13 @@ sequenceDiagram
 **Input:** Full state (conversation, questions, intents, sandbox)
 
 **Process:**
+
 1. Build decision context (conversation, state, metrics)
 2. LLM call with structured output (`NextActionDecision`)
 3. Return `next_node` in state
 
 **LLM Prompt Structure:**
+
 ```
 CONVERSATION: [last 10 messages]
 STATE: Turn, Phase, Questions count, Sandbox status
@@ -200,13 +203,13 @@ class ActionNodeMixin:
         """My new node description."""
         # Build context
         context = build_conversation_context(state)
-        
+
         # LLM call
         response = await self.llm_helper.call_llm_creative(
             system_prompt="...",
             user_prompt=context
         )
-        
+
         # Return state updates (no mutations)
         return {
             "last_node": "my_new_node",
@@ -252,6 +255,7 @@ class NextActionDecision(BaseModel):
 ### Interview ID Validation
 
 **Entry Point:**
+
 ```python
 # langgraph_orchestrator.py
 interview_id = state.get("interview_id")
@@ -260,6 +264,7 @@ if not interview_id:
 ```
 
 **Exit Point:**
+
 ```python
 final_interview_id = final_state.get("interview_id")
 if final_interview_id != interview_id:
@@ -295,12 +300,12 @@ LOG_LEVEL = "DEBUG"
 
 ### Common Issues
 
-| Issue | Cause | Solution |
-|-------|-------|----------|
-| **State pollution** | interview_id changed | Validate at entry/exit |
-| **Duplicate messages** | Reducer not working | Check `operator.add` annotation |
-| **Stuck in loop** | Routing error | Check `next_node` value |
-| **Missing fields** | Initialize not called | Ensure initialize runs first |
+| Issue                  | Cause                 | Solution                        |
+| ---------------------- | --------------------- | ------------------------------- |
+| **State pollution**    | interview_id changed  | Validate at entry/exit          |
+| **Duplicate messages** | Reducer not working   | Check `operator.add` annotation |
+| **Stuck in loop**      | Routing error         | Check `next_node` value         |
+| **Missing fields**     | Initialize not called | Ensure initialize runs first    |
 
 ## Best Practices
 
@@ -312,10 +317,9 @@ LOG_LEVEL = "DEBUG"
 
 ## Performance
 
-| Operation | Latency | Notes |
-|-----------|---------|-------|
-| **Node execution** | 100-500ms | LLM calls dominate |
-| **Graph execution** | 1-3s | Multiple nodes in sequence |
-| **Checkpointing** | 50-200ms | Database write |
-| **State restoration** | 100-300ms | Load from DB/checkpoint |
-
+| Operation             | Latency   | Notes                      |
+| --------------------- | --------- | -------------------------- |
+| **Node execution**    | 100-500ms | LLM calls dominate         |
+| **Graph execution**   | 1-3s      | Multiple nodes in sequence |
+| **Checkpointing**     | 50-200ms  | Database write             |
+| **State restoration** | 100-300ms | Load from DB/checkpoint    |

@@ -230,7 +230,7 @@ print(fibonacci(10))`;
             <div className="flex-1">
               <CardTitle className="flex items-center">
                 <Code className="mr-2 h-5 w-5" />
-                Code Sandbox
+                Code Editor
               </CardTitle>
               {exerciseDescription && (
                 <p className="text-sm text-muted-foreground mt-1">

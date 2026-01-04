@@ -176,14 +176,14 @@ InterviewLab/
 
 ### Key Directories
 
-| Directory | Purpose | Key Files |
-|-----------|---------|-----------|
-| `src/agents/` | LiveKit agent | `interview_agent.py`, `orchestrator_llm.py` |
-| `src/services/orchestrator/` | LangGraph state machine | `graph.py`, `nodes.py`, `control_nodes.py`, `action_nodes.py` |
-| `src/services/analysis/` | LLM-based analysis | `response_analyzer.py`, `code_analyzer.py`, `feedback_generator.py` |
-| `src/services/execution/` | Code sandbox | `sandbox_service.py` |
-| `frontend/components/interview/` | Interview UI | `voice-video.tsx`, `sandbox.tsx` |
-| `frontend/lib/api/` | API integration | `client.ts`, `interviews.ts`, `voice.ts` |
+| Directory                        | Purpose                 | Key Files                                                           |
+| -------------------------------- | ----------------------- | ------------------------------------------------------------------- |
+| `src/agents/`                    | LiveKit agent           | `interview_agent.py`, `orchestrator_llm.py`                         |
+| `src/services/orchestrator/`     | LangGraph state machine | `graph.py`, `nodes.py`, `control_nodes.py`, `action_nodes.py`       |
+| `src/services/analysis/`         | LLM-based analysis      | `response_analyzer.py`, `code_analyzer.py`, `feedback_generator.py` |
+| `src/services/execution/`        | Code sandbox            | `sandbox_service.py`                                                |
+| `frontend/components/interview/` | Interview UI            | `voice-video.tsx`, `sandbox.tsx`                                    |
+| `frontend/lib/api/`              | API integration         | `client.ts`, `interviews.ts`, `voice.ts`                            |
 
 ## Documentation
 

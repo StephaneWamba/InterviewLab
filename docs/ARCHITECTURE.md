@@ -26,6 +26,7 @@ graph TB
 State machine managing interview flow using LangGraph's StateGraph.
 
 **Key Files:**
+
 - `langgraph_orchestrator.py` - Main orchestrator class
 - `graph.py` - Graph definition with nodes and edges
 - `nodes.py` - NodeHandler combining action/control mixins
@@ -38,6 +39,7 @@ State machine managing interview flow using LangGraph's StateGraph.
 Real-time voice agent handling STT/TTS and orchestrator integration.
 
 **Key Files:**
+
 - `interview_agent.py` - Agent entrypoint and lifecycle
 - `orchestrator_llm.py` - Custom LLM adapter for orchestrator
 - `resources.py` - Resource bootstrap and cleanup
@@ -94,7 +96,7 @@ sequenceDiagram
     Agent->>Orchestrator: Initialize orchestrator
     Agent->>LiveKit: Connect (handshake)
     LiveKit->>Client: Agent ready
-    
+
     loop Interview Loop
         Client->>LiveKit: User speaks
         LiveKit->>Agent: Audio stream (STT)
@@ -105,7 +107,7 @@ sequenceDiagram
         Agent->>LiveKit: TTS audio stream
         LiveKit->>Client: Agent speaks
     end
-    
+
     Client->>LiveKit: End interview
     Agent->>Orchestrator: Cleanup interview
     Agent->>DB: Final state save
@@ -114,12 +116,14 @@ sequenceDiagram
 ## State Management
 
 **InterviewState** (TypedDict) contains:
+
 - **Append-only fields** (reducers): `conversation_history`, `questions_asked`, `detected_intents`, `code_submissions`
 - **Single-writer fields**: `next_message`, `phase`, `last_node`
 - **Sandbox state**: Code execution tracking
 - **Topics covered**: Simple list (no complex tracking)
 
 **Checkpointing:**
+
 - LangGraph MemorySaver: In-memory per `thread_id`
 - Database: Persistent checkpoints via `CheckpointService`
 - Redis: Optional caching layer
@@ -169,4 +173,3 @@ sequenceDiagram
     Orchestrator->>Agent: Code review response
     Agent->>Frontend: TTS audio
 ```
-
