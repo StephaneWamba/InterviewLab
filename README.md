@@ -119,48 +119,6 @@ sequenceDiagram
 - ✅ **Code execution** in isolated Docker containers
 - ✅ **Comprehensive feedback** with skill breakdowns
 
-## Project Structure
-
-```
-InterviewLab/
-├── src/                    # Backend (Python/FastAPI)
-│   ├── agents/            # LiveKit agent implementation
-│   ├── api/               # REST API endpoints
-│   │   └── v1/           # API version 1
-│   ├── core/              # Core utilities (DB, security, config)
-│   ├── models/            # SQLAlchemy database models
-│   ├── schemas/           # Pydantic request/response schemas
-│   └── services/          # Business logic services
-│       ├── analysis/      # Response/code analysis
-│       ├── analytics/     # Analytics service
-│       ├── data/          # Data management (checkpoints, state)
-│       ├── execution/     # Code sandbox execution
-│       ├── logging/       # Interview logging
-│       ├── orchestrator/  # LangGraph orchestration
-│       └── voice/         # LiveKit voice services
-├── frontend/              # Frontend (Next.js/React)
-│   ├── app/              # Next.js App Router pages
-│   ├── components/       # React components
-│   ├── lib/              # Utilities (API client, stores)
-│   └── hooks/            # Custom React hooks
-├── docs/                  # Documentation
-├── alembic/              # Database migrations
-├── docker-compose.yml    # Local development setup
-├── Dockerfile            # Production Docker image
-└── pyproject.toml        # Python dependencies
-```
-
-**Key Directories:**
-
-| Directory | Purpose |
-|-----------|---------|
-| `src/agents/` | LiveKit agent entrypoint, resource management |
-| `src/services/orchestrator/` | LangGraph state machine, nodes, graph definition |
-| `src/services/analysis/` | LLM-based analysis (responses, code, feedback) |
-| `src/services/execution/` | Docker-based code sandbox |
-| `frontend/components/interview/` | Interview UI components (voice, sandbox) |
-| `frontend/lib/api/` | API client and endpoint definitions |
-
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) - System architecture and component relationships
@@ -170,7 +128,6 @@ InterviewLab/
 - [User Guide](docs/USER_GUIDE.md) - How to use InterviewLab
 - [Local Development](docs/LOCAL_DEVELOPMENT.md) - Setup and development workflow
 - [LangGraph Guide](docs/LANGGRAPH.md) - State, nodes, and orchestration
-- [NFRs](docs/NFRs.md) - Non-functional requirements and how they're managed
 - [Deployment](docs/DEPLOYMENT.md) - Railway and Vercel deployment
 
 ## Quick Start
