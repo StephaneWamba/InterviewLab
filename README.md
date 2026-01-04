@@ -119,6 +119,72 @@ sequenceDiagram
 - ✅ **Code execution** in isolated Docker containers
 - ✅ **Comprehensive feedback** with skill breakdowns
 
+## Project Structure
+
+```
+InterviewLab/
+├── src/                    # Backend (Python/FastAPI)
+│   ├── agents/            # LiveKit agent implementation
+│   │   ├── interview_agent.py      # Agent entrypoint
+│   │   ├── orchestrator_llm.py    # Custom LLM adapter
+│   │   └── resources.py            # Resource management
+│   ├── api/               # REST API endpoints
+│   │   └── v1/
+│   │       └── endpoints/ # Interviews, resumes, voice, sandbox
+│   ├── core/              # Core utilities
+│   │   ├── config.py     # Settings management
+│   │   ├── database.py   # SQLAlchemy setup
+│   │   └── security.py   # JWT authentication
+│   ├── models/            # Database models (User, Interview, Resume)
+│   ├── schemas/           # Pydantic request/response schemas
+│   └── services/          # Business logic
+│       ├── analysis/      # Response/code/feedback analysis
+│       ├── analytics/     # Analytics service
+│       ├── data/          # Checkpoints, state management
+│       ├── execution/     # Docker sandbox execution
+│       ├── logging/       # Interview logging
+│       ├── orchestrator/  # LangGraph orchestration
+│       │   ├── graph.py           # Graph definition
+│       │   ├── nodes.py           # Node handler
+│       │   ├── control_nodes.py   # Flow control nodes
+│       │   ├── action_nodes.py    # Response generation nodes
+│       │   └── types.py           # State schema
+│       └── voice/         # LiveKit voice services
+├── frontend/              # Frontend (Next.js/React)
+│   ├── app/              # Next.js App Router
+│   │   ├── (auth)/       # Login, register
+│   │   └── dashboard/    # Protected routes
+│   ├── components/       # React components
+│   │   ├── interview/    # Voice, sandbox, transcription
+│   │   ├── analytics/    # Charts and metrics
+│   │   └── ui/           # shadcn/ui components
+│   ├── lib/              # Utilities
+│   │   ├── api/          # API client & endpoints
+│   │   └── store/        # Zustand stores
+│   └── hooks/            # Custom React hooks
+├── docs/                  # Documentation
+│   ├── ARCHITECTURE.md   # System architecture
+│   ├── API.md            # API reference
+│   ├── FRONTEND.md       # Frontend guide
+│   ├── LANGGRAPH.md      # Orchestration guide
+│   └── ...               # Other docs
+├── alembic/              # Database migrations
+├── docker-compose.yml    # Local development
+├── Dockerfile            # Production image
+└── pyproject.toml        # Python dependencies
+```
+
+### Key Directories
+
+| Directory | Purpose | Key Files |
+|-----------|---------|-----------|
+| `src/agents/` | LiveKit agent | `interview_agent.py`, `orchestrator_llm.py` |
+| `src/services/orchestrator/` | LangGraph state machine | `graph.py`, `nodes.py`, `control_nodes.py`, `action_nodes.py` |
+| `src/services/analysis/` | LLM-based analysis | `response_analyzer.py`, `code_analyzer.py`, `feedback_generator.py` |
+| `src/services/execution/` | Code sandbox | `sandbox_service.py` |
+| `frontend/components/interview/` | Interview UI | `voice-video.tsx`, `sandbox.tsx` |
+| `frontend/lib/api/` | API integration | `client.ts`, `interviews.ts`, `voice.ts` |
+
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md) - System architecture and component relationships
