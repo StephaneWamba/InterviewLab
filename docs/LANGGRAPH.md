@@ -323,3 +323,4 @@ LOG_LEVEL = "DEBUG"
 | **Graph execution**   | 1-3s      | Multiple nodes in sequence |
 | **Checkpointing**     | 50-200ms  | Database write             |
 | **State restoration** | 100-300ms | Load from DB/checkpoint    |
+

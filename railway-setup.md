@@ -78,11 +78,21 @@ The agent can run on Railway or separately.
 
 ### On Railway:
 
-1. Create new service: `railway service create interview-agent`
+1. Create new service: `railway service create interview-agent` (or name it `agent`)
 2. Link to same project: `railway link`
-3. Use `railway-agent.json` configuration
-4. Set same environment variables as API
+3. **IMPORTANT**: Configure the service manually in Railway dashboard:
+   - Go to Railway dashboard → Agent service → Settings → Deploy
+   - Set **Start Command** to: `python -m src.agents.interview_agent start`
+   - **Disable Healthcheck**: Go to Settings → Healthcheck and disable it (LiveKit agents don't expose HTTP endpoints)
+   - The service uses `Dockerfile.agent` which doesn't include a healthcheck
+   - This ensures it uses the agent instead of the FastAPI server
+4. Set same environment variables as API (especially LiveKit credentials)
 5. Deploy: `railway up`
+
+**Note**: Railway may not automatically detect `railway-agent.json`. Always verify:
+
+- The start command in the dashboard matches the agent command above
+- Healthcheck is disabled (agents connect via WebSocket, not HTTP)
 
 ### Separate Deployment:
 

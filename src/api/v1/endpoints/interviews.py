@@ -122,7 +122,7 @@ async def start_interview(
     db: AsyncSession = Depends(get_db),
 ):
     """Start an interview session - marks interview as in_progress.
-    
+
     NOTE: Greeting is now handled automatically by LangGraph when the agent connects.
     This endpoint just marks the interview as ready. The agent will execute LangGraph
     on first turn, which will automatically route to greeting node.
@@ -208,7 +208,8 @@ async def respond_to_interview(
             try:
                 await orchestrator.cleanup_interview(interview.id)
             except Exception as e:
-                logger.warning(f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
+                logger.warning(
+                    f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
 
         await db.commit()
         await db.refresh(interview)
@@ -269,12 +270,13 @@ async def complete_interview(
         state_to_interview(state, interview)
         interview.status = "completed"
         interview.completed_at = datetime.utcnow()
-        
+
         # Cleanup graph state and cache for completed interview
         try:
             await orchestrator.cleanup_interview(interview.id)
         except Exception as e:
-            logger.warning(f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
+            logger.warning(
+                f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
 
         await db.commit()
         await db.refresh(interview)
@@ -286,14 +288,15 @@ async def complete_interview(
         # Still mark as completed even if closing node fails
         interview.status = "completed"
         interview.completed_at = datetime.utcnow()
-        
+
         # Cleanup graph state and cache for completed interview
         try:
             if orchestrator:
                 await orchestrator.cleanup_interview(interview.id)
         except Exception as cleanup_error:
-            logger.warning(f"Failed to cleanup interview {interview.id}: {cleanup_error}", exc_info=True)
-        
+            logger.warning(
+                f"Failed to cleanup interview {interview.id}: {cleanup_error}", exc_info=True)
+
         await db.commit()
         await db.refresh(interview)
         # Try to get state if available

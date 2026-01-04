@@ -51,3 +51,4 @@ echo "✅ Deployment complete!"
 echo "Check logs with: railway logs"
 echo "View service: railway open"
 
+

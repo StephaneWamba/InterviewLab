@@ -1,4 +1,4 @@
-# Multi-stage Docker build for optimized image size
+# Multi-stage Docker build for LiveKit Agent (no HTTP server, no healthcheck)
 
 # Stage 1: Builder
 FROM python:3.11-slim as builder
@@ -71,14 +71,11 @@ COPY --chown=appuser:appuser alembic/ ./alembic/
 # Switch to non-root user
 USER appuser
 
-# Expose port
-EXPOSE 8000
+# Note: No EXPOSE port needed - agent connects via WebSocket to LiveKit
+# Note: No HEALTHCHECK - agent doesn't expose HTTP endpoints
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
-
-# Run migrations and start application
-# Railway will override PORT via $PORT environment variable
-CMD ["sh", "-c", "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Default command (can be overridden by Railway)
+# Run as Python module to ensure proper import paths
+# The 'start' command is required by the LiveKit agents CLI
+CMD ["python", "-m", "src.agents.interview_agent", "start"]
 

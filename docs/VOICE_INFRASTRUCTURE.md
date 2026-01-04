@@ -99,7 +99,8 @@ OPENAI_API_KEY = "your-openai-key"
 python -m src.agents.interview_agent dev
 
 # Production
-livekit-agents start src.agents.interview_agent
+python -m livekit.agents start src.agents.interview_agent
+# Alternative (if PATH is set correctly): livekit-agents start src.agents.interview_agent
 ```
 
 ## Voice Pipeline

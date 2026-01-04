@@ -250,3 +250,4 @@ All errors follow this format:
 | `/interviews/*`    | 10 requests/minute |
 | `/sandbox/execute` | 20 requests/minute |
 | `/voice/tts`       | 30 requests/minute |
+

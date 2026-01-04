@@ -63,7 +63,7 @@ class OrchestratorLLMStream(llm.LLMStream):
                 interview_id = self._llm_instance.interview_id
                 max_retries = 3
                 retry_delay = 0.5  # 500ms delay between retries
-                
+
                 for attempt in range(max_retries):
                     try:
                         # Try main session first
@@ -74,26 +74,30 @@ class OrchestratorLLMStream(llm.LLMStream):
                                 pass
 
                             result = await self._llm_instance.db.execute(
-                                select(Interview).where(Interview.id == interview_id)
+                                select(Interview).where(
+                                    Interview.id == interview_id)
                             )
                             interview = result.scalar_one_or_none()
                             if interview:
-                                logger.info(f"Interview {interview_id} found using main session (attempt {attempt + 1})")
+                                logger.info(
+                                    f"Interview {interview_id} found using main session (attempt {attempt + 1})")
                                 return interview
-                        
+
                         # Fallback: use fresh session (avoids transaction isolation issues)
                         async with AsyncSessionLocal() as fresh_db:
                             result = await fresh_db.execute(
-                                select(Interview).where(Interview.id == interview_id)
+                                select(Interview).where(
+                                    Interview.id == interview_id)
                             )
                             interview = result.scalar_one_or_none()
                             if interview:
-                                logger.info(f"Interview {interview_id} found using fresh session (attempt {attempt + 1})")
+                                logger.info(
+                                    f"Interview {interview_id} found using fresh session (attempt {attempt + 1})")
                                 # Merge into main session for commit
                                 if self._llm_instance.db:
                                     interview = await self._llm_instance.db.merge(interview)
                                 return interview
-                        
+
                         # If not found and not last attempt, wait and retry
                         if attempt < max_retries - 1:
                             logger.warning(
@@ -107,7 +111,7 @@ class OrchestratorLLMStream(llm.LLMStream):
                                 f"Check if interview exists in database and if DATABASE_URL is correct."
                             )
                             return None
-                            
+
                     except Exception as e:
                         logger.error(
                             f"Error loading interview (attempt {attempt + 1}): {e}", exc_info=True)
@@ -116,7 +120,7 @@ class OrchestratorLLMStream(llm.LLMStream):
                             retry_delay *= 2
                         else:
                             raise
-                
+
                 return None
 
             async def load_checkpoint():

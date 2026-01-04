@@ -130,7 +130,7 @@ railway link interview-agent
     "dockerfilePath": "Dockerfile"
   },
   "deploy": {
-    "startCommand": "livekit-agents start src.agents.interview_agent",
+    "startCommand": "python -m livekit.agents start src.agents.interview_agent",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
