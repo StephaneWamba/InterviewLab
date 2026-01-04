@@ -9,6 +9,8 @@ import {
   FileText,
   LogOut,
   User,
+  Github,
+  Linkedin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -49,7 +51,17 @@ export function Navbar() {
             </div>
             <span className="text-lg font-semibold">InterviewLab</span>
           </Link>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" asChild>
+              <a href="https://github.com/StephaneWamba/InterviewLab" target="_blank" rel="noopener noreferrer" title="GitHub">
+                <Github className="h-5 w-5" />
+              </a>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a href="https://www.linkedin.com/in/stephane-wamba/" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                <Linkedin className="h-5 w-5" />
+              </a>
+            </Button>
             <Button variant="ghost" asChild>
               <Link href="/login">Sign In</Link>
             </Button>

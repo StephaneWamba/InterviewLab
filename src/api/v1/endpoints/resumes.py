@@ -87,7 +87,7 @@ async def upload_resume(
     )
 
 
-@router.get("/", response_model=list[ResumeResponse])
+@router.get("", response_model=list[ResumeResponse])
 async def list_resumes(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
