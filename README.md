@@ -6,7 +6,7 @@
 
 ---
 
-**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **LiveKit** `0.11.0+` **License** `GNU` **Status** `Portfolio-Project`
+**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **LiveKit** `0.11.0+` **OpenAI** `1.0.0+` **License** `GNU` **Status** `Portfolio-Project`
 
 Portfolio Project — Production-ready codebase demonstrating AI system architecture.
 
