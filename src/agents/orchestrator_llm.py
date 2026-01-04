@@ -158,7 +158,10 @@ class OrchestratorLLMStream(llm.LLMStream):
             interview = interview_result
             if not interview:
                 logger.error(
-                    f"Interview {self._llm_instance.interview_id} not found")
+                    f"Interview {self._llm_instance.interview_id} not found after all retries. "
+                    f"Room name: {getattr(self._llm_instance, '_room_name', 'unknown')}, "
+                    f"Database URL configured: {bool(self._llm_instance.db)}"
+                )
                 self._event_ch.send_nowait(llm.ChatChunk(
                     id="error",
                     delta=llm.ChoiceDelta(
