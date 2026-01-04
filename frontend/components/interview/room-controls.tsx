@@ -26,7 +26,7 @@ export function RoomControls({ room, onMuteChange, onVideoChange }: RoomControls
       const cameraTrack = room.localParticipant.getTrackPublication(Track.Source.Camera);
       
       setIsMuted(!micTrack || micTrack.isMuted || !micTrack.isSubscribed);
-      setIsVideoEnabled(cameraTrack && !cameraTrack.isMuted && cameraTrack.isSubscribed);
+      setIsVideoEnabled(!!(cameraTrack && !cameraTrack.isMuted && cameraTrack.isSubscribed));
     };
 
     updateStates();
