@@ -89,7 +89,3 @@ All colors support both light and dark modes.
 npm run build
 npm start
 ```
-
-## License
-
-MIT
