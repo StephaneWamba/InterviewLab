@@ -4,6 +4,12 @@
 
 **Solution:** InterviewLab delivers AI-driven technical interviews using real-time voice conversations, live code execution, and in-depth feedback, powered by LangGraph and LiveKit.
 
+---
+
+**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **License** `GNU` **Status** `Portfolio-Project`
+
+Portfolio Project — Production-ready codebase demonstrating AI system architecture.
+
 ## Aim
 
 Provide candidates with realistic interview practice through:
@@ -216,17 +222,34 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 
 ## Tech Stack
 
-| Layer         | Technology                                 |
-| ------------- | ------------------------------------------ |
-| Frontend      | Next.js 14, React, TypeScript, TailwindCSS |
-| Backend       | FastAPI, Python 3.11, SQLAlchemy, Alembic  |
-| Voice         | LiveKit, OpenAI TTS/STT, Silero VAD        |
-| Orchestration | LangGraph, LangChain                       |
-| LLM           | OpenAI GPT-4o-mini, Instructor             |
-| Database      | PostgreSQL, Redis                          |
-| Execution     | Docker, Python, Node.js                    |
-| Deployment    | Railway (backend), Vercel (frontend)       |
+### Backend
+- **FastAPI** - Modern async web framework
+- **Python 3.11+** - Programming language
+- **LangGraph 0.0.40+** - State machine orchestration
+- **SQLAlchemy 2.0+** - ORM with async support
+- **Alembic** - Database migrations
+- **LiveKit Agents** - Real-time voice agents
+- **OpenAI GPT-4o-mini** - LLM for question generation
+- **Instructor** - Structured LLM outputs
+- **PostgreSQL** - Primary database
+- **Redis** - Caching and state management
+- **Docker** - Code sandbox execution
+
+### Frontend
+- **Next.js 16.1** - React framework
+- **TypeScript 5.0+** - Type safety
+- **React 19.2** - UI library
+- **Tailwind CSS 4** - Styling
+- **Zustand** - State management
+- **TanStack Query** - Data fetching
+- **Monaco Editor** - Code editor
+- **Framer Motion** - Animations
+- **LiveKit Client** - WebRTC integration
+
+### Deployment
+- **Railway** - Backend and agent hosting
+- **Vercel** - Frontend hosting
 
 ## License
 
-Free to use under GNU License
+GNU General Public License v3.0
