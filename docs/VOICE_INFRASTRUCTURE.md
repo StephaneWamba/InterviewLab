@@ -15,6 +15,8 @@ graph LR
     B -->|Audio Stream| A
 ```
 
+The agent acts as a bridge between LiveKit's WebRTC streams and the orchestrator. Audio flows bidirectionally: user speech is buffered, VAD detects speech boundaries, then STT transcribes. The orchestrator processes text and returns `next_message`, which TTS converts to audio and streams back through LiveKit. The agent uses non-streaming STT (OpenAI's default), so VAD is required to detect when to send audio chunks for transcription.
+
 ## Components
 
 | Component          | Technology                | Purpose                         | Latency   |
@@ -35,16 +37,16 @@ sequenceDiagram
     participant STT as OpenAI STT
     participant TTS as OpenAI TTS
 
-    LK->>AG: JobContext (room metadata)
-    AG->>AG: Bootstrap (DB, TTS, STT, VAD)
+    LK->>AG: JobContext room metadata
+    AG->>AG: Bootstrap DB TTS STT VAD
     AG->>O: Initialize orchestrator
-    AG->>LK: Connect (handshake)
+    AG->>LK: Connect handshake
 
     loop Interview Loop
-        LK->>AG: Audio stream (user speaks)
+        LK->>AG: Audio stream user speaks
         AG->>STT: Transcribe audio
         STT->>AG: Text response
-        AG->>O: execute_step(user_response)
+        AG->>O: execute_step user_response
         O->>AG: Response message
         AG->>TTS: Generate speech
         TTS->>AG: Audio bytes
@@ -55,6 +57,8 @@ sequenceDiagram
     LK->>AG: Room closed
     AG->>O: Cleanup
 ```
+
+Bootstrap happens before connection to meet LiveKit's <100ms handshake requirement. Heavy imports (database, orchestrator) are deferred until after metadata extraction. The `OrchestratorLLM` adapter wraps the orchestrator, translating agent callbacks into `execute_step` calls with proper state loading and checkpointing. TTS/STT failures are handled gracefully—the agent continues with degraded functionality rather than crashing.
 
 ## Setup
 

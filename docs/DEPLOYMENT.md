@@ -9,18 +9,18 @@ InterviewLab deploys to:
 
 ```mermaid
 graph TB
-    subgraph "Vercel"
+    subgraph Vercel["Vercel"]
         FE[Next.js Frontend]
     end
 
-    subgraph "Railway"
+    subgraph Railway["Railway"]
         API[FastAPI Backend]
         AGENT[LiveKit Agent]
-        DB[(PostgreSQL)]
-        REDIS[(Redis)]
+        DB[PostgreSQL]
+        REDIS[Redis]
     end
 
-    subgraph "External"
+    subgraph External["External"]
         LK[LiveKit Cloud]
         OPENAI[OpenAI API]
     end
@@ -33,6 +33,8 @@ graph TB
     AGENT -->|API| OPENAI
     API -->|API| OPENAI
 ```
+
+The frontend connects to the backend via HTTPS for REST APIs and directly to LiveKit Cloud via WebSocket for voice streams. The agent runs as a separate Railway service, connecting to LiveKit Cloud to handle voice sessions. Both the API and agent use the same database and Redis instance, sharing connection pools. The agent scales independently—deploy multiple instances and LiveKit distributes connections across them.
 
 ## Railway Deployment (Backend)
 

@@ -8,18 +8,18 @@ InterviewLab frontend is a modern Next.js 14 application built with TypeScript, 
 
 ```mermaid
 graph TB
-    subgraph "Next.js App Router"
+    subgraph NextJS["Next.js App Router"]
         A[Pages] --> B[Components]
         B --> C[Hooks]
         C --> D[API Client]
     end
 
-    subgraph "State Management"
+    subgraph State["State Management"]
         E[Zustand Store] --> F[React Query]
         F --> D
     end
 
-    subgraph "External Services"
+    subgraph External["External Services"]
         D --> G[Backend API]
         H[LiveKit Client] --> I[LiveKit Server]
     end
@@ -27,6 +27,8 @@ graph TB
     B --> H
     F --> G
 ```
+
+The App Router provides server components and route-based code splitting. Zustand manages client-side auth state, while React Query handles server state with automatic caching and background refetching. The API client uses Axios interceptors to inject auth tokens and handle 401 redirects. LiveKit Client connects separately via WebSocket, with connection state managed by the `useLiveKitRoom` hook.
 
 ## Tech Stack
 
@@ -122,12 +124,14 @@ sequenceDiagram
     participant LK as LiveKit
 
     U->>F: Start Interview
-    F->>A: POST /interviews/{id}/start
-    A->>F: { token, url, room_name }
-    F->>LK: Connect(token, url)
+    F->>A: POST interviews id start
+    A->>F: token url room_name
+    F->>LK: Connect token url
     LK->>F: Connected
     F->>U: Audio stream active
 ```
+
+The frontend requests a LiveKit token from the backend, which generates a JWT with room permissions. The token includes the room name (`interview-{id}`) and participant identity. Once connected, the agent bootstraps and the frontend subscribes to audio tracks. The `useLiveKitRoom` hook manages connection lifecycle, automatically handling reconnection on network failures and cleaning up resources on unmount.
 
 ### useLiveKitRoom Hook
 
@@ -223,11 +227,13 @@ const { data, isLoading, error } = useQuery({
 ```mermaid
 graph LR
     A[User writes code] --> B[Click Submit]
-    B --> C[POST /interviews/{id}/submit-code]
+    B --> C[POST interviews id submit-code]
     C --> D[Code saved to interview]
     D --> E[Agent processes code]
     E --> F[Code review response]
 ```
+
+Code is saved to the database first, then the user's voice message triggers the orchestrator with `current_code` set. The orchestrator routes directly to `code_review`, bypassing intent detection. The sandbox service executes code in isolated Docker containers, and results are appended to `code_submissions` via reducer. The frontend polls the interview state to display code review feedback when available.
 
 ## Routing & Navigation
 

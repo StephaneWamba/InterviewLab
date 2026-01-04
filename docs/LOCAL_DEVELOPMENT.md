@@ -268,21 +268,23 @@ sequenceDiagram
     participant AG as Agent
     participant O as Orchestrator
 
-    F->>A: POST /interviews/123/submit-code
+    F->>A: POST interviews 123 submit-code
     A->>D: Save code to interview
     A->>D: Update conversation_history
     A->>F: 200 OK
 
-    Note over F,AG: User speaks "I submitted code"
+    Note over F,AG: User speaks I submitted code
     F->>AG: Audio stream
-    AG->>O: execute_step(code=...)
-    O->>O: route_from_ingest → code_review
+    AG->>O: execute_step code
+    O->>O: route_from_ingest to code_review
     O->>O: Execute code in sandbox
     O->>O: Analyze code quality
     O->>D: Save results
     O->>AG: Code review response
     AG->>F: TTS audio
 ```
+
+Code is persisted to the database first, then the user's voice message triggers the orchestrator with `current_code` set. The `route_from_ingest` function detects code presence and routes directly to `code_review`, bypassing intent detection. The sandbox service executes code in isolated Docker containers, and `get_code_metrics` analyzes quality using AST parsing. Results are appended to `code_submissions` via reducer, ensuring atomic updates even with concurrent state modifications.
 
 ## State Inspection
 

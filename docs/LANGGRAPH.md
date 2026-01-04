@@ -73,6 +73,8 @@ graph TD
     FINAL --> END([END])
 ```
 
+All external inputs enter through `ingest_input`, which prevents state mutations at graph boundaries. The `route_from_ingest` function checks conversation history to avoid duplicate greetings on reconnects, then routes based on turn count and code presence. `decide_next_action` uses structured LLM output (`NextActionDecision`) to set `next_node`, which `route_action_node` reads for deterministic routing. Every action node converges on `finalize_turn`, which atomically writes `conversation_history` using the reducer pattern and checkpoints state.
+
 ## Node Types
 
 ### Control Nodes
@@ -109,19 +111,21 @@ sequenceDiagram
     participant Q as question
     participant F as finalize_turn
 
-    U->>O: "I worked on a Python project"
-    O->>I: execute_step(user_response="...")
+    U->>O: I worked on a Python project
+    O->>I: execute_step user_response
     I->>D: Route to detect_intent
-    D->>D: LLM detects: no_intent
+    D->>D: LLM detects no_intent
     D->>DEC: Route to decide_next_action
-    DEC->>DEC: LLM decides: question
+    DEC->>DEC: LLM decides question
     DEC->>Q: Route to question
     Q->>Q: LLM generates question
     Q->>F: Route to finalize_turn
     F->>F: Append to conversation_history
     F->>O: Return state
-    O->>U: "Tell me more about that project"
+    O->>U: Tell me more about that project
 ```
+
+Each node receives the full state and returns partial updates. The orchestrator merges updates using LangGraph's reducer mechanism for append-only fields. `detect_intent` uses structured output (`UserIntentDetection`) to classify user intent, while `decide_next_action` considers conversation history, phase, and active requests to choose the next action. The question node builds resume context and conversation context, then generates a personalized question that's appended to `questions_asked` via reducer.
 
 ## Decision Making
 

@@ -41,6 +41,8 @@ graph LR
     H --> I[End]
 ```
 
+The orchestrator manages flow through phases: intro (greeting), exploration (resume-based questions), technical (code exercises), and closing (evaluation). The LLM decides transitions based on conversation context, user responses, and interview progress. Code submissions trigger immediate routing to `code_review`, bypassing normal question flow. The agent guides you to the sandbox when appropriate, and code execution results inform the next questions.
+
 ### Phases
 
 | Phase           | Description                     | Duration  |

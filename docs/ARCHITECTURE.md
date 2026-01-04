@@ -4,13 +4,15 @@
 
 InterviewLab is a voice-based technical interview platform using LangGraph for orchestration and LiveKit for real-time communication.
 
+The system connects a Next.js frontend to a FastAPI backend, which coordinates with LiveKit for real-time voice communication. The LiveKit agent bridges voice streams to the LangGraph orchestrator, which manages interview state and generates responses using GPT-4o-mini.
+
 ```mermaid
 graph TB
-    Frontend[Frontend React App] -->|HTTP/REST| API[FastAPI Backend]
+    Frontend[Frontend React App] -->|HTTP REST| API[FastAPI Backend]
     Frontend -->|WebSocket| LiveKit[LiveKit Server]
     API -->|HTTP| LiveKit
-    API -->|SQL| DB[(PostgreSQL)]
-    API -->|Cache| Redis[(Redis)]
+    API -->|SQL| DB[PostgreSQL]
+    API -->|Cache| Redis[Redis]
     LiveKit -->|WebSocket| Agent[LiveKit Agent]
     Agent -->|LangGraph| Orchestrator[Interview Orchestrator]
     Orchestrator -->|OpenAI API| LLM[GPT-4o-mini]
@@ -18,6 +20,8 @@ graph TB
     Agent -->|OpenAI API| TTS[Text-to-Speech]
     Agent -->|OpenAI API| STT[Speech-to-Text]
 ```
+
+The frontend establishes two connections: REST for interview management and WebSocket for real-time voice. The agent bootstraps resources before connecting to meet LiveKit's <100ms handshake requirement, then bridges voice streams to the orchestrator via a custom LLM adapter that translates LangGraph state updates into agent responses.
 
 ## Core Components
 
@@ -80,6 +84,8 @@ stateDiagram-v2
     finalize_turn --> [*]
 ```
 
+All external inputs funnel through `ingest_input`, which prevents state mutations at graph boundaries. The `route_from_ingest` function checks conversation history to avoid duplicate greetings on reconnects, then routes based on turn count and code presence. `decide_next_action` uses structured LLM output to set `next_node`, which `route_action_node` reads for deterministic routing. Every action node converges on `finalize_turn`, which atomically writes `conversation_history` and checkpoints state.
+
 ## Agent Lifecycle
 
 ```mermaid
@@ -91,16 +97,16 @@ sequenceDiagram
     participant DB
 
     Client->>LiveKit: Connect to room
-    LiveKit->>Agent: JobContext (room metadata)
-    Agent->>Agent: Bootstrap resources (DB, TTS, STT, VAD)
+    LiveKit->>Agent: JobContext room metadata
+    Agent->>Agent: Bootstrap resources DB TTS STT VAD
     Agent->>Orchestrator: Initialize orchestrator
-    Agent->>LiveKit: Connect (handshake)
+    Agent->>LiveKit: Connect handshake
     LiveKit->>Client: Agent ready
 
     loop Interview Loop
         Client->>LiveKit: User speaks
-        LiveKit->>Agent: Audio stream (STT)
-        Agent->>Orchestrator: Execute step (user_response)
+        LiveKit->>Agent: Audio stream STT
+        Agent->>Orchestrator: Execute step user_response
         Orchestrator->>Orchestrator: LangGraph execution
         Orchestrator->>DB: Checkpoint state
         Orchestrator->>Agent: Response message
@@ -112,6 +118,8 @@ sequenceDiagram
     Agent->>Orchestrator: Cleanup interview
     Agent->>DB: Final state save
 ```
+
+The agent follows a two-phase bootstrap: extract interview_id from room name, then bootstrap all resources before `ctx.connect()`. This ensures the agent is ready before the handshake completes, preventing the frontend from showing an uninitialized participant. Heavy imports (database, orchestrator, TTS/STT) are deferred until after metadata extraction. VAD is required for OpenAI's non-streaming STT to detect speech boundaries. The agent monitors interview status every 5 seconds and triggers cleanup when status becomes "completed".
 
 ## State Management
 
@@ -151,6 +159,8 @@ flowchart LR
     I -->|Audio| J[User hears]
 ```
 
+The `OrchestratorLLM` adapter wraps the orchestrator, translating agent callbacks into `execute_step` invocations. It loads state from the database checkpoint, passes user input through the graph, then extracts `next_message` from the updated state. The adapter handles thread*id isolation (`interview*{interview_id}`) so concurrent interviews don't leak state. Each graph execution is atomic: state updates, checkpoint writes, and response generation happen in a single transaction.
+
 ## Code Submission Flow
 
 ```mermaid
@@ -161,12 +171,12 @@ sequenceDiagram
     participant Agent
     participant Orchestrator
 
-    Frontend->>API: POST /submit-code
+    Frontend->>API: POST submit-code
     API->>DB: Save code to interview
     API->>DB: Update conversation_history
-    Frontend->>Agent: User speaks "I submitted code"
-    Agent->>Orchestrator: execute_step(code=...)
-    Orchestrator->>Orchestrator: route_from_ingest → code_review
+    Frontend->>Agent: User speaks I submitted code
+    Agent->>Orchestrator: execute_step code
+    Orchestrator->>Orchestrator: route_from_ingest to code_review
     Orchestrator->>Orchestrator: Execute code in sandbox
     Orchestrator->>Orchestrator: Analyze code quality
     Orchestrator->>DB: Save results
@@ -174,3 +184,4 @@ sequenceDiagram
     Agent->>Frontend: TTS audio
 ```
 
+Code submissions are saved to the database first, then the user's voice message triggers the orchestrator with `current_code` set. The `route_from_ingest` function detects `current_code` and bypasses intent detection, routing directly to `code_review`. The sandbox service executes code in isolated Docker containers, and `get_code_metrics` analyzes quality using AST parsing and complexity metrics. Results are appended to `code_submissions` via reducer, ensuring atomic updates even with concurrent state modifications.
