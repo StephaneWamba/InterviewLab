@@ -12,7 +12,8 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-# Only stdlib + livekit core imports at module level
+# Module-level imports: only standard library and LiveKit core
+# Heavy imports are deferred until after handshake to meet <100ms requirement
 from livekit.agents import (
     Agent,
     AgentServer,
@@ -23,17 +24,18 @@ from livekit.agents import (
     room_io,
 )
 
-# Type hints only - never executed at runtime
+# Type hints are conditionally imported to avoid runtime overhead
 if TYPE_CHECKING:
     from src.agents.resources import AgentResources
 
-# Add src to path for imports (only if needed, should be in PYTHONPATH)
+# Ensure src directory is in Python path for imports
+# Note: In production, this should be handled via PYTHONPATH environment variable
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 logger = logging.getLogger(__name__)
 
-# Create server instance (OK at module level - AgentServer is lightweight)
+# AgentServer is lightweight and safe to instantiate at module level
 server = AgentServer()
 
 
@@ -50,35 +52,21 @@ async def entrypoint(ctx: JobContext):
 
     This ensures frontend doesn't show agent participant before it's ready to listen.
     """
-    import time
-    t0 = time.monotonic()
-
-    # Log immediately (before any imports or heavy operations)
-    try:
-        room_name = ctx.room.name if hasattr(ctx, 'room') else 'no-room'
-        logger.info(f"entrypoint_called (room={room_name})")
-    except Exception:
-        pass
-
-    # Extract interview_id from room name BEFORE connection
-    # Room name is available without connecting (format: "interview-{id}")
+    # Extract interview ID from room name before establishing connection
+    # Room name format: "interview-{id}" and is available without connecting
     try:
         interview_id = int(ctx.room.name.replace("interview-", ""))
-        logger.info(
-            f"Extracted interview_id: {interview_id} from room: {ctx.room.name}")
     except ValueError:
         logger.error(
             f"Could not extract interview_id from room name: {ctx.room.name}")
         return
 
-    # Bootstrap all resources BEFORE connection (per LiveKit best practices)
-    # This ensures agent is ready before frontend shows it as connected
-    logger.info("bootstrap_start (before connection)")
+    # Bootstrap all resources before connection to ensure agent is ready
+    # This follows LiveKit best practices: agent should be initialized before handshake
+    # so the frontend doesn't display the agent participant until it's ready to listen
 
-    # Lazy import - only when needed (after metadata extraction, before connection)
+    # Defer heavy imports until after metadata extraction but before connection
     from src.agents.resources import bootstrap_resources
-    from src.agents.tts_utils import prepare_text_for_tts, normalize_numbers_and_symbols
-    from src.agents.checkpoint_utils import checkpoint_greeting_in_background
 
     resources: "AgentResources | None" = None
     try:
@@ -87,30 +75,20 @@ async def entrypoint(ctx: JobContext):
         logger.error(f"Bootstrap failed before connection: {e}", exc_info=True)
         return
 
-    logger.info("handshake_start")
-
-    # CRITICAL: Connect AFTER bootstrap (agent is ready, frontend won't show it until ready)
+    # Connect to room after bootstrap completes
+    # Agent is now fully initialized, so frontend won't display it until ready
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
 
-    t_connect = time.monotonic()
-    logger.info(f"ctx_connected (elapsed={(t_connect - t0):.3f}s)")
-
-    # ---- SAFE ZONE: Handshake complete, agent already initialized ----
-
-    logger.info(
-        f"Agent connected to room: {ctx.room.name} (interview_id={interview_id})")
+    # Handshake complete: safe to perform heavy operations and start session
 
     try:
-        # Create agent session with bootstrapped resources
-        # VAD is required for OpenAI STT (non-streaming STT needs VAD for streaming)
         resources.session = AgentSession(
-            vad=resources.vad,  # Required for non-streaming STT to work
+            vad=resources.vad,  # Required for OpenAI non-streaming STT
             stt=resources.stt,
             llm=resources.orchestrator_llm,
             tts=resources.tts,
         )
 
-        # Create agent with instructions
         agent = Agent(
             instructions=(
                 "You are a professional interviewer conducting a technical interview. "
@@ -123,8 +101,6 @@ async def entrypoint(ctx: JobContext):
             ),
         )
 
-        # Start the session
-        t_session_start = time.monotonic()
         await resources.session.start(
             agent=agent,
             room=ctx.room,
@@ -134,19 +110,9 @@ async def entrypoint(ctx: JobContext):
             )
         )
 
-        t_session_ready = time.monotonic()
-        logger.info(
-            f"session_started (elapsed={(t_session_ready - t_session_start):.3f}s)")
-        logger.info(
-            "AgentSession started with transcription enabled. "
-            "Transcriptions will be sent to frontend via lk.transcription text stream."
-        )
+        # Brief delay to ensure TTS audio output is initialized
+        await asyncio.sleep(0.5)
 
-        t_init_total = time.monotonic() - t0
-        logger.info(
-            f"init_done (elapsed={t_init_total:.3f}s, interview_id={interview_id})")
-
-        # Listen for test audio requests via data messages
         def handle_data_message(data_packet):
             """Handle data messages, including test audio requests."""
             try:
@@ -155,128 +121,108 @@ async def entrypoint(ctx: JobContext):
                     data = data_packet.user.payload
                     message = json.loads(data.decode('utf-8'))
                     if message.get('type') == 'test_audio' and resources.session:
-                        logger.info("Received test audio request")
                         test_message = prepare_text_for_tts(
                             "Hello! This is an audio test. Can you hear me clearly?"
                         )
                         asyncio.create_task(
                             resources.session.say(test_message))
-            except Exception as e:
-                logger.debug(f"Error processing data message: {e}")
+            except Exception:
+                pass
 
         ctx.room.on("data_received", handle_data_message)
 
-        # Send initial greeting after session starts
+        # Execute LangGraph on first connection to generate initial greeting
+        # LangGraph routes to greeting node when conversation_history is empty
         try:
-            logger.info(
-                f"Checking for interview {interview_id} to send greeting")
-
-            # Lazy imports - only when needed (after handshake)
-            from src.services.checkpoint_service import get_checkpoint_service
             from src.core.database import AsyncSessionLocal
             from src.models.interview import Interview
-            from src.services.state_manager import interview_to_state, state_to_interview
+            from src.models.user import User
+            from src.services.data.state_manager import interview_to_state
             from sqlalchemy import select
 
-            checkpoint_service = get_checkpoint_service()
+            if resources.db:
+                interview_result = await resources.db.execute(
+                    select(Interview).where(Interview.id == interview_id)
+                )
+                interview = interview_result.scalar_one_or_none()
 
-            async def load_interview_for_greeting():
-                """Load interview using the main session."""
-                if not resources.db:
-                    return None
-                result = await resources.db.execute(select(Interview).where(Interview.id == interview_id))
-                return result.scalar_one_or_none()
+                if interview and interview.status == "in_progress":
+                    user_result = await resources.db.execute(
+                        select(User).where(User.id == interview.user_id)
+                    )
+                    user = user_result.scalar_one_or_none()
 
-            async def load_checkpoint_for_greeting():
-                """Load checkpoint using a separate session."""
-                try:
-                    async with AsyncSessionLocal() as checkpoint_db:
-                        return await checkpoint_service.restore(interview_id, checkpoint_db)
-                except Exception as e:
-                    logger.warning(
-                        f"Failed to restore checkpoint for greeting: {e}")
-                    return None
+                    conv_history = interview.conversation_history or []
+                    actual_messages = [
+                        msg for msg in conv_history if msg.get("role") != "system"]
 
-            interview_result, existing_state = await asyncio.gather(
-                load_interview_for_greeting(),
-                load_checkpoint_for_greeting(),
-                return_exceptions=True
-            )
-
-            # Handle results
-            if isinstance(interview_result, Exception):
-                logger.error(
-                    f"Failed to load interview for greeting: {interview_result}", exc_info=True)
-                interview = None
-            else:
-                interview = interview_result
-
-            if isinstance(existing_state, Exception):
-                logger.warning(
-                    f"Failed to restore checkpoint for greeting: {existing_state}")
-                existing_state = None
-
-            if interview and interview.status == "in_progress":
-                logger.info(
-                    f"Interview {interview_id} found, status: {interview.status}")
-
-                has_any_messages = interview.conversation_history and len(
-                    interview.conversation_history) > 0
-
-                if not has_any_messages and not existing_state:
-                    logger.info(
-                        "No conversation history or checkpoint, generating initial greeting")
-                    if not resources.orchestrator_llm or not resources.orchestrator_llm.orchestrator:
-                        logger.error(
-                            "Orchestrator not initialized, cannot send greeting")
-                    else:
-                        state = interview_to_state(interview)
+                    if not actual_messages:
+                        state = interview_to_state(interview, user=user)
                         state = await resources.orchestrator_llm.orchestrator.execute_step(state)
+
                         greeting = state.get("next_message")
+                        if not greeting:
+                            conv_history = state.get(
+                                "conversation_history", [])
+                            for msg in reversed(conv_history):
+                                if msg.get("role") == "assistant" and msg.get("content"):
+                                    greeting = msg.get("content")
+                                    break
 
-                        if resources.orchestrator_llm.orchestrator._interview_logger:
-                            resources.orchestrator_llm.orchestrator._interview_logger.log_state(
-                                "greeting_generated", state)
+                        if greeting and resources.session:
+                            from src.agents.tts_utils import prepare_text_for_tts
+                            from src.services.data.state_manager import state_to_interview
 
-                        if greeting:
-                            logger.info(
-                                f"Sending greeting: {greeting[:100]}...")
+                            greeting_tts = prepare_text_for_tts(greeting)
+                            await resources.session.say(greeting_tts)
+
                             state_to_interview(state, interview)
                             if resources.db:
                                 await resources.db.commit()
-
-                            if resources.session:
-                                await resources.session.say(greeting)
-                            logger.info("Greeting sent successfully")
-
-                            asyncio.create_task(
-                                checkpoint_greeting_in_background(
-                                    state, interview_id, resources.orchestrator_llm.orchestrator)
-                            )
-                        else:
-                            logger.warning(
-                                "No greeting generated from orchestrator")
                 else:
-                    logger.info(
-                        f"Interview has conversation history or checkpoint (messages: {len(interview.conversation_history) if interview.conversation_history else 0}), "
-                        f"skipping automatic greeting. Agent will respond when user speaks.")
-            else:
-                logger.warning(
-                    f"Interview {interview_id} not found or not in_progress: {interview.status if interview else 'not found'}")
+                    logger.error(
+                        f"Interview {interview_id} not found or not in_progress")
         except Exception as e:
             logger.error(
-                f"Error sending initial greeting: {e}", exc_info=True)
+                f"Error executing initial LangGraph step: {e}", exc_info=True)
 
-        # Wait for room to disconnect (or timeout)
+        # Monitor interview status and room connection state
         try:
-            await asyncio.sleep(3600)  # Run for up to 1 hour
+
+            while True:
+                await asyncio.sleep(5)
+
+                try:
+                    async with AsyncSessionLocal() as check_db:
+                        result = await check_db.execute(
+                            select(Interview).where(
+                                Interview.id == interview_id)
+                        )
+                        interview = result.scalar_one_or_none()
+
+                        if interview and interview.status == "completed":
+                            # Clean up orchestrator state before exiting
+                            if resources and resources.orchestrator_llm and resources.orchestrator_llm.orchestrator:
+                                try:
+                                    await resources.orchestrator_llm.orchestrator.cleanup_interview(interview_id)
+                                except Exception as cleanup_error:
+                                    logger.error(
+                                        f"Failed to cleanup orchestrator: {cleanup_error}", exc_info=True)
+                            break
+                except Exception:
+                    pass
+
+                if not ctx.room or not ctx.room.isconnected():
+                    break
+
         except asyncio.CancelledError:
             pass
+        except Exception as e:
+            logger.error(f"Error in agent monitoring loop: {e}", exc_info=True)
 
     except Exception as e:
         logger.error(f"Agent entrypoint error: {e}", exc_info=True)
     finally:
-        # Clean up all resources
         if resources:
             await resources.aclose()
 

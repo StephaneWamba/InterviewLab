@@ -13,7 +13,7 @@ from livekit.agents import llm
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
     from src.models.interview import Interview
-    from src.services.interview_orchestrator import InterviewOrchestrator
+    from src.services.orchestrator.langgraph_orchestrator import LangGraphInterviewOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -35,58 +35,79 @@ class OrchestratorLLMStream(llm.LLMStream):
     async def _run(self) -> None:
         """Run the orchestrator and push results to the stream."""
         try:
-            # Lazy imports - only when method is called (after handshake)
-            from src.services.checkpoint_service import CheckpointService
+            from src.services.data.checkpoint_service import CheckpointService
             from src.core.database import AsyncSessionLocal
             from src.models.interview import Interview
-            from src.services.state_manager import interview_to_state, state_to_interview
+            from src.services.data.state_manager import interview_to_state, state_to_interview
             from sqlalchemy import select
 
-            logger.debug(
-                f"OrchestratorLLMStream._run started for interview {self._llm_instance.interview_id}")
+            # Rollback any pending transactions to ensure session is in valid state
+            if self._llm_instance.db:
+                try:
+                    await self._llm_instance.db.rollback()
+                except Exception as rollback_error:
+                    logger.warning(
+                        f"Could not rollback session (will use fresh sessions): {rollback_error}")
 
-            # OPTIMIZATION: Get user message more efficiently
             user_message = ""
             if self._chat_ctx.items:
-                # Find the last user message - iterate backwards for efficiency
                 for item in reversed(self._chat_ctx.items):
                     if item.type == "message" and item.role == "user":
                         user_message = item.text_content or ""
                         break
 
-            logger.debug(
-                f"Processing user message: {user_message[:100] if user_message else '(empty)'}")
-
             checkpoint_service = CheckpointService()
 
-            # Create separate functions with proper session handling
             async def load_interview():
-                """Load interview using the main session."""
-                result = await self._llm_instance.db.execute(
-                    select(Interview).where(Interview.id ==
-                                            self._llm_instance.interview_id)
-                )
-                return result.scalar_one_or_none()
+                """Load interview using main session with fallback to fresh session."""
+                try:
+                    if self._llm_instance.db:
+                        try:
+                            await self._llm_instance.db.rollback()
+                        except Exception:
+                            pass
+
+                    result = await self._llm_instance.db.execute(
+                        select(Interview).where(Interview.id ==
+                                                self._llm_instance.interview_id)
+                    )
+                    return result.scalar_one_or_none()
+                except Exception as e:
+                    logger.error(
+                        f"Error loading interview: {e}", exc_info=True)
+                    # Fallback: use fresh session and merge into main session for commit
+                    try:
+                        async with AsyncSessionLocal() as fresh_db:
+                            result = await fresh_db.execute(
+                                select(Interview).where(Interview.id ==
+                                                        self._llm_instance.interview_id)
+                            )
+                            interview = result.scalar_one_or_none()
+                            if interview and self._llm_instance.db:
+                                interview = await self._llm_instance.db.merge(interview)
+                            return interview
+                    except Exception as retry_error:
+                        logger.error(
+                            f"Error loading interview with fresh session: {retry_error}", exc_info=True)
+                        raise
 
             async def load_checkpoint():
-                """Load checkpoint using a separate session to avoid concurrent operation errors."""
+                """Load checkpoint using separate session to avoid transaction conflicts."""
                 try:
                     async with AsyncSessionLocal() as checkpoint_db:
                         return await checkpoint_service.restore(
                             self._llm_instance.interview_id, checkpoint_db
                         )
                 except Exception as e:
-                    logger.warning(f"Failed to restore checkpoint: {e}")
                     return None
 
-            # Parallelize database queries using separate sessions
+            # Parallelize database queries to improve performance
             interview_result, checkpoint_state = await asyncio.gather(
                 load_interview(),
                 load_checkpoint(),
                 return_exceptions=True
             )
 
-            # Ensure orchestrator is initialized
             if not self._llm_instance._initialized or not self._llm_instance.orchestrator:
                 logger.error("OrchestratorLLM not initialized")
                 self._event_ch.send_nowait(llm.ChatChunk(
@@ -96,7 +117,6 @@ class OrchestratorLLMStream(llm.LLMStream):
                 ))
                 return
 
-            # Handle interview load result
             if isinstance(interview_result, Exception):
                 logger.error(
                     f"Failed to load interview: {interview_result}", exc_info=True)
@@ -118,58 +138,122 @@ class OrchestratorLLMStream(llm.LLMStream):
                 ))
                 return
 
-            # Handle checkpoint restore result
+            # Stop processing if interview is already completed
+            if interview.status == "completed":
+                self._event_ch.send_nowait(llm.ChatChunk(
+                    id="completed",
+                    delta=llm.ChoiceDelta(
+                        content="This interview has been completed. Thank you for your time!")
+                ))
+                return
+
             state = None if isinstance(
                 checkpoint_state, Exception) else checkpoint_state
             if isinstance(checkpoint_state, Exception):
-                logger.warning(
-                    f"Failed to restore checkpoint, will initialize from interview: {checkpoint_state}")
+                pass  # State already set to None above
+
+            user = None
+            try:
+                from src.models.user import User
+                async with AsyncSessionLocal() as user_db:
+                    result = await user_db.execute(
+                        select(User).where(User.id == interview.user_id)
+                    )
+                    user = result.scalar_one_or_none()
+            except Exception:
+                pass
 
             if not state:
-                # No checkpoint found, initialize from interview
-                logger.debug(
-                    f"No checkpoint found, initializing state from interview {self._llm_instance.interview_id}")
-                state = interview_to_state(interview)
+                state = interview_to_state(interview, user=user)
+
+                if state.get("interview_id") != self._llm_instance.interview_id:
+                    logger.error(
+                        f"State interview_id ({state.get('interview_id')}) does not match "
+                        f"expected interview_id ({self._llm_instance.interview_id})"
+                    )
+                    raise ValueError("State interview_id mismatch")
+
                 if self._llm_instance.orchestrator._interview_logger:
                     self._llm_instance.orchestrator._interview_logger.log_state(
                         "state_initialized_from_interview", state)
             else:
-                logger.debug(
-                    f"Loaded state from checkpoint for interview {self._llm_instance.interview_id}")
-                if self._llm_instance.orchestrator._interview_logger:
-                    self._llm_instance.orchestrator._interview_logger.log_checkpoint(
-                        {"interview_id": self._llm_instance.interview_id,
-                            "state_keys": list(state.keys())},
-                        "loaded"
+                # Validate checkpoint belongs to this interview to prevent state contamination
+                checkpoint_interview_id = state.get("interview_id")
+                if checkpoint_interview_id != self._llm_instance.interview_id:
+                    logger.error(
+                        f"Checkpoint state interview_id ({checkpoint_interview_id}) does not match "
+                        f"expected interview_id ({self._llm_instance.interview_id}). "
+                        f"Rejecting checkpoint and reconstructing from interview."
                     )
-                    self._llm_instance.orchestrator._interview_logger.log_state(
-                        "state_restored_from_checkpoint", state)
+                    state = interview_to_state(interview, user=user)
+                else:
+                    # Reload conversation_history from database to get latest code submissions
+                    # Checkpoint may be stale if code was submitted via API after checkpoint was saved
+                    interview_state = interview_to_state(interview, user=user)
+                    state["conversation_history"] = interview_state.get(
+                        "conversation_history", [])
+                    state["code_submissions"] = interview_state.get(
+                        "code_submissions", [])
+                    state["feedback"] = interview_state.get("feedback")
+
+                    if self._llm_instance.orchestrator._interview_logger:
+                        self._llm_instance.orchestrator._interview_logger.log_checkpoint(
+                            {"interview_id": self._llm_instance.interview_id,
+                                "state_keys": list(state.keys())},
+                            "loaded"
+                        )
+                        self._llm_instance.orchestrator._interview_logger.log_state(
+                            "state_restored_from_checkpoint", state)
 
             # Execute orchestrator step with user response
-            logger.debug("Executing orchestrator step...")
+            # Code submissions via /submit-code are already in conversation_history
             state = await self._llm_instance.orchestrator.execute_step(state, user_response=user_message)
 
-            # Get the response message
-            response = state.get(
-                "next_message", "I'm here to help with your interview.")
+            if state.get("interview_id") != self._llm_instance.interview_id:
+                logger.error(
+                    f"State interview_id ({state.get('interview_id')}) changed after execution. "
+                    f"Expected {self._llm_instance.interview_id}"
+                )
+                raise ValueError("State interview_id changed after execution")
 
-            logger.debug(f"Generated response: {response[:100]}...")
+            # Extract response: prefer next_message, fallback to conversation_history
+            response = state.get("next_message")
 
-            # Update interview and commit
+            if not response:
+                conversation_history = state.get("conversation_history", [])
+                for msg in reversed(conversation_history):
+                    if msg.get("role") == "assistant" and msg.get("content"):
+                        response = msg["content"]
+                        break
+
+                if not response:
+                    response = "I'm here to help with your interview."
+                    logger.warning(
+                        "No response found in state or conversation_history, using fallback")
+
+            if not response or not response.strip():
+                logger.error("Response is empty or whitespace only!")
+                response = "I'm here to help with your interview."
+
+            from src.agents.tts_utils import prepare_text_for_tts
+            response_tts = prepare_text_for_tts(response)
+
             state_to_interview(state, interview)
-            await self._llm_instance.db.commit()
+            try:
+                await self._llm_instance.db.commit()
+            except Exception as commit_error:
+                logger.error(
+                    f"Error committing interview update: {commit_error}", exc_info=True)
+                try:
+                    await self._llm_instance.db.rollback()
+                except Exception as rollback_error:
+                    logger.error(
+                        f"Error rolling back transaction: {rollback_error}", exc_info=True)
 
-            # Push response to stream FIRST (before checkpointing)
-            logger.debug("Sending response chunk to stream for TTS...")
+            # Send response to TTS stream (checkpointing handled by LangGraph)
             self._event_ch.send_nowait(llm.ChatChunk(
                 id="response",
-                delta=llm.ChoiceDelta(content=response)
-            ))
-            logger.debug("Response chunk sent successfully")
-
-            # Checkpoint in background after response is sent
-            asyncio.create_task(self._checkpoint_in_background(
-                state, interview, checkpoint_service
+                delta=llm.ChoiceDelta(content=response_tts)
             ))
 
         except Exception as e:
@@ -195,13 +279,11 @@ class OrchestratorLLMStream(llm.LLMStream):
             checkpoint_service: Checkpoint service instance to reuse
         """
         try:
-            # Lazy import - only when function is called
             from src.core.database import AsyncSessionLocal
             from src.models.interview import Interview
             from sqlalchemy import select
 
             async with AsyncSessionLocal() as bg_db:
-                # Reload interview in background session
                 result = await bg_db.execute(
                     select(Interview).where(
                         Interview.id == state["interview_id"])
@@ -214,10 +296,7 @@ class OrchestratorLLMStream(llm.LLMStream):
                     return
 
                 checkpoint_id = await checkpoint_service.checkpoint(state, bg_db)
-                logger.info(
-                    f"Checkpointed state in background: {checkpoint_id}")
 
-                # Log checkpoint operation
                 if self._llm_instance.orchestrator._interview_logger:
                     self._llm_instance.orchestrator._interview_logger.log_checkpoint(
                         {
@@ -229,7 +308,7 @@ class OrchestratorLLMStream(llm.LLMStream):
                         "saved_background"
                     )
         except Exception as e:
-            logger.warning(
+            logger.error(
                 f"Failed to checkpoint state in background: {e}", exc_info=True)
             if self._llm_instance.orchestrator._interview_logger:
                 self._llm_instance.orchestrator._interview_logger.log_error(
@@ -249,7 +328,7 @@ class OrchestratorLLM(llm.LLM):
         super().__init__()
         self.interview_id = interview_id
         self.db: "AsyncSession | None" = None
-        self.orchestrator: "InterviewOrchestrator | None" = None
+        self.orchestrator: "LangGraphInterviewOrchestrator | None" = None
         self._initialized = False
 
     async def init(self, db: "AsyncSession"):
@@ -258,19 +337,18 @@ class OrchestratorLLM(llm.LLM):
         Called after handshake completes to avoid blocking initialization.
         """
         # Lazy imports - only when init is called (after handshake)
-        from src.services.interview_orchestrator import InterviewOrchestrator
-        from src.services.interview_logger import InterviewLogger
+        from src.services.orchestrator.langgraph_orchestrator import LangGraphInterviewOrchestrator
+        from src.services.logging.interview_logger import InterviewLogger
 
         self.db = db
-        self.orchestrator = InterviewOrchestrator()
+        # Use LangGraph orchestrator (production orchestrator with full feature set)
+        self.orchestrator = LangGraphInterviewOrchestrator()
 
-        # Initialize interview logger
         interview_logger = InterviewLogger(self.interview_id)
         self.orchestrator.set_interview_logger(interview_logger)
+        self.orchestrator.set_db_session(db)
 
         self._initialized = True
-        logger.info(
-            f"OrchestratorLLM initialized for interview {self.interview_id}")
 
     def chat(
         self,

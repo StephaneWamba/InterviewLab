@@ -4,16 +4,14 @@ import logging
 from typing import TYPE_CHECKING
 
 from openai import AsyncOpenAI
-import instructor
-
-from src.core.config import settings
 from src.services.orchestrator.types import InterviewState, UserIntent, UserIntentDetection
 from src.services.orchestrator.context_builders import build_conversation_context
+from src.services.orchestrator.llm_helpers import LLMHelper
 
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from src.services.interview_logger import InterviewLogger
+    from src.services.logging.interview_logger import InterviewLogger
 
 
 async def detect_user_intent(
@@ -21,162 +19,108 @@ async def detect_user_intent(
     openai_client: AsyncOpenAI,
     interview_logger=None
 ) -> InterviewState:
-    """Detect user intent from their last response."""
-    state["last_node"] = "detect_user_intent"
+    """Detect user intent from their last response.
 
+    Returns state updates (no mutations) following LangGraph principles.
+    """
     last_response = state.get("last_response")
     if not last_response:
-        state["active_user_request"] = None
-        return state
+        return {
+            "active_user_request": None,
+        }
 
-    # Build conversation context for better understanding
-    conversation_context = build_conversation_context(state, interview_logger)
-    recent_context = conversation_context[-500:] if len(conversation_context) > 500 else conversation_context
+    # Build conversation context - use last 10 messages instead of character limit
+    conversation_history = state.get("conversation_history", [])
+    recent_messages = conversation_history[-10:] if len(
+        conversation_history) > 10 else conversation_history
+    recent_context = "\n".join([
+        f"{msg.get('role', 'unknown').upper()}: {msg.get('content', '')}"
+        for msg in recent_messages
+    ])
 
-    # Get the last question asked to understand what user might be responding to
+    # Get the last question asked
     last_question = ""
-    if state.get("conversation_history"):
-        for msg in reversed(state["conversation_history"]):
-            if msg.get("role") == "assistant":
-                last_question = msg.get("content", "")
-                break
+    for msg in reversed(recent_messages):
+        if msg.get("role") == "assistant":
+            last_question = msg.get("content", "")
+            break
 
-    prompt = f"""You are analyzing a user's response in an interview conversation to understand their TRUE INTENT.
+    prompt = f"""Analyze the user's response to identify their TRUE INTENT. Focus on their GOAL, not keywords.
 
-CONVERSATION CONTEXT:
+CONVERSATION (last 10 messages):
 {recent_context}
 
-LAST QUESTION ASKED: {last_question if last_question else "None (initial greeting)"}
+LAST QUESTION: {last_question if last_question else "None (initial greeting)"}
+USER RESPONSE: "{last_response}"
 
-USER'S CURRENT RESPONSE: "{last_response}"
+INTENT TYPES (choose the user's GOAL):
 
-YOUR TASK:
-Understand what the user is TRYING TO ACCOMPLISH with this response. Think about:
-1. What ACTION do they want the interviewer to take?
-2. What is their GOAL or PURPOSE in saying this?
-3. Are they making a REQUEST or just ANSWERING a question?
-4. What would happen if we IGNORED their intent? Would the conversation flow naturally?
+1. **write_code** - User wants to CREATE/WRITE code to demonstrate skills
+   Examples: "I'd like to write code", "Can I show you my approach?", "Let me code something"
+   NOT: Just mentioning code in an answer
 
-CRITICAL: Don't match keywords. Understand the user's GOAL. People express the same intent in many different ways.
+2. **review_code** - User wants to SHARE/DISCUSS existing code
+   Examples: "Here's my code", "Can you review this?", "I have code to show"
+   NOT: Asking to write new code
 
-INTENT TYPES - Understand the GOAL, not the words:
+3. **change_topic** - User wants to REDIRECT to a different topic
+   Examples: "Actually, let's talk about X", "Can we discuss Y instead?", "What about Z?"
+   KEY: Look for explicit redirection, not just a different answer
 
-1. **write_code**: User wants to CREATE/WRITE code in the sandbox
-   - GOAL: Demonstrate coding ability by writing code
-   - SIGNALS: Proactive request to code, wants to show technical skills
-   - VARIATIONS: "I'd like to write code", "Can I code something?", "Let me show you my approach", "I want to demonstrate", "Can I use the editor?"
-   - NOT: Just mentioning code in an answer
+4. **clarify** - User is CONFUSED and needs help understanding
+   Examples: "What do you mean?", "I don't understand", "Can you clarify?"
+   NOT: Just asking a follow-up question
 
-2. **review_code**: User wants to SHARE/DISCUSS existing code
-   - GOAL: Get feedback on code they have or want to walk through
-   - SIGNALS: Has code ready, wants to show/share code
-   - VARIATIONS: "Here's my code", "Can you review this?", "Let me show you the implementation", "I have some code to share"
-   - NOT: Asking to write new code
+5. **technical_assessment** - User wants different interview format (coding questions)
+   Examples: "Give me coding questions", "I want technical assessment"
 
-3. **change_topic**: User wants to REDIRECT the conversation
-   - GOAL: Move discussion to a different subject/topic
-   - SIGNALS: Explicit redirection, wants to discuss something else, correcting direction
-   - VARIATIONS: "Actually, let's talk about X", "Can we discuss Y instead?", "I'd rather talk about Z", "Let's change topics", "What about X?", "Instead, I want to discuss Y"
-   - KEY: User is REDIRECTING, not just answering differently. Look for correction/redirection intent.
-   - NOT: Just providing a different answer or example
+6. **stop** - User wants to END the interview
+   Examples: "Let's stop", "That's enough", "I want to end"
 
-4. **clarify**: User is CONFUSED and needs help understanding
-   - GOAL: Get clarification on what was asked
-   - SIGNALS: Doesn't understand, needs explanation, asking for help
-   - VARIATIONS: "What do you mean?", "I don't understand", "Can you clarify?", "Could you explain?", "I'm not sure what you're asking"
-   - NOT: Just asking a follow-up question
+7. **continue** - User is AFFIRMING willingness to continue
+   Examples: "Yes", "Sure", "Okay", "Go ahead"
 
-5. **technical_assessment**: User wants DIFFERENT TYPE of interview
-   - GOAL: Switch to technical/coding questions format
-   - SIGNALS: Requesting different interview style
-   - VARIATIONS: "Give me coding questions", "I want technical assessment", "Ask me technical questions"
+8. **no_intent** - User is just ANSWERING normally (default)
+   Examples: Normal responses providing information
 
-6. **stop**: User wants to END the interview
-   - GOAL: Terminate or pause the conversation
-   - SIGNALS: Clear request to stop
-   - VARIATIONS: "Let's stop", "That's enough", "I want to end", "Can we finish?"
+DECISION FRAMEWORK:
+1. What is the user's GOAL? (DO something / SAY something / CHANGE something)
+2. What happens if we IGNORE this? (Breaks flow = request / Fine = answer)
+3. Does it require ACTION? (Yes = specific intent / No = no_intent)
 
-7. **continue**: User is AFFIRMING willingness to continue
-   - GOAL: Express agreement/willingness
-   - SIGNALS: Brief affirmative response
-   - VARIATIONS: "Yes", "Sure", "Okay", "Continue", "Go ahead"
+EDGE CASES:
+- User asks question back → clarify (if confused) or no_intent (if natural follow-up)
+- User mentions code in answer → no_intent (unless explicitly requesting to show/write code)
+- User says "I don't know" → clarify (if confused) or no_intent (if just answering)
+- Multiple intents possible → Choose the one requiring ACTION
 
-8. **no_intent**: User is just ANSWERING normally
-   - GOAL: Provide information, answer the question
-   - SIGNALS: Normal conversational response, providing information
-   - DEFAULT: When user is just answering or having normal conversation
+EXAMPLES:
+Q: "What challenges did you face?" → A: "Actually, let's talk about leadership" → change_topic (0.95)
+Q: "Tell me about your project" → A: "I'd like to write code to show you" → write_code (0.9)
+Q: "How did you solve that?" → A: "What do you mean by 'solve'?" → clarify (0.9)
+Q: "What tools did you use?" → A: "Python, Docker, Kubernetes" → no_intent (0.9)
+Q: "Tell me about microservices" → A: "I built them with Go. Can I show you the code?" → review_code (0.85)
 
-ANALYSIS FRAMEWORK - Think through this:
+CONFIDENCE:
+- 0.9+: Very clear, explicit request
+- 0.7-0.89: Clear but some ambiguity
+- <0.7: Ambiguous → use no_intent
 
-Step 1: What is the user's GOAL?
-- Are they trying to DO something (request an action)?
-- Are they trying to SAY something (provide information)?
-- Are they trying to CHANGE something (redirect/clarify)?
+METADATA FORMAT (dict, not string):
+- change_topic: {{"topic": "leadership", "redirected_from": "challenges"}}
+- write_code/review_code: {{"language": "python", "context": "project_demo"}}
+- clarify: {{"unclear_term": "solve", "question_about": "last_question"}}
+- Otherwise: {{}} (empty dict)
 
-Step 2: What would happen if we IGNORED this?
-- If ignoring it would break the conversation flow → It's a request (write_code, change_topic, clarify, etc.)
-- If ignoring it is fine → It's just an answer (no_intent)
-
-Step 3: Look at the CONTEXT
-- What was just discussed?
-- What question was just asked?
-- How does this response relate to the conversation flow?
-
-EXAMPLES OF GOOD INTENT DETECTION:
-
-Example 1:
-Context: Interviewer asked "What challenges did you face?"
-User: "Actually, let's talk about my team leadership instead"
-Analysis: User is REDIRECTING (goal: change topic). They're not answering the question, they're changing direction.
-Intent: change_topic (confidence: 0.95)
-
-Example 2:
-Context: Interviewer asked "Tell me about your project"
-User: "I'd like to write some code to show you my approach"
-Analysis: User wants to DEMONSTRATE (goal: write code). Proactive request to code.
-Intent: write_code (confidence: 0.9)
-
-Example 3:
-Context: Interviewer asked "How did you solve that?"
-User: "What do you mean by 'solve'?"
-Analysis: User is CONFUSED (goal: get clarification). They need help understanding.
-Intent: clarify (confidence: 0.9)
-
-Example 4:
-Context: Interviewer asked "What tools did you use?"
-User: "I've worked with Python, Docker, and Kubernetes"
-Analysis: User is ANSWERING (goal: provide information). Normal response.
-Intent: no_intent (confidence: 0.9)
-
-Example 5:
-Context: Interviewer asked "Tell me about microservices"
-User: "I've built microservices using Go. Can I show you the code?"
-Analysis: User is ANSWERING but also making a REQUEST (goal: share code). The request is clear.
-Intent: review_code (confidence: 0.85)
-
-CONFIDENCE SCORING:
-- 0.9+: Very clear intent, user is explicitly requesting something
-- 0.7-0.89: Clear intent, but some ambiguity
-- <0.7: Ambiguous, likely no_intent
-
-Return your analysis with:
-- intent_type: The best matching intent (one of: write_code, review_code, change_topic, clarify, technical_assessment, stop, continue, no_intent)
-- confidence: How certain you are (0.0-1.0, float)
-- reasoning: Brief explanation of WHY you chose this intent (what goal did you identify?)
-- metadata: A JSON object/dict with any additional context (e.g. {{"topic": "leadership", "reason": "user redirected"}}), NOT a string"""
+Return: intent_type, confidence (0.0-1.0), reasoning (brief), metadata (dict)"""
 
     try:
-        client = instructor.patch(openai_client)
-        detection = await client.chat.completions.create(
-            model="gpt-4o-mini",
+        # openai_client is already patched with instructor in langgraph_orchestrator
+        llm_helper = LLMHelper(openai_client)
+        detection = await llm_helper.call_llm_with_instructor(
+            system_prompt="You are an expert at understanding human intent through conversation analysis. Your job is to identify what the user is TRYING TO ACCOMPLISH, not match keywords. Think about their GOAL, their PURPOSE, and what ACTION they want. Consider the conversation context, the flow, and what would happen if their intent was ignored. Be thoughtful and holistic in your analysis.",
+            user_prompt=prompt,
             response_model=UserIntentDetection,
-            messages=[
-                {
-                    "role": "system",
-                    "content": "You are an expert at understanding human intent through conversation analysis. Your job is to identify what the user is TRYING TO ACCOMPLISH, not match keywords. Think about their GOAL, their PURPOSE, and what ACTION they want. Consider the conversation context, the flow, and what would happen if their intent was ignored. Be thoughtful and holistic in your analysis.",
-                },
-                {"role": "user", "content": prompt},
-            ],
             temperature=0.2,
         )
 
@@ -189,20 +133,21 @@ Return your analysis with:
             "metadata": detection.metadata,
         }
 
-        state["detected_intents"] = state.get("detected_intents", [])
-        state["detected_intents"].append(intent)
+        # Return state updates (no mutations)
+        updates = {
+            "detected_intents": [intent],  # Reducer will append
+        }
 
         # Set active request if confidence is high
         if detection.confidence > 0.7:
-            state["active_user_request"] = intent
-            logger.info(
-                f"Detected user intent: {detection.intent_type} (confidence: {detection.confidence})")
+            updates["active_user_request"] = intent
         else:
-            state["active_user_request"] = None
+            updates["active_user_request"] = None
+
+        return updates
 
     except Exception as e:
         logger.warning(f"Failed to detect user intent: {e}")
-        state["active_user_request"] = None
-
-    return state
-
+        return {
+            "active_user_request": None,
+        }

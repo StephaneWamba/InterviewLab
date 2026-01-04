@@ -1,103 +1,163 @@
 # InterviewLab
 
-Voice-based interview preparation platform with AI interviewer, resume analysis, and live coding sandbox environment.
+**Voice-based technical interview platform powered by LangGraph and LiveKit**
+
+InterviewLab conducts AI-powered technical interviews through real-time voice conversations, code execution, and comprehensive feedback generation.
+
+## Aim
+
+Provide candidates with realistic interview practice through:
+
+- **Natural voice conversations** with AI interviewer
+- **Live code execution** in isolated sandbox
+- **Comprehensive feedback** on communication, technical knowledge, problem-solving, and code quality
+- **Resume-based questions** tailored to candidate background
+
+## High-Level Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend"
+        FE[Next.js React App]
+    end
+
+    subgraph "Backend API"
+        API[FastAPI Server]
+        ORCH[LangGraph Orchestrator]
+    end
+
+    subgraph "Voice Infrastructure"
+        LK[LiveKit Server]
+        AGENT[LiveKit Agent]
+        TTS[OpenAI TTS]
+        STT[OpenAI STT]
+    end
+
+    subgraph "Services"
+        SB[Docker Sandbox]
+        LLM[GPT-4o-mini]
+        DB[(PostgreSQL)]
+        REDIS[(Redis Cache)]
+    end
+
+    FE -->|HTTP/REST| API
+    FE -->|WebSocket| LK
+    API -->|HTTP| LK
+    API -->|SQL| DB
+    API -->|Cache| REDIS
+    LK -->|WebSocket| AGENT
+    AGENT -->|LangGraph| ORCH
+    ORCH -->|API| LLM
+    ORCH -->|Docker| SB
+    AGENT -->|API| TTS
+    AGENT -->|API| STT
+```
+
+### Core Components
+
+| Component        | Technology     | Purpose                               |
+| ---------------- | -------------- | ------------------------------------- |
+| **Orchestrator** | LangGraph      | State machine managing interview flow |
+| **Agent**        | LiveKit Agents | Real-time voice agent (STT/TTS)       |
+| **LLM**          | GPT-4o-mini    | Question generation, decision making  |
+| **Sandbox**      | Docker         | Isolated code execution               |
+| **Database**     | PostgreSQL     | Interview state, checkpoints          |
+| **Cache**        | Redis          | State caching, session management     |
+
+## How It Works
+
+### Interview Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant F as Frontend
+    participant A as API
+    participant LK as LiveKit
+    participant AG as Agent
+    participant O as Orchestrator
+    participant LLM as GPT-4o-mini
+
+    U->>F: Start Interview
+    F->>A: POST /interviews
+    A->>LK: Create Room
+    F->>LK: Connect (WebSocket)
+    LK->>AG: Bootstrap Agent
+    AG->>O: Initialize
+    O->>LLM: Generate Greeting
+    LLM->>O: Response
+    O->>AG: next_message
+    AG->>LK: TTS Audio
+    LK->>U: Hear Greeting
+
+    loop Conversation
+        U->>LK: Speak
+        LK->>AG: STT Text
+        AG->>O: execute_step(user_response)
+        O->>LLM: Detect Intent
+        O->>LLM: Decide Next Action
+        O->>LLM: Generate Response
+        O->>AG: Response
+        AG->>U: TTS Audio
+    end
+```
+
+### State Management
+
+- **LangGraph MemorySaver**: In-memory state per interview (`thread_id`)
+- **Database Checkpoints**: Persistent state after each turn
+- **Reducers**: Append-only fields (conversation_history, questions_asked)
+- **Single Writer**: Critical fields (next_message, phase) written by one node
+## Current Performance
+
+### Strengths
+
+- ✅ **Real-time voice** with <3s latency
+- ✅ **State persistence** via checkpoints
+- ✅ **Concurrent interviews** (isolated by thread_id)
+- ✅ **Code execution** in isolated Docker containers
+- ✅ **Comprehensive feedback** with skill breakdowns
+
+## Documentation
+
+- [API Reference](docs/API.md) - REST API endpoints
+- [Voice Infrastructure](docs/VOICE_INFRASTRUCTURE.md) - LiveKit setup and agent architecture
+- [User Guide](docs/USER_GUIDE.md) - How to use InterviewLab
+- [Local Development](docs/LOCAL_DEVELOPMENT.md) - Setup and development workflow
+- [LangGraph Guide](docs/LANGGRAPH.md) - State, nodes, and orchestration
+- [Deployment](docs/DEPLOYMENT.md) - Railway and Vercel deployment
+
+## Quick Start
+
+```bash
+# Backend
+cd src
+uvicorn main:app --reload
+
+# Frontend
+cd frontend
+npm install
+npm run dev
+
+# Agent (requires LiveKit server)
+python -m src.agents.interview_agent
+```
+
+See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 
 ## Tech Stack
 
-- **Backend**: FastAPI (Python 3.11+)
-- **Package Manager**: uv
-- **LLM**: OpenAI GPT-4o mini
-- **Structured Output**: Instructor
-- **Authentication**: Authlib (OAuth2/JWT)
-- **Database**: PostgreSQL (async with SQLAlchemy)
-- **Caching**: Redis
-- **Containerization**: Docker (multi-stage builds)
-
-## Features
-
-- ✅ User authentication (JWT)
-- ✅ Resume upload (PDF only)
-- ✅ Resume parsing and text extraction
-- ✅ AI-powered resume analysis with GPT-4o mini
-- ✅ Structured data extraction (skills, experience, education, projects)
-
-## Project Structure
-
-```
-InterviewLab/
-├── src/
-│   ├── api/           # API routes and endpoints
-│   ├── core/          # Core configuration (database, security, logging)
-│   ├── models/        # SQLAlchemy database models
-│   ├── schemas/       # Pydantic schemas for validation
-│   ├── services/      # Business logic services
-│   └── main.py        # FastAPI application entry point
-├── private/           # Documentation (gitignored)
-├── docker-compose.yml # Local development setup
-├── Dockerfile         # Multi-stage Docker build
-└── pyproject.toml     # Project dependencies (uv)
-```
-
-## Setup
-
-### Prerequisites
-
-- Docker and Docker Compose
-- Python 3.11+ (for local development)
-- uv package manager
-
-### Environment Variables
-
-Copy `.env.example` to `.env` and fill in the required values:
-
-```bash
-cp .env.example .env
-```
-
-Required variables:
-- `DATABASE_URL`: PostgreSQL connection string
-- `REDIS_URL`: Redis connection string
-- `SECRET_KEY`: JWT secret key
-- `OPENAI_API_KEY`: OpenAI API key
-
-### Running with Docker Compose
-
-```bash
-docker-compose up --build
-```
-
-The API will be available at `http://localhost:8000`
-
-### Local Development
-
-1. Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
-
-2. Install dependencies:
-```bash
-uv pip install -e .
-```
-
-3. Run database migrations (when Alembic is set up)
-
-4. Start the server:
-```bash
-uvicorn src.main:app --reload
-```
-
-## API Documentation
-
-Once the server is running, visit:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
-
-## Development
-
-- Main branch: `main`
-- Development branch: `develop`
-- All documentation in `/private` folder (gitignored)
+| Layer         | Technology                                 |
+| ------------- | ------------------------------------------ |
+| Frontend      | Next.js 14, React, TypeScript, TailwindCSS |
+| Backend       | FastAPI, Python 3.11, SQLAlchemy, Alembic  |
+| Voice         | LiveKit, OpenAI TTS/STT, Silero VAD        |
+| Orchestration | LangGraph, LangChain                       |
+| LLM           | OpenAI GPT-4o-mini, Instructor             |
+| Database      | PostgreSQL, Redis                          |
+| Execution     | Docker, Python, Node.js                    |
+| Deployment    | Railway (backend), Vercel (frontend)       |
 
 ## License
 
-MIT
-
-
+Free to use under GNU License

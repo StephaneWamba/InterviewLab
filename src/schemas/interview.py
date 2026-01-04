@@ -31,6 +31,8 @@ class InterviewResponse(BaseModel):
     turn_count: int
     current_message: Optional[str] = Field(
         None, description="Current AI message to display")
+    sandbox: Optional[dict] = Field(
+        None, description="Sandbox state including initial_code, exercise_description, etc.")
     started_at: Optional[str] = None
     completed_at: Optional[str] = None
     created_at: str

@@ -1,6 +1,7 @@
 """Type definitions for the interview orchestrator."""
 
-from typing import TypedDict, Literal, Optional
+import operator
+from typing import TypedDict, Literal, Optional, Annotated
 from pydantic import BaseModel, Field
 
 
@@ -12,7 +13,7 @@ class QuestionRecord(TypedDict):
     """Record of a question asked during the interview."""
     id: str
     text: str
-    source: str  # resume | followup | user_request | transition
+    source: str  # resume | followup | user_request
     resume_anchor: Optional[str]  # project_1, skill_python, etc.
     aspect: str  # challenges, impact, design, tradeoffs, implementation, etc.
     asked_at_turn: int
@@ -27,14 +28,8 @@ class UserIntent(TypedDict):
     metadata: Optional[dict]  # Additional context
 
 
-class ResumeExploration(TypedDict):
-    """Tracking of how deeply we've explored a resume anchor."""
-    anchor_id: str  # project_1, skill_python, etc.
-    anchor_type: str  # project | skill | experience | education
-    # design, challenges, tools, impact, team, results, etc.
-    aspects_covered: set[str]
-    depth_score: int  # 0-10, how deeply explored
-    last_explored_turn: int
+# Simplified: Just track topics covered, no complex anchor/aspect/depth tracking
+# The LLM can handle question generation without this complexity
 
 
 class SandboxState(TypedDict):
@@ -53,30 +48,36 @@ class SandboxState(TypedDict):
 
 
 class InterviewState(TypedDict):
-    """Robust state schema for LangGraph interview workflow."""
+    """Robust state schema for LangGraph interview workflow with reducers.
+
+    Fields annotated with operator.add use LangGraph reducers for append-only operations.
+    This ensures state updates are atomic and prevents last-writer-wins bugs.
+    """
     # Core identifiers
     interview_id: int
     user_id: int
     resume_id: int | None
+    candidate_name: str | None  # User's name for personalization
 
-    # Conversation
+    # Conversation - APPEND ONLY (uses reducer)
     turn_count: int
-    conversation_history: list[dict]
+    conversation_history: Annotated[list[dict], operator.add]
 
-    # Questions tracking
-    questions_asked: list[QuestionRecord]
+    # Questions tracking - APPEND ONLY (uses reducer)
+    questions_asked: Annotated[list[QuestionRecord], operator.add]
     current_question: str | None
 
     # Resume understanding
     resume_structured: dict  # parsed resume data
-    # anchor_id -> exploration
-    resume_exploration: dict[str, ResumeExploration]
+    # Simple list of topics covered (e.g., ["Project X", "Python", "Team Leadership"])
+    # NOTE: This is NOT a reducer field - topics are manually merged in nodes to allow deduplication
+    topics_covered: list[str]
 
     # Job context
     job_description: str | None
 
-    # User intent
-    detected_intents: list[UserIntent]
+    # User intent - APPEND ONLY (uses reducer)
+    detected_intents: Annotated[list[UserIntent], operator.add]
     active_user_request: UserIntent | None
 
     # Sandbox / code
@@ -94,11 +95,16 @@ class InterviewState(TypedDict):
     current_code: str | None
     code_execution_result: dict | None
     code_quality: dict | None
-    code_submissions: list[dict]
+    # APPEND ONLY (uses reducer)
+    code_submissions: Annotated[list[dict], operator.add]
     feedback: dict | None
 
+    # Conversation summary (for memory management)
+    conversation_summary: str  # Summarized conversation for long interviews
+
     # System
-    checkpoints: list[str]  # Checkpoint IDs for recovery
+    # APPEND ONLY (uses reducer)
+    checkpoints: Annotated[list[str], operator.add]
 
 
 # ============================================================================
@@ -121,24 +127,11 @@ class UserIntentDetection(BaseModel):
 class NextActionDecision(BaseModel):
     """LLM-driven decision on what to do next."""
     action: Literal[
-        "greeting", "question", "followup", "transition", "closing",
+        "greeting", "question", "followup", "closing",
         "evaluation", "sandbox_guidance", "code_review"
     ] = Field(..., description="What action to take next")
     reasoning: str = Field(...,
                            description="Brief reasoning for this decision")
-    should_evaluate: bool = Field(
-        default=False, description="Whether to run evaluation before closing"
-    )
-
-
-class ResumeAnchor(BaseModel):
-    """Identified resume anchor for exploration."""
-    anchor_id: str = Field(...,
-                           description="Unique identifier (e.g., project_1, skill_python)")
-    anchor_type: Literal["project", "skill", "experience", "education"] = Field(
-        ..., description="Type of anchor"
-    )
-    description: str = Field(..., description="Brief description")
 
 
 class QuestionGeneration(BaseModel):

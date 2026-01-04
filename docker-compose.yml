@@ -69,6 +69,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: interviewlab_agent
+    user: "0:0"  # Run as root to access Docker socket (for sandbox)
     environment:
       DATABASE_URL: postgresql://interviewlab:interviewlab_dev@db:5432/interviewlab
       REDIS_URL: redis://redis:6379/0
@@ -84,6 +85,8 @@ services:
       LIVEKIT_WS_URL: ${LIVEKIT_WS_URL}
     volumes:
       - ./src:/app/src
+      # Docker socket for sandbox (development only - use separate service in production)
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     depends_on:
       db:
         condition: service_healthy

@@ -19,7 +19,7 @@ from src.core.config import settings
 from src.models.user import User
 from src.models.resume import Resume
 from src.schemas.resume import ResumeUpload, ResumeResponse
-from src.services.resume_parser import ResumeParser
+from src.services.data.resume_parser import ResumeParser
 from src.api.v1.dependencies import get_current_user
 
 logger = logging.getLogger(__name__)

@@ -15,13 +15,7 @@ def build_decision_context(state: "InterviewState", interview_logger=None) -> di
         "questions_asked": [q["text"] for q in state.get("questions_asked", [])],
         "questions_count": len(state.get("questions_asked", [])),
         "active_user_request": state.get("active_user_request"),
-        "resume_coverage": {
-            k: {
-                "aspects_covered": list(v.get("aspects_covered", set())),
-                "depth_score": v.get("depth_score", 0),
-            }
-            for k, v in state.get("resume_exploration", {}).items()
-        },
+        "topics_covered": state.get("topics_covered", []),
         "sandbox_signals": state.get("sandbox", {}).get("signals", []),
         "conversation_length": len(state.get("conversation_history", [])),
     }
@@ -33,7 +27,14 @@ def build_decision_context(state: "InterviewState", interview_logger=None) -> di
 
 
 def build_job_context(state: "InterviewState") -> str:
-    """Build job description context string."""
+    """Build job description context string.
+
+    Args:
+        state: InterviewState to build context from
+
+    Returns:
+        Formatted job context string
+    """
     job_desc = state.get("job_description")
     if not job_desc:
         return ""
@@ -41,7 +42,14 @@ def build_job_context(state: "InterviewState") -> str:
 
 
 def build_resume_context(state: "InterviewState") -> str:
-    """Build resume context string for prompts."""
+    """Build resume context string for prompts.
+
+    Args:
+        state: InterviewState to build context from
+
+    Returns:
+        Formatted resume context string
+    """
     resume_ctx = state.get("resume_structured", {})
     if not resume_ctx:
         return "No resume context available."
@@ -64,7 +72,15 @@ def build_resume_context(state: "InterviewState") -> str:
 
 
 def build_conversation_context(state: "InterviewState", interview_logger=None) -> str:
-    """Build conversation context string."""
+    """Build conversation context string.
+
+    Args:
+        state: InterviewState to build context from
+        interview_logger: Optional logger for debugging
+
+    Returns:
+        Formatted conversation context string
+    """
     history = state.get("conversation_history", [])
     if not history:
         ctx_str = "No conversation yet."
@@ -75,12 +91,20 @@ def build_conversation_context(state: "InterviewState", interview_logger=None) -
 
     context_parts = []
     recent_messages = history[-20:]  # Last 20 messages for full context
+
+    # Filter and format messages
     for msg in recent_messages:
         role = msg.get("role", "unknown")
         content = msg.get("content", "")
-        # Skip checkpoint system messages
+
+        # Skip checkpoint system messages (they're metadata, not conversation)
         if role == "system" and "CHECKPOINT" in content:
             continue
+
+        # Skip invalid messages
+        if not role or not content:
+            continue
+
         context_parts.append(f"{role.upper()}: {content[:200]}")
 
     ctx_str = "\n".join(context_parts)

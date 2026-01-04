@@ -27,7 +27,6 @@ class Language(str, Enum):
 
     PYTHON = "python"
     JAVASCRIPT = "javascript"
-    # Future: JAVA = "java", CPP = "cpp", GO = "go"
 
 
 class ExecutionResult:
@@ -72,11 +71,8 @@ class SandboxService:
 
         if DOCKER_AVAILABLE:
             try:
-                # Try to connect to Docker daemon
                 self.docker_client = docker.from_env()
-                # Test connection
                 self.docker_client.ping()
-                logger.info("Docker client initialized successfully")
             except Exception as e:
                 logger.warning(f"Failed to initialize Docker client: {e}")
                 logger.warning(
@@ -100,7 +96,6 @@ class SandboxService:
         """Prepare code files for execution."""
         files_dict = files or {}
 
-        # Determine main file name based on language
         if language == Language.PYTHON:
             main_file = "main.py"
         elif language == Language.JAVASCRIPT:
@@ -108,7 +103,6 @@ class SandboxService:
         else:
             main_file = "main.py"
 
-        # Add main code file
         if main_file not in files_dict:
             files_dict[main_file] = code
 
@@ -142,16 +136,13 @@ class SandboxService:
         cpu = cpu_limit or self.cpu_limit
 
         if self.docker_client is None:
-            # Fallback: execute in current process (less secure, for development)
             logger.warning("Using fallback execution (Docker not available)")
             return await self._execute_fallback(code, language, timeout)
 
-        # Prepare files
         code_files = self._prepare_code_files(code, language, files)
         image = self._get_language_image(language)
 
         try:
-            # Run in executor to avoid blocking
             loop = asyncio.get_event_loop()
             result = await loop.run_in_executor(
                 None,
@@ -186,7 +177,6 @@ class SandboxService:
         container = None
 
         try:
-            # Determine command based on language
             if language == Language.PYTHON:
                 command = ["python", "/workspace/main.py"]
             elif language == Language.JAVASCRIPT:
@@ -194,44 +184,32 @@ class SandboxService:
             else:
                 command = ["python", "/workspace/main.py"]
 
-            # Generate unique container name to avoid collisions and enable tracking
             container_name = f"sandbox-{uuid.uuid4().hex[:12]}"
-            logger.debug(f"Creating container {container_name} for {language.value} execution")
             
-            # Create container first (don't start it)
             container = self.docker_client.containers.create(
                 image,
                 command=command,
                 name=container_name,
                 working_dir="/workspace",
                 mem_limit=memory,
-                # Convert to microseconds
                 cpu_quota=int(float(cpu) * 100000),
                 cpu_period=100000,
-                network_disabled=True,  # Disable network for security
-                auto_remove=False,  # We'll remove manually in finally block
+                network_disabled=True,
+                auto_remove=False,
             )
 
-            # Create tar archive in memory with all files
             tar_stream = io.BytesIO()
             with tarfile.open(fileobj=tar_stream, mode='w') as tar:
                 for filename, content in files.items():
-                    # Create tarinfo for the file
                     tarinfo = tarfile.TarInfo(name=filename)
                     content_bytes = content.encode('utf-8')
                     tarinfo.size = len(content_bytes)
-                    tarinfo.mode = 0o644  # Readable by all
-                    # Add file to tar
+                    tarinfo.mode = 0o644
                     tar.addfile(tarinfo, io.BytesIO(content_bytes))
 
-            # Reset stream position to beginning
             tar_stream.seek(0)
-
-            # Copy files into container using put_archive
             container.put_archive("/workspace", tar_stream)
 
-            # Start container
-            logger.debug(f"Starting container {container_name}")
             container.start()
 
             # Wait for container with timeout
@@ -278,7 +256,6 @@ class SandboxService:
                 execution_time_ms=execution_time,
             )
         finally:
-            # Clean up container
             if container:
                 try:
                     container.remove(force=True)
@@ -296,7 +273,6 @@ class SandboxService:
 
         try:
             if language == Language.PYTHON:
-                # Execute Python code directly (INSECURE - development only)
                 process = await asyncio.create_subprocess_exec(
                     "python",
                     "-c",
@@ -305,7 +281,6 @@ class SandboxService:
                     stderr=asyncio.subprocess.PIPE,
                 )
             elif language == Language.JAVASCRIPT:
-                # Execute JavaScript with Node.js
                 process = await asyncio.create_subprocess_exec(
                     "node",
                     "-e",

@@ -18,9 +18,9 @@ from src.schemas.voice import (
     TTSRequest,
     TTSResponse,
 )
-from src.services.livekit_service import LiveKitService
-from src.services.stt_service import STTService
-from src.services.tts_service import TTSService
+from src.services.voice.livekit_service import LiveKitService
+from src.services.voice.stt_service import STTService
+from src.services.voice.tts_service import TTSService
 
 router = APIRouter()
 
@@ -253,4 +253,3 @@ async def text_to_speech_stream(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Failed to generate speech: {str(e)}",
         )
-

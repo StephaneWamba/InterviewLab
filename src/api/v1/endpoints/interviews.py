@@ -20,11 +20,11 @@ from src.schemas.interview import (
     InterviewComplete,
     InterviewSubmitCode,
 )
-from src.services.interview_orchestrator import InterviewOrchestrator
-from src.services.state_manager import interview_to_state, state_to_interview
-from src.services.feedback_generator import FeedbackGenerator
-from src.services.analytics_service import InterviewAnalytics
-from src.services.livekit_service import LiveKitService
+from src.services.orchestrator.langgraph_orchestrator import LangGraphInterviewOrchestrator
+from src.services.data.state_manager import interview_to_state, state_to_interview
+from src.services.analysis.feedback_generator import FeedbackGenerator
+from src.services.analytics.analytics_service import InterviewAnalytics
+from src.services.voice.livekit_service import LiveKitService
 from src.api.v1.dependencies import get_current_user
 
 logger = logging.getLogger(__name__)
@@ -121,7 +121,12 @@ async def start_interview(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    """Start an interview session - initializes and runs greeting node."""
+    """Start an interview session - marks interview as in_progress.
+    
+    NOTE: Greeting is now handled automatically by LangGraph when the agent connects.
+    This endpoint just marks the interview as ready. The agent will execute LangGraph
+    on first turn, which will automatically route to greeting node.
+    """
     result = await db.execute(
         select(Interview).where(
             Interview.id == data.interview_id, Interview.user_id == user.id
@@ -141,31 +146,19 @@ async def start_interview(
             detail=f"Interview is already {interview.status}",
         )
 
-    try:
-        orchestrator = InterviewOrchestrator()
+    # Simply mark interview as in_progress
+    # LangGraph will handle greeting automatically when agent executes first turn
+    interview.status = "in_progress"
+    interview.started_at = datetime.utcnow()
 
-        # Convert interview to state
-        state = interview_to_state(interview)
+    await db.commit()
+    await db.refresh(interview)
 
-        # Execute initialize and greeting nodes
-        state = await orchestrator.execute_step(state)
+    logger.info(
+        f"Interview {interview.id} marked as in_progress. "
+        f"LangGraph will handle greeting automatically on first turn.")
 
-        # Update interview from state
-        state_to_interview(state, interview)
-        interview.status = "in_progress"
-        interview.started_at = datetime.utcnow()
-
-        await db.commit()
-        await db.refresh(interview)
-
-        return _interview_to_response(interview)
-
-    except Exception as e:
-        logger.error(f"Failed to start interview: {e}", exc_info=True)
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to start interview",
-        )
+    return _interview_to_response(interview)
 
 
 @router.post("/respond", response_model=InterviewResponse)
@@ -195,10 +188,11 @@ async def respond_to_interview(
         )
 
     try:
-        orchestrator = InterviewOrchestrator()
+        orchestrator = LangGraphInterviewOrchestrator()
+        orchestrator.set_db_session(db)
 
-        # Convert interview to state
-        state = interview_to_state(interview)
+        # Convert interview to state (pass user for name extraction)
+        state = interview_to_state(interview, user=user)
 
         # Execute graph with user response
         state = await orchestrator.execute_step(state, user_response=data.message)
@@ -210,11 +204,16 @@ async def respond_to_interview(
         if state.get("should_close") and state.get("current_node") == "closing":
             interview.status = "completed"
             interview.completed_at = datetime.utcnow()
+            # Cleanup graph state and cache for completed interview
+            try:
+                await orchestrator.cleanup_interview(interview.id)
+            except Exception as e:
+                logger.warning(f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
 
         await db.commit()
         await db.refresh(interview)
 
-        return _interview_to_response(interview)
+        return _interview_to_response(interview, state)
 
     except Exception as e:
         logger.error(
@@ -255,36 +254,54 @@ async def complete_interview(
         )
 
     try:
-        orchestrator = InterviewOrchestrator()
+        orchestrator = LangGraphInterviewOrchestrator()
+        orchestrator.set_db_session(db)
 
-        # Convert interview to state
-        state = interview_to_state(interview)
+        # Convert interview to state (pass user for name extraction)
+        state = interview_to_state(interview, user=user)
 
-        # Force closing
-        state["should_close"] = True
-
-        # Execute closing node
-        state["current_node"] = "closing"
-        state = await orchestrator._closing_node(state)
+        # Execute graph - will route to closing node
+        # Set next_node to force closing
+        state["next_node"] = "closing"
+        state = await orchestrator.execute_step(state)
 
         # Update interview from state
         state_to_interview(state, interview)
         interview.status = "completed"
         interview.completed_at = datetime.utcnow()
+        
+        # Cleanup graph state and cache for completed interview
+        try:
+            await orchestrator.cleanup_interview(interview.id)
+        except Exception as e:
+            logger.warning(f"Failed to cleanup interview {interview.id}: {e}", exc_info=True)
 
         await db.commit()
         await db.refresh(interview)
 
-        return _interview_to_response(interview)
+        return _interview_to_response(interview, state)
 
     except Exception as e:
         logger.error(f"Failed to complete interview: {e}", exc_info=True)
         # Still mark as completed even if closing node fails
         interview.status = "completed"
         interview.completed_at = datetime.utcnow()
+        
+        # Cleanup graph state and cache for completed interview
+        try:
+            if orchestrator:
+                await orchestrator.cleanup_interview(interview.id)
+        except Exception as cleanup_error:
+            logger.warning(f"Failed to cleanup interview {interview.id}: {cleanup_error}", exc_info=True)
+        
         await db.commit()
         await db.refresh(interview)
-        return _interview_to_response(interview)
+        # Try to get state if available
+        try:
+            state = interview_to_state(interview, user=user)
+            return _interview_to_response(interview, state)
+        except:
+            return _interview_to_response(interview)
 
 
 @router.post("/submit-code", response_model=InterviewResponse)
@@ -314,12 +331,13 @@ async def submit_code_to_interview(
         )
 
     try:
-        orchestrator = InterviewOrchestrator()
+        orchestrator = LangGraphInterviewOrchestrator()
+        orchestrator.set_db_session(db)
 
-        # Convert interview to state
-        state = interview_to_state(interview)
+        # Convert interview to state (pass user for name extraction)
+        state = interview_to_state(interview, user=user)
 
-        # Execute code review node
+        # Execute graph with code submission (will route to code_review)
         state = await orchestrator.execute_step(
             state, code=data.code, language=data.language
         )
@@ -330,7 +348,7 @@ async def submit_code_to_interview(
         await db.commit()
         await db.refresh(interview)
 
-        return _interview_to_response(interview)
+        return _interview_to_response(interview, state)
 
     except Exception as e:
         logger.error(f"Failed to process code submission: {e}", exc_info=True)
@@ -349,7 +367,7 @@ async def update_sandbox_code(
 ):
     """
     Update current sandbox code (for polling).
-    
+
     Frontend calls this periodically to update the agent's view of current code.
     This enables real-time interaction like a real interviewer watching over your shoulder.
     """
@@ -373,23 +391,33 @@ async def update_sandbox_code(
         )
 
     try:
-        orchestrator = InterviewOrchestrator()
+        orchestrator = LangGraphInterviewOrchestrator()
+        orchestrator.set_db_session(db)
         state = interview_to_state(interview)
-        
-        # Update current code in state (for polling)
+
+        # Convert interview to state (pass user for name extraction)
+        state = interview_to_state(interview, user=user)
+
+        # Update state with current code for polling
         state["current_code"] = code
+        if "sandbox" not in state:
+            state["sandbox"] = {}
         state["sandbox"]["is_active"] = True
         state["sandbox"]["last_activity_ts"] = datetime.utcnow().timestamp()
-        
-        # Check for code changes and provide real-time guidance if needed
-        state = await orchestrator._check_sandbox_code_changes(state)
-        
+
+        # Get node handler to call helper method (now returns updates, no mutations)
+        node_handler = orchestrator._get_node_handler()
+        updates = await node_handler.check_sandbox_code_changes(state)
+
+        # Merge updates into state
+        state = {**state, **updates}
+
         # Update interview from state
         state_to_interview(state, interview)
         await db.commit()
-        
+
         return {"status": "updated", "has_guidance": state.get("next_message") is not None}
-        
+
     except Exception as e:
         logger.error(f"Failed to update sandbox code: {e}", exc_info=True)
         raise HTTPException(
@@ -523,15 +551,17 @@ async def get_skill_averages(
 
 @router.get("/analytics/skills/compare")
 async def compare_interview_skills(
-    interview_ids: str = Query(..., description="Comma-separated list of interview IDs"),
+    interview_ids: str = Query(...,
+                               description="Comma-separated list of interview IDs"),
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
     """Compare skills across multiple interviews."""
     try:
         # Parse comma-separated interview IDs
-        interview_id_list = [int(id.strip()) for id in interview_ids.split(",") if id.strip().isdigit()]
-        
+        interview_id_list = [int(id.strip()) for id in interview_ids.split(
+            ",") if id.strip().isdigit()]
+
         if not interview_id_list:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -555,7 +585,7 @@ async def compare_interview_skills(
 
         analytics_service = InterviewAnalytics()
         comparison = await analytics_service.get_skill_comparison(interview_id_list, db)
-        
+
         # Add interview metadata
         return {
             "comparison": comparison,
@@ -602,7 +632,7 @@ async def get_interview_skill_breakdown(
     try:
         analytics_service = InterviewAnalytics()
         breakdown = await analytics_service.get_skill_breakdown(interview_id, db)
-        
+
         return {
             "interview_id": interview.id,
             "interview_title": interview.title,
@@ -690,7 +720,8 @@ async def delete_interview(
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 
     except Exception as e:
-        logger.error(f"Failed to delete interview {interview_id}: {e}", exc_info=True)
+        logger.error(
+            f"Failed to delete interview {interview_id}: {e}", exc_info=True)
         await db.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -698,8 +729,13 @@ async def delete_interview(
         )
 
 
-def _interview_to_response(interview: Interview) -> InterviewResponse:
-    """Convert Interview model to InterviewResponse schema."""
+def _interview_to_response(interview: Interview, state: dict | None = None) -> InterviewResponse:
+    """Convert Interview model to InterviewResponse schema.
+
+    Args:
+        interview: Interview model
+        state: Optional InterviewState dict to extract sandbox from
+    """
     # Get current message from last assistant message in conversation_history
     current_message = None
     if interview.conversation_history:
@@ -707,6 +743,14 @@ def _interview_to_response(interview: Interview) -> InterviewResponse:
             if msg.get("role") == "assistant":
                 current_message = msg.get("content")
                 break
+
+    # Extract sandbox state if available
+    sandbox_state = None
+    if state and "sandbox" in state:
+        sandbox_state = state["sandbox"]
+    elif interview.resume_context and isinstance(interview.resume_context, dict):
+        # Fallback: check if sandbox was stored in resume_context (temporary)
+        sandbox_state = interview.resume_context.get("_sandbox")
 
     return InterviewResponse(
         id=interview.id,
@@ -719,6 +763,7 @@ def _interview_to_response(interview: Interview) -> InterviewResponse:
         feedback=interview.feedback,
         turn_count=interview.turn_count,
         current_message=current_message,
+        sandbox=sandbox_state,
         started_at=interview.started_at.isoformat() if interview.started_at else None,
         completed_at=interview.completed_at.isoformat() if interview.completed_at else None,
         created_at=interview.created_at.isoformat(),

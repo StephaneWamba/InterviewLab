@@ -21,7 +21,8 @@ logger = logging.getLogger(__name__)
 class AgentResources:
     """Resource container for agent components with proper cleanup."""
 
-    def __init__(self):
+    def __init__(self, interview_id: int):
+        self.interview_id = interview_id
         self.db: "AsyncSession | None" = None
         self.orchestrator_llm: "OrchestratorLLM | None" = None
         self.tts: tts.TTS | None = None
@@ -31,13 +32,20 @@ class AgentResources:
 
     async def aclose(self):
         """Clean up all resources."""
+        # Clean up orchestrator state if it exists
+        if self.orchestrator_llm and self.orchestrator_llm.orchestrator:
+            try:
+                await self.orchestrator_llm.orchestrator.cleanup_interview(self.interview_id)
+            except Exception as e:
+                logger.error(
+                    f"Failed to cleanup orchestrator during resource cleanup: {e}", exc_info=True)
+
         if self.db:
             await self.db.close()
             self.db = None
-        logger.debug("Agent resources cleaned up")
 
 
-# Per-process VAD cache (lazy loaded, async, with lock protection)
+# Per-process VAD cache with thread-safe lazy loading
 _vad: vad.VAD | None = None
 _vad_lock = asyncio.Lock()
 
@@ -52,28 +60,27 @@ async def get_vad() -> vad.VAD | None:
     """
     global _vad
 
-    # Fast path - already loaded
+    # Return cached instance if already loaded
     if _vad is not None:
         return _vad
 
-    # Lock-protected lazy load (only once per process)
+    # Thread-safe lazy loading: acquire lock before loading
     async with _vad_lock:
-        # Double-check after acquiring lock
+        # Double-check pattern: another coroutine may have loaded it while waiting
         if _vad is not None:
             return _vad
 
         try:
-            # Lazy import - only when function is called (after handshake)
+            # Defer import until after LiveKit handshake completes
             from livekit.plugins import silero
 
-            logger.info("Loading VAD model asynchronously...")
             loop = asyncio.get_running_loop()
+            # Load in executor to avoid blocking the event loop
             _vad = await loop.run_in_executor(None, silero.VAD.load)
-            logger.info("VAD model loaded successfully")
             return _vad
         except Exception as e:
             logger.error(f"VAD loading failed: {e}", exc_info=True)
-            # Return None for graceful degradation
+            # Graceful degradation: return None if loading fails
             return None
 
 
@@ -83,69 +90,55 @@ async def bootstrap_resources(ctx: JobContext, interview_id: int) -> AgentResour
     This is the SAFE ZONE - handshake is complete, we can do heavy operations.
     All heavy imports happen here, not at module level.
     """
-    import time
-    t0 = time.monotonic()
-    logger.info(f"bootstrap_start (interview_id={interview_id})")
-
-    resources = AgentResources()
+    resources = AgentResources(interview_id)
 
     try:
-        # Lazy imports - only when bootstrap is called (after handshake)
+        # Defer heavy imports until after LiveKit handshake completes
         from src.core.database import AsyncSessionLocal
         from src.core.config import settings
         from livekit.plugins import openai
         from src.agents.orchestrator_llm import OrchestratorLLM
 
-        # Create database session (async-safe, per-process pool)
+        # Initialize database session from connection pool
         resources.db = AsyncSessionLocal()
-        logger.debug("Database session created")
 
-        # Create and initialize orchestrator LLM (two-phase init)
+        # Initialize orchestrator LLM with two-phase initialization pattern
+        # This avoids blocking the LiveKit handshake with heavy imports
         resources.orchestrator_llm = OrchestratorLLM(interview_id)
         await resources.orchestrator_llm.init(resources.db)
-        logger.debug("Orchestrator LLM initialized")
 
-        # Create TTS with graceful degradation
+        # Initialize TTS with graceful error handling
         try:
             resources.tts = openai.TTS(
                 voice=settings.OPENAI_TTS_VOICE or "alloy",
                 model=settings.OPENAI_TTS_MODEL or "tts-1-hd"
             )
-            logger.debug("TTS instance created")
         except Exception as e:
             logger.exception("TTS creation failed, will retry later")
             resources.tts = None
 
-        # Create STT
+        # Initialize STT with graceful error handling
         try:
             resources.stt = openai.STT()
-            logger.debug("STT instance created")
         except Exception as e:
             logger.exception("STT creation failed, will retry later")
             resources.stt = None
 
-        # Load VAD - REQUIRED for OpenAI STT (non-streaming STT needs VAD)
-        # Loading happens during bootstrap (before connection), so delay is acceptable
-        # VAD is loaded asynchronously in executor to avoid blocking event loop
+        # Initialize VAD: required for OpenAI non-streaming STT to function properly
+        # Loading occurs during bootstrap (before connection), so initialization delay is acceptable
+        # VAD is loaded asynchronously in an executor thread to prevent event loop blocking
         try:
             resources.vad = await get_vad()
-            if resources.vad:
-                logger.info("VAD loaded successfully")
-            else:
-                logger.warning(
+            if not resources.vad:
+                logger.error(
                     "VAD loading failed - STT may not work properly without VAD")
         except Exception as e:
             logger.exception("VAD loading failed, STT may not work properly")
             resources.vad = None
 
-        elapsed = time.monotonic() - t0
-        logger.info(
-            f"bootstrap_complete (elapsed={elapsed:.3f}s, interview_id={interview_id})")
         return resources
 
     except Exception as e:
         logger.error(f"Bootstrap failed: {e}", exc_info=True)
         await resources.aclose()
         raise
-
-

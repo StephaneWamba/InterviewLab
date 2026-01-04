@@ -16,9 +16,9 @@ from src.schemas.sandbox import (
     SandboxSessionResponse,
     CodeSubmissionRequest,
 )
-from src.services.sandbox_service import SandboxService, Language
-from src.services.code_analyzer import CodeAnalyzer
-from src.services.code_metrics import get_code_metrics
+from src.services.execution.sandbox_service import SandboxService, Language
+from src.services.analysis.code_analyzer import CodeAnalyzer
+from src.services.analysis.code_metrics import get_code_metrics
 
 logger = logging.getLogger(__name__)
 router = APIRouter()

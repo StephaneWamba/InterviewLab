@@ -8,7 +8,7 @@ import logging
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.services.interview_orchestrator import InterviewOrchestrator
+    from src.services.orchestrator.langgraph_orchestrator import LangGraphInterviewOrchestrator
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 async def checkpoint_greeting_in_background(
     state: dict,
     interview_id: int,
-    orchestrator: "InterviewOrchestrator"
+    orchestrator: "LangGraphInterviewOrchestrator"
 ) -> None:
     """Background task to checkpoint greeting state without blocking.
 
@@ -28,13 +28,11 @@ async def checkpoint_greeting_in_background(
     try:
         # Lazy import - only when function is called
         from src.core.database import AsyncSessionLocal
-        from src.services.checkpoint_service import get_checkpoint_service
+        from src.services.data.checkpoint_service import get_checkpoint_service
 
         async with AsyncSessionLocal() as bg_db:
             checkpoint_service = get_checkpoint_service()
             checkpoint_id = await checkpoint_service.checkpoint(state, bg_db)
-            logger.info(
-                f"Checkpointed greeting state in background: {checkpoint_id}")
 
             # Log checkpoint
             if orchestrator._interview_logger:
@@ -52,4 +50,3 @@ async def checkpoint_greeting_in_background(
                 e,
                 {"interview_id": interview_id}
             )
-

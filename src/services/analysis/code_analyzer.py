@@ -6,7 +6,7 @@ import instructor
 from pydantic import BaseModel, Field
 
 from src.core.config import settings
-from src.services.sandbox_service import SandboxService, Language as SandboxLanguage
+from src.services.execution.sandbox_service import SandboxService, Language as SandboxLanguage
 
 
 class CodeQuality(BaseModel):
@@ -39,18 +39,6 @@ class CodeQuality(BaseModel):
     suggestions: list[str] = Field(
         default_factory=list, description="Specific suggestions for improvement"
     )
-
-
-class TestCaseResult(BaseModel):
-    """Schema for test case validation result."""
-
-    test_case: str = Field(..., description="The test case description")
-    passed: bool = Field(..., description="Whether the test case passed")
-    expected_output: str = Field(..., description="Expected output")
-    actual_output: str = Field(...,
-                               description="Actual output from code execution")
-    error: Optional[str] = Field(
-        None, description="Error message if test failed")
 
 
 class CodeAnalyzer:
@@ -94,7 +82,6 @@ class CodeAnalyzer:
         """
         client = self._get_openai_client()
 
-        # Build execution context
         execution_context = ""
         if execution_result:
             stdout = execution_result.get("stdout", "")
@@ -110,7 +97,6 @@ Execution Results:
 - Stderr: {stderr[:500] if stderr else 'No errors'}
 """
 
-        # Build problem context
         problem_context = ""
         if problem_statement:
             problem_context = f"""
@@ -118,7 +104,6 @@ Problem Statement:
 {problem_statement}
 """
 
-        # Build interview context
         interview_context = ""
         if context:
             interview_context = f"""
@@ -139,20 +124,20 @@ Code:
 {problem_context}
 {interview_context}
 
-Evaluate the code on:
-1. **Correctness**: Does it solve the problem correctly? Does it handle edge cases? (0-1)
-2. **Efficiency**: Is it efficient? Time/space complexity? (0-1)
-3. **Readability**: Is it clean, well-structured, and easy to understand? (0-1)
-4. **Best Practices**: Does it follow language-specific best practices? (0-1)
+Evaluate on:
+1. **Correctness** (0-1): Solves problem correctly, handles edge cases
+2. **Efficiency** (0-1): Time/space complexity
+3. **Readability** (0-1): Clean, well-structured, easy to understand
+4. **Best Practices** (0-1): Follows language-specific best practices
 
-Calculate an overall quality score (weighted average: correctness 40%, efficiency 20%, readability 20%, best practices 20%).
+Calculate overall quality score (weighted: correctness 40%, efficiency 20%, readability 20%, best practices 20%).
 
 Identify:
-- **Strengths**: What the candidate did well
-- **Weaknesses**: Areas that need improvement
-- **Suggestions**: Specific, actionable suggestions for improvement
+- Strengths: What they did well
+- Weaknesses: Areas for improvement
+- Suggestions: Specific, actionable improvements
 
-Provide detailed, constructive feedback that would help the candidate improve."""
+Provide detailed, constructive feedback."""
 
         try:
             result = await client.chat.completions.create(
@@ -170,8 +155,7 @@ Provide detailed, constructive feedback that would help the candidate improve.""
 
             return result
 
-        except Exception as e:
-            # Return default quality on error
+        except Exception:
             return CodeQuality(
                 quality_score=0.5,
                 correctness_score=0.5,
@@ -201,7 +185,6 @@ Provide detailed, constructive feedback that would help the candidate improve.""
         """
         client = self._get_openai_client()
 
-        # Build summary
         quality_summary = f"""
 Code Quality Analysis:
 - Overall Score: {code_quality.quality_score:.2f}/1.0
@@ -230,12 +213,11 @@ Output: {execution_result.get('stdout', 'No output')[:200]}
 {execution_info}
 
 Create a message that:
-- Acknowledges what they did well (if any strengths)
-- Provides constructive feedback on areas for improvement
-- Is encouraging and supportive, not harsh
-- Sounds like a real interviewer, not a robot
+- Acknowledges strengths (if any)
+- Provides constructive feedback on improvements
+- Is encouraging and supportive
+- Sounds natural and conversational
 - Is concise (2-3 sentences)
-- Can be used as the next message in the interview conversation
 
 Return ONLY the feedback message, no prefix or explanation."""
 
@@ -255,7 +237,6 @@ Return ONLY the feedback message, no prefix or explanation."""
             return response.choices[0].message.content.strip()
 
         except Exception:
-            # Fallback message
             if code_quality.quality_score >= 0.7:
                 return "Great work on your code! I can see you've put thought into the solution. Let's discuss a few areas where we could refine it further."
             elif code_quality.quality_score >= 0.5:
@@ -282,7 +263,6 @@ Return ONLY the feedback message, no prefix or explanation."""
         """
         client = self._get_openai_client()
 
-        # Build quality summary
         quality_summary = f"""
 Code Quality Analysis:
 - Overall Score: {code_quality.quality_score:.2f}/1.0
@@ -318,22 +298,14 @@ Conversation Context:
 
 Generate ONE simple, focused follow-up question that:
 - Builds on the code review feedback naturally
-- Is relevant to the weaknesses or suggestions identified
-- Encourages the candidate to think deeper or improve
-- Is conversational and engaging (not interrogative)
-- Is SIMPLE and FOCUSED - ONE question only
-- Can be about: optimization, edge cases, testing, best practices, or alternative approaches
+- Is relevant to weaknesses or suggestions identified
+- Encourages deeper thinking or improvement
+- Is conversational and engaging
 
-GUIDELINES:
-- Prefer ONE simple, focused question for clarity
-- Compound questions (with "and") are acceptable when exploring related aspects naturally
-- Keep questions clear and specific, especially for technical discussions
-
-Examples of good questions:
+Examples:
 - "How would you handle edge cases like empty input or negative numbers?"
 - "What would you do differently if you needed to optimize this for large datasets?"
 - "Can you walk me through how you would test this function?"
-- "What are some alternative approaches you considered?"
 
 Return ONLY the question, no prefix or explanation."""
 
@@ -353,101 +325,9 @@ Return ONLY the question, no prefix or explanation."""
             return response.choices[0].message.content.strip()
 
         except Exception:
-            # Fallback questions based on quality
             if code_quality.quality_score >= 0.7:
                 return "How would you optimize this solution for better performance?"
             elif code_quality.quality_score >= 0.5:
                 return "What edge cases should we consider for this code?"
             else:
                 return "Can you walk me through your thought process for this approach?"
-
-    async def validate_test_cases(
-        self,
-        code: str,
-        language: str,
-        test_cases: List[dict],
-    ) -> List[TestCaseResult]:
-        """
-        Validate code against test cases.
-
-        Args:
-            code: The code to test
-            language: Programming language
-            test_cases: List of test cases with 'input' and 'expected_output'
-
-        Returns:
-            List of TestCaseResult objects
-        """
-        results = []
-        sandbox_service = self._get_sandbox_service()
-
-        try:
-            sandbox_language = SandboxLanguage(language.lower())
-        except ValueError:
-            sandbox_language = SandboxLanguage.PYTHON
-
-        for test_case in test_cases:
-            test_input = test_case.get("input", "")
-            expected_output = str(test_case.get("expected_output", "")).strip()
-            test_description = test_case.get(
-                "description", f"Test with input: {test_input}")
-
-            # Modify code to include test input
-            # For Python: wrap in a test function or modify main execution
-            test_code = self._prepare_test_code(code, language, test_input)
-
-            try:
-                # Execute test code
-                execution_result = await sandbox_service.execute_code(
-                    code=test_code,
-                    language=sandbox_language,
-                )
-
-                actual_output = execution_result.stdout.strip() if execution_result.stdout else ""
-                passed = actual_output == expected_output and execution_result.success
-
-                results.append(
-                    TestCaseResult(
-                        test_case=test_description,
-                        passed=passed,
-                        expected_output=expected_output,
-                        actual_output=actual_output,
-                        error=execution_result.stderr if not execution_result.success else None,
-                    )
-                )
-
-            except Exception as e:
-                results.append(
-                    TestCaseResult(
-                        test_case=test_description,
-                        passed=False,
-                        expected_output=expected_output,
-                        actual_output="",
-                        error=str(e),
-                    )
-                )
-
-        return results
-
-    def _prepare_test_code(self, code: str, language: str, test_input: str) -> str:
-        """Prepare code with test input for execution."""
-        if language.lower() == "python":
-            # For Python, try to inject test input
-            # Simple approach: append test execution
-            # This assumes the code defines a function that can be called
-            # More sophisticated parsing could be added later
-            if "def " in code and "print(" not in code:
-                # If code has a function but no print, add test call
-                return f"{code}\n\n# Test execution\nresult = {test_input}\nprint(result)"
-            else:
-                # If code already has execution, try to modify it
-                # For now, just append the test input as a comment and execute
-                return f"{code}\n\n# Test input: {test_input}"
-        elif language.lower() == "javascript":
-            # Similar approach for JavaScript
-            if "function " in code or "const " in code or "let " in code:
-                return f"{code}\n\n// Test execution\nconsole.log({test_input})"
-            else:
-                return f"{code}\n\n// Test input: {test_input}"
-        else:
-            return code

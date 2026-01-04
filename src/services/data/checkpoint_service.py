@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
 
 from src.models.interview import Interview
-from src.services.interview_orchestrator import InterviewState
+from src.services.orchestrator.types import InterviewState
 
 logger = logging.getLogger(__name__)
 
@@ -35,70 +35,50 @@ class CheckpointService:
             interview_id = state["interview_id"]
             checkpoint_id = datetime.utcnow().isoformat()
 
-            # Load interview
             result = await db.execute(
                 select(Interview).where(Interview.id == interview_id)
             )
             interview = result.scalar_one_or_none()
 
             if not interview:
-                logger.error(f"Interview {interview_id} not found for checkpointing")
+                logger.error(
+                    f"Interview {interview_id} not found for checkpointing")
                 return checkpoint_id
 
-            # Serialize state to JSON (handle sets by converting to lists)
             state_json = self._serialize_state(state)
 
-            # Update interview with checkpoint data
-            # Note: We're storing in the Interview model's JSON fields
-            # In production, you might want a separate Checkpoint table
-            interview.conversation_history = state.get("conversation_history", [])
+            interview.conversation_history = state.get(
+                "conversation_history", [])
             interview.turn_count = state.get("turn_count", 0)
             interview.feedback = state.get("feedback")
-            
-            # Store full state in a metadata field (if available) or conversation_history metadata
-            # For now, we'll store checkpoint info in conversation_history metadata
+
             checkpoint_metadata = {
                 "checkpoint_id": checkpoint_id,
                 "last_node": state.get("last_node", ""),
                 "phase": state.get("phase", "intro"),
-                "state_snapshot": state_json,  # Full state snapshot
+                "state_snapshot": state_json,
             }
 
-            # Add checkpoint to state
             if "checkpoints" not in state:
                 state["checkpoints"] = []
             state["checkpoints"].append(checkpoint_id)
 
-            # Store checkpoint metadata in conversation_history as a system message
-            # (Alternative: use a separate state_json field in Interview model)
             if interview.conversation_history is None:
                 interview.conversation_history = []
-            
-            # Store checkpoint in a dedicated metadata location
-            # We'll add this to the interview's JSON field structure
-            # For now, append as a system message (not ideal, but works)
+
             checkpoint_msg = {
                 "role": "system",
                 "content": f"CHECKPOINT: {checkpoint_id}",
                 "timestamp": datetime.utcnow().isoformat(),
                 "metadata": checkpoint_metadata,
             }
-            
-            # Only append if not already the last message
-            if (not interview.conversation_history or 
-                interview.conversation_history[-1].get("content") != f"CHECKPOINT: {checkpoint_id}"):
+
+            if (not interview.conversation_history or
+                    interview.conversation_history[-1].get("content") != f"CHECKPOINT: {checkpoint_id}"):
                 interview.conversation_history.append(checkpoint_msg)
 
             await db.commit()
-            logger.info(f"Checkpointed state for interview {interview_id} (checkpoint: {checkpoint_id})")
-            
-            # Log checkpoint details
-            logger.debug(f"Checkpoint details - Turn: {state.get('turn_count', 0)}, "
-                        f"Last Node: {state.get('last_node', 'unknown')}, "
-                        f"Phase: {state.get('phase', 'unknown')}, "
-                        f"Conversation History Length: {len(state.get('conversation_history', []))}, "
-                        f"Questions Asked: {len(state.get('questions_asked', []))}")
-            
+
             return checkpoint_id
 
         except Exception as e:
@@ -130,75 +110,97 @@ class CheckpointService:
             interview = result.scalar_one_or_none()
 
             if not interview:
-                logger.error(f"Interview {interview_id} not found for restoration")
+                logger.error(
+                    f"Interview {interview_id} not found for restoration")
                 return None
 
             # Find checkpoint in conversation_history
             if not interview.conversation_history:
-                logger.warning(f"No conversation history for interview {interview_id}")
+                logger.warning(
+                    f"No conversation history for interview {interview_id}")
                 return None
 
-            # OPTIMIZATION: Look for checkpoint messages more efficiently
-            # Start from the end and work backwards (most recent checkpoints are at the end)
+            # Search backwards from end (most recent checkpoints are at the end)
             checkpoint_msg = None
             if interview.conversation_history:
-                # Use reversed() with index for early exit optimization
                 for i in range(len(interview.conversation_history) - 1, -1, -1):
                     msg = interview.conversation_history[i]
-                    if (msg.get("role") == "system" and 
-                        msg.get("content", "").startswith("CHECKPOINT:")):
+                    if (msg.get("role") == "system" and
+                            msg.get("content", "").startswith("CHECKPOINT:")):
                         if checkpoint_id is None or checkpoint_id in msg.get("content", ""):
                             checkpoint_msg = msg
                             break
 
             if checkpoint_msg and checkpoint_msg.get("metadata", {}).get("state_snapshot"):
-                # Restore from checkpoint
                 state_json = checkpoint_msg["metadata"]["state_snapshot"]
                 state = self._deserialize_state(state_json)
-                logger.info(f"Restored state from checkpoint {checkpoint_id or 'latest'}")
-                logger.debug(f"Restored checkpoint details - Turn: {state.get('turn_count', 0)}, "
-                            f"Last Node: {state.get('last_node', 'unknown')}, "
-                            f"Phase: {state.get('phase', 'unknown')}, "
-                            f"Conversation History Length: {len(state.get('conversation_history', []))}")
+
+                # Validate restored state belongs to this interview to prevent contamination
+                restored_interview_id = state.get("interview_id")
+                if restored_interview_id != interview_id:
+                    logger.error(
+                        f"Restored checkpoint has wrong interview_id: "
+                        f"expected {interview_id}, got {restored_interview_id}. Rejecting."
+                    )
+                    return None
+
+                # Sanitize conversation_history: filter messages with mismatched interview_id
+                conv_history = state.get("conversation_history", [])
+                sanitized_history = []
+                for msg in conv_history:
+                    if msg.get("role") == "system" and "CHECKPOINT" in msg.get("content", ""):
+                        continue
+                    if msg.get("role") and msg.get("content"):
+                        msg_interview_id = msg.get(
+                            "metadata", {}).get("interview_id")
+                        if msg_interview_id and msg_interview_id != interview_id:
+                            logger.warning(
+                                f"Filtering message with wrong interview_id: "
+                                f"expected {interview_id}, got {msg_interview_id}"
+                            )
+                            continue
+                        sanitized_history.append(msg)
+
+                state["conversation_history"] = sanitized_history
+                state["interview_id"] = interview_id
+
                 return state
-            else:
-                # Fallback: reconstruct from interview data (legacy)
-                logger.info(f"No checkpoint found, reconstructing state from interview data")
-                return None
+
+        except Exception as e:
+            logger.error(f"Failed to restore state: {e}", exc_info=True)
+            return None
 
         except Exception as e:
             logger.error(f"Failed to restore state: {e}", exc_info=True)
             return None
 
     def _serialize_state(self, state: InterviewState) -> dict:
-        """Serialize state to JSON-compatible dict (converts sets to lists)."""
+        """Serialize state to JSON-compatible dict, converting sets to lists."""
         state_dict = dict(state)
-        
-        # Convert sets to lists
+
         if "resume_exploration" in state_dict:
             for anchor_id, anchor_data in state_dict["resume_exploration"].items():
                 if isinstance(anchor_data, dict) and "aspects_covered" in anchor_data:
                     if isinstance(anchor_data["aspects_covered"], set):
-                        anchor_data["aspects_covered"] = list(anchor_data["aspects_covered"])
-        
-        # Convert TypedDict to regular dict
+                        anchor_data["aspects_covered"] = list(
+                            anchor_data["aspects_covered"])
+
         return json.loads(json.dumps(state_dict, default=str))
 
     def _deserialize_state(self, state_json: dict) -> InterviewState:
-        """Deserialize state from JSON dict (converts lists back to sets)."""
+        """Deserialize state from JSON dict, converting lists back to sets."""
         state = dict(state_json)
-        
-        # Convert lists back to sets
+
         if "resume_exploration" in state:
             for anchor_id, anchor_data in state["resume_exploration"].items():
                 if isinstance(anchor_data, dict) and "aspects_covered" in anchor_data:
                     if isinstance(anchor_data["aspects_covered"], list):
-                        anchor_data["aspects_covered"] = set(anchor_data["aspects_covered"])
-        
+                        anchor_data["aspects_covered"] = set(
+                            anchor_data["aspects_covered"])
+
         return state  # type: ignore
 
 
-# Global instance
 _checkpoint_service: Optional[CheckpointService] = None
 
 
@@ -208,4 +210,3 @@ def get_checkpoint_service() -> CheckpointService:
     if _checkpoint_service is None:
         _checkpoint_service = CheckpointService()
     return _checkpoint_service
-
