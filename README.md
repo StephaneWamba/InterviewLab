@@ -6,7 +6,7 @@
 
 ---
 
-**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **License** `GNU` **Status** `Portfolio-Project`
+**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **LiveKit** `0.11.0+` **License** `GNU` **Status** `Portfolio-Project`
 
 Portfolio Project — Production-ready codebase demonstrating AI system architecture.
 
@@ -223,6 +223,7 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 ## Tech Stack
 
 ### Backend
+
 - **FastAPI** - Modern async web framework
 - **Python 3.11+** - Programming language
 - **LangGraph 0.0.40+** - State machine orchestration
@@ -236,6 +237,7 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 - **Docker** - Code sandbox execution
 
 ### Frontend
+
 - **Next.js 16.1** - React framework
 - **TypeScript 5.0+** - Type safety
 - **React 19.2** - UI library
@@ -247,6 +249,7 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 - **LiveKit Client** - WebRTC integration
 
 ### Deployment
+
 - **Railway** - Backend and agent hosting
 - **Vercel** - Frontend hosting
 
