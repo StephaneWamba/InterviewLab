@@ -17,30 +17,30 @@ Provide candidates with realistic interview practice through:
 
 ```mermaid
 graph TB
-    subgraph "Frontend"
+    subgraph Frontend
         FE[Next.js React App]
     end
 
-    subgraph "Backend API"
+    subgraph Backend
         API[FastAPI Server]
         ORCH[LangGraph Orchestrator]
     end
 
-    subgraph "Voice Infrastructure"
+    subgraph Voice
         LK[LiveKit Server]
         AGENT[LiveKit Agent]
         TTS[OpenAI TTS]
         STT[OpenAI STT]
     end
 
-    subgraph "Services"
+    subgraph Services
         SB[Docker Sandbox]
         LLM[GPT-4o-mini]
-        DB[(PostgreSQL)]
-        REDIS[(Redis Cache)]
+        DB[PostgreSQL]
+        REDIS[Redis Cache]
     end
 
-    FE -->|HTTP/REST| API
+    FE -->|HTTP REST| API
     FE -->|WebSocket| LK
     API -->|HTTP| LK
     API -->|SQL| DB
@@ -79,9 +79,9 @@ sequenceDiagram
     participant LLM as GPT-4o-mini
 
     U->>F: Start Interview
-    F->>A: POST /interviews
+    F->>A: POST interviews
     A->>LK: Create Room
-    F->>LK: Connect (WebSocket)
+    F->>LK: Connect WebSocket
     LK->>AG: Bootstrap Agent
     AG->>O: Initialize
     O->>LLM: Generate Greeting
@@ -93,7 +93,7 @@ sequenceDiagram
     loop Conversation
         U->>LK: Speak
         LK->>AG: STT Text
-        AG->>O: execute_step(user_response)
+        AG->>O: execute_step
         O->>LLM: Detect Intent
         O->>LLM: Decide Next Action
         O->>LLM: Generate Response
