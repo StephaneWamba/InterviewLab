@@ -141,15 +141,17 @@ print(fibonacci(10))`;
         toast.error(data.error || 'Code execution failed');
       }
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to execute code');
+    onError: (error: Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Failed to execute code';
+      toast.error(message);
+      const errorMessage = error instanceof Error ? error.message : 'Execution failed';
       setResult({
         stdout: '',
-        stderr: error.message || 'Execution failed',
+        stderr: errorMessage,
         exit_code: 1,
         execution_time_ms: 0,
         success: false,
-        error: error.message,
+        error: errorMessage,
       });
     },
   });
@@ -167,8 +169,9 @@ print(fibonacci(10))`;
         toast.success('Code submitted to interviewer for review!');
       }
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to submit code to interviewer');
+    onError: (error: Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Failed to submit code to interviewer';
+      toast.error(message);
     },
   });
 
