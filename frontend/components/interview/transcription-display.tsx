@@ -115,7 +115,7 @@ export function TranscriptionDisplay({ room }: TranscriptionDisplayProps) {
 
     return () => {
       try {
-        room.unregisterTextStreamHandler('lk.transcription', handler);
+        room.unregisterTextStreamHandler('lk.transcription');
       } catch (error) {
         console.warn('Failed to unregister transcription handler:', error);
       }

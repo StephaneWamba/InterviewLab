@@ -8,6 +8,16 @@ from pydantic import BaseModel, Field
 from src.core.config import settings
 
 
+class SkillFeedback(BaseModel):
+    """Schema for individual skill feedback."""
+    strengths: List[str] = Field(
+        default_factory=list, description="2-3 specific strengths for this skill")
+    weaknesses: List[str] = Field(
+        default_factory=list, description="2-3 specific areas for improvement for this skill")
+    recommendations: List[str] = Field(
+        default_factory=list, description="2-3 specific recommendations for this skill")
+
+
 class InterviewFeedback(BaseModel):
     """Schema for comprehensive interview feedback with skill breakdowns."""
 
@@ -27,7 +37,25 @@ class InterviewFeedback(BaseModel):
         ..., ge=0.0, le=1.0, description="Code quality score (0-1, 0 if no code submitted)"
     )
 
-    # Skill-specific breakdowns
+    # Skill-specific feedback
+    communication_feedback: SkillFeedback = Field(
+        default_factory=lambda: SkillFeedback(),
+        description="Communication-specific feedback"
+    )
+    technical_feedback: SkillFeedback = Field(
+        default_factory=lambda: SkillFeedback(),
+        description="Technical-specific feedback"
+    )
+    problem_solving_feedback: SkillFeedback = Field(
+        default_factory=lambda: SkillFeedback(),
+        description="Problem-solving-specific feedback"
+    )
+    code_quality_feedback: SkillFeedback = Field(
+        default_factory=lambda: SkillFeedback(),
+        description="Code quality-specific feedback (empty if no code)"
+    )
+
+    # Skill-specific breakdowns (for backward compatibility)
     skill_breakdown: Dict[str, Dict] = Field(
         default_factory=dict,
         description="Detailed breakdown per skill with strengths, weaknesses, and recommendations"
@@ -167,8 +195,13 @@ Evaluate 4 skills (0-1 each):
 3. Problem-Solving: approach, logic, creativity
 4. Code Quality: correctness, efficiency, readability, best practices (0.0 if no code)
 
-For each skill, provide: score, 2-3 strengths, 2-3 weaknesses, 2-3 recommendations.
-For code_quality: return empty lists [] if no code submitted.
+For EACH skill separately, provide:
+- communication_feedback: 2-3 strengths, 2-3 weaknesses, 2-3 recommendations specific to COMMUNICATION
+- technical_feedback: 2-3 strengths, 2-3 weaknesses, 2-3 recommendations specific to TECHNICAL knowledge
+- problem_solving_feedback: 2-3 strengths, 2-3 weaknesses, 2-3 recommendations specific to PROBLEM-SOLVING
+- code_quality_feedback: 2-3 strengths, 2-3 weaknesses, 2-3 recommendations specific to CODE QUALITY (empty lists [] if no code submitted)
+
+Each skill's feedback must be UNIQUE and specific to that skill. Do NOT repeat the same feedback across skills.
 
 Calculate overall score (weighted: Communication 25%, Technical 30%, Problem-Solving 25%, Code Quality 20%).
 
@@ -195,31 +228,31 @@ Be specific and reference actual examples from the conversation."""
                 temperature=0.3,
             )
 
-            # Build skill breakdown from individual scores
+            # Build skill breakdown from skill-specific feedback
             skill_breakdown_dict = {
                 "communication": {
                     "score": result.communication_score,
-                    "strengths": result.strengths[:2] if result.strengths else [],
-                    "weaknesses": result.weaknesses[:2] if result.weaknesses else [],
-                    "recommendations": result.recommendations[:2] if result.recommendations else [],
+                    "strengths": result.communication_feedback.strengths,
+                    "weaknesses": result.communication_feedback.weaknesses,
+                    "recommendations": result.communication_feedback.recommendations,
                 },
                 "technical": {
                     "score": result.technical_score,
-                    "strengths": result.strengths[:2] if result.strengths else [],
-                    "weaknesses": result.weaknesses[:2] if result.weaknesses else [],
-                    "recommendations": result.recommendations[:2] if result.recommendations else [],
+                    "strengths": result.technical_feedback.strengths,
+                    "weaknesses": result.technical_feedback.weaknesses,
+                    "recommendations": result.technical_feedback.recommendations,
                 },
                 "problem_solving": {
                     "score": result.problem_solving_score,
-                    "strengths": result.strengths[:2] if result.strengths else [],
-                    "weaknesses": result.weaknesses[:2] if result.weaknesses else [],
-                    "recommendations": result.recommendations[:2] if result.recommendations else [],
+                    "strengths": result.problem_solving_feedback.strengths,
+                    "weaknesses": result.problem_solving_feedback.weaknesses,
+                    "recommendations": result.problem_solving_feedback.recommendations,
                 },
                 "code_quality": {
                     "score": result.code_quality_score if code_submissions_count > 0 else 0.0,
-                    "strengths": [] if code_submissions_count == 0 else (result.strengths[:2] if result.strengths else []),
-                    "weaknesses": [] if code_submissions_count == 0 else (result.weaknesses[:2] if result.weaknesses else []),
-                    "recommendations": [] if code_submissions_count == 0 else (result.recommendations[:2] if result.recommendations else []),
+                    "strengths": result.code_quality_feedback.strengths if code_submissions_count > 0 else [],
+                    "weaknesses": result.code_quality_feedback.weaknesses if code_submissions_count > 0 else [],
+                    "recommendations": result.code_quality_feedback.recommendations if code_submissions_count > 0 else [],
                 },
             }
 

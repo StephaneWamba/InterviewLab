@@ -41,14 +41,16 @@ graph LR
     H --> I[End]
 ```
 
+The orchestrator manages flow through phases: intro (greeting), exploration (resume-based questions), technical (code exercises), and closing (evaluation). The LLM decides transitions based on conversation context, user responses, and interview progress. Code submissions trigger immediate routing to `code_review`, bypassing normal question flow. The agent guides you to the sandbox when appropriate, and code execution results inform the next questions.
+
 ### Phases
 
-| Phase | Description | Duration |
-|-------|-------------|----------|
-| **Intro** | Greeting, initial questions | 2-5 min |
-| **Exploration** | Resume-based questions | 10-20 min |
-| **Technical** | Code exercises, problem-solving | 10-15 min |
-| **Closing** | Final questions, wrap-up | 2-5 min |
+| Phase           | Description                     | Duration  |
+| --------------- | ------------------------------- | --------- |
+| **Intro**       | Greeting, initial questions     | 2-5 min   |
+| **Exploration** | Resume-based questions          | 10-20 min |
+| **Technical**   | Code exercises, problem-solving | 10-15 min |
+| **Closing**     | Final questions, wrap-up        | 2-5 min   |
 
 ## Using the Code Sandbox
 
@@ -67,20 +69,22 @@ graph LR
 
 ### Supported Languages
 
-| Language | Version | Features |
-|----------|---------|----------|
-| **Python** | 3.11 | Full standard library, no external packages |
-| **JavaScript** | Node 18 | Standard Node.js APIs |
+| Language       | Version | Features                                    |
+| -------------- | ------- | ------------------------------------------- |
+| **Python**     | 3.11    | Full standard library, no external packages |
+| **JavaScript** | Node 18 | Standard Node.js APIs                       |
 
 ### Code Submission
 
 **What happens:**
+
 1. Code executed in isolated Docker container
 2. Execution results analyzed
 3. Code quality assessed (correctness, efficiency, readability)
 4. Agent provides feedback
 
 **Best Practices:**
+
 - Write clear, readable code
 - Add comments for complex logic
 - Test your code before submitting
@@ -110,12 +114,12 @@ graph LR
 
 ### Skill Breakdown
 
-| Skill | Weight | Description |
-|-------|--------|-------------|
-| **Communication** | 25% | Clarity, articulation, engagement |
-| **Technical Knowledge** | 30% | Depth, accuracy, expertise |
-| **Problem-Solving** | 25% | Approach, logic, creativity |
-| **Code Quality** | 20% | Correctness, efficiency, readability |
+| Skill                   | Weight | Description                          |
+| ----------------------- | ------ | ------------------------------------ |
+| **Communication**       | 25%    | Clarity, articulation, engagement    |
+| **Technical Knowledge** | 30%    | Depth, accuracy, expertise           |
+| **Problem-Solving**     | 25%    | Approach, logic, creativity          |
+| **Code Quality**        | 20%    | Correctness, efficiency, readability |
 
 ### Feedback Components
 
@@ -127,23 +131,25 @@ graph LR
 
 ### Interpreting Scores
 
-| Score Range | Interpretation |
-|-------------|----------------|
-| 0.8-1.0 | Excellent - Strong performance |
-| 0.6-0.79 | Good - Solid with minor gaps |
-| 0.4-0.59 | Fair - Needs improvement |
-| 0.0-0.39 | Poor - Significant gaps |
+| Score Range | Interpretation                 |
+| ----------- | ------------------------------ |
+| 0.8-1.0     | Excellent - Strong performance |
+| 0.6-0.79    | Good - Solid with minor gaps   |
+| 0.4-0.59    | Fair - Needs improvement       |
+| 0.0-0.39    | Poor - Significant gaps        |
 
 ## Common Issues
 
 ### Audio Problems
 
 **No sound:**
+
 - Check browser permissions (microphone/speaker)
 - Verify internet connection
 - Refresh page and reconnect
 
 **Echo/feedback:**
+
 - Use headphones
 - Reduce speaker volume
 - Check microphone sensitivity
@@ -151,11 +157,13 @@ graph LR
 ### Connection Issues
 
 **Agent disconnected:**
+
 - Refresh page
 - Check internet connection
 - Restart interview if needed
 
 **Slow responses:**
+
 - Check network speed
 - Close other browser tabs
 - Wait for agent to respond (may take 5-10 seconds)
@@ -163,11 +171,13 @@ graph LR
 ### Code Execution Errors
 
 **Code won't run:**
+
 - Check syntax errors
 - Verify language selected correctly
 - Review error messages
 
 **Timeout:**
+
 - Code execution limited to 30 seconds
 - Optimize slow algorithms
 - Break into smaller functions
@@ -183,6 +193,7 @@ graph LR
 ## Support
 
 **Need help?**
+
 - Check [FAQ](#) (coming soon)
 - Email: support@interviewlab.com
 - Discord: [Join community](#)

@@ -18,8 +18,20 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    # Add job_description column to interviews table
-    op.add_column('interviews', sa.Column('job_description', sa.Text(), nullable=True))
+    # Check if table exists before adding column (idempotent migration)
+    from sqlalchemy import inspect
+    conn = op.get_bind()
+    inspector = inspect(conn)
+    tables = inspector.get_table_names()
+    
+    if 'interviews' not in tables:
+        # Table doesn't exist yet, skip (will be created by Base.metadata.create_all in main.py)
+        return
+    
+    # Check if column already exists
+    columns = [col['name'] for col in inspector.get_columns('interviews')]
+    if 'job_description' not in columns:
+        op.add_column('interviews', sa.Column('job_description', sa.Text(), nullable=True))
 
 
 def downgrade() -> None:

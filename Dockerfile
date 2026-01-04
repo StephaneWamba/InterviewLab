@@ -59,6 +59,9 @@ COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
 COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
 COPY --from=builder /usr/local/bin /usr/local/bin
 
+# Ensure PATH includes /usr/local/bin for livekit-agents command
+ENV PATH="/usr/local/bin:${PATH}"
+
 # Copy only necessary application files (excludes frontend, tests, etc. via .dockerignore)
 # Copy source code last for better layer caching
 COPY --chown=appuser:appuser src/ ./src/
@@ -75,6 +78,7 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/health')" || exit 1
 
-# Run application (default, can be overridden in docker-compose)
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run migrations and start application
+# Railway will override PORT via $PORT environment variable
+CMD ["sh", "-c", "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
 

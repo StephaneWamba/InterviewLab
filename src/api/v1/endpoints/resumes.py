@@ -11,6 +11,7 @@ from fastapi import (
     UploadFile,
     File,
 )
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -87,7 +88,7 @@ async def upload_resume(
     )
 
 
-@router.get("/", response_model=list[ResumeResponse])
+@router.get("", response_model=list[ResumeResponse])
 async def list_resumes(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -145,6 +146,39 @@ async def get_resume(
         created_at=resume.created_at.isoformat(),
         updated_at=resume.updated_at.isoformat(),
     )
+
+
+@router.delete("/{resume_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_resume(
+    resume_id: int,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete a resume by ID."""
+    result = await db.execute(
+        select(Resume).where(Resume.id == resume_id, Resume.user_id == user.id)
+    )
+    resume = result.scalar_one_or_none()
+
+    if not resume:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Resume not found",
+        )
+
+    # Delete the file from disk if it exists
+    file_path = Path(resume.file_path)
+    if file_path.exists():
+        try:
+            file_path.unlink()
+        except Exception as e:
+            logger.warning(f"Failed to delete resume file {file_path}: {e}")
+
+    # Delete the database record
+    await db.delete(resume)
+    await db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 async def analyze_resume_background(resume_id: int, db: AsyncSession):
