@@ -11,6 +11,7 @@ from fastapi import (
     UploadFile,
     File,
 )
+from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -176,6 +177,8 @@ async def delete_resume(
     # Delete the database record
     await db.delete(resume)
     await db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 async def analyze_resume_background(resume_id: int, db: AsyncSession):
