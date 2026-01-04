@@ -72,30 +72,15 @@ yarn-error.log*
 out/
 .vercel
 
-# Build outputs
-dist/
-build/
+# TypeScript
 *.tsbuildinfo
 
-# Temporary files
-*.tmp
-*.temp
-.cache/
-
-# Uploads and assets (keep structure, ignore content)
-uploads/*
-!uploads/.gitkeep
-assets/*
-!assets/.gitkeep
+# Uploads
+uploads/
+*.pdf
+assets/*.pdf
 
 # Markdown files (ignore all except docs/ and README.md)
-*.md
-!README.md
-!docs/**/*.md
-
-# Ignore .gitignore itself
-.gitignore
-
 *.md
 !README.md
 !docs/**/*.md
