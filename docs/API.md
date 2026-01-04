@@ -6,13 +6,13 @@ Authentication: Bearer token in `Authorization` header
 
 ## Endpoints Overview
 
-| Category | Endpoints | Description |
-|----------|-----------|-------------|
-| **Auth** | `/auth/register`, `/auth/login` | User authentication |
-| **Interviews** | `/interviews/*` | Interview lifecycle management |
-| **Sandbox** | `/sandbox/*` | Code execution and submission |
-| **Voice** | `/voice/*` | LiveKit tokens, TTS, STT |
-| **Resumes** | `/resumes/*` | Resume upload and analysis |
+| Category       | Endpoints                       | Description                    |
+| -------------- | ------------------------------- | ------------------------------ |
+| **Auth**       | `/auth/register`, `/auth/login` | User authentication            |
+| **Interviews** | `/interviews/*`                 | Interview lifecycle management |
+| **Sandbox**    | `/sandbox/*`                    | Code execution and submission  |
+| **Voice**      | `/voice/*`                      | LiveKit tokens, TTS, STT       |
+| **Resumes**    | `/resumes/*`                    | Resume upload and analysis     |
 
 ## Interviews
 
@@ -31,6 +31,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "id": 456,
@@ -48,6 +49,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "interview_id": 456,
@@ -71,6 +73,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "message": "Code submitted successfully",
@@ -90,6 +93,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "interview_id": 456,
@@ -109,6 +113,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "interview_id": 456,
@@ -141,6 +146,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "stdout": "Hello, World!\n",
@@ -181,6 +187,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "token": "eyJhbGciOiJIUzI1NiIs...",
@@ -204,6 +211,7 @@ Authorization: Bearer <token>
 ```
 
 **Response:**
+
 ```json
 {
   "audio_base64": "UklGRiQAAABXQVZFZm10...",
@@ -226,20 +234,20 @@ All errors follow this format:
 
 ### Common Status Codes
 
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request |
-| 401 | Unauthorized |
-| 404 | Not Found |
-| 500 | Internal Server Error |
+| Code | Meaning               |
+| ---- | --------------------- |
+| 200  | Success               |
+| 201  | Created               |
+| 400  | Bad Request           |
+| 401  | Unauthorized          |
+| 404  | Not Found             |
+| 500  | Internal Server Error |
 
 ## Rate Limits
 
-| Endpoint | Limit |
-|----------|-------|
-| `/interviews/*` | 10 requests/minute |
+| Endpoint           | Limit              |
+| ------------------ | ------------------ |
+| `/interviews/*`    | 10 requests/minute |
 | `/sandbox/execute` | 20 requests/minute |
-| `/voice/tts` | 30 requests/minute |
+| `/voice/tts`       | 30 requests/minute |
 

@@ -16,8 +16,36 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "InterviewLab - AI-Powered Interview Preparation",
-  description: "Prepare for interviews with AI-powered practice sessions, resume analysis, and live coding sandbox",
+  description: "Prepare for interviews with AI-powered practice sessions, resume analysis, and live code practice",
   keywords: ["interview", "practice", "AI", "coding", "resume"],
+  openGraph: {
+    title: "InterviewLab - AI-Powered Interview Preparation",
+    description: "Prepare for interviews with AI-powered practice sessions, resume analysis, and live code practice",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "InterviewLab - AI-Powered Interview Preparation",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "InterviewLab - AI-Powered Interview Preparation",
+    description: "Prepare for interviews with AI-powered practice sessions, resume analysis, and live code practice",
+    images: ["/opengraph-image"],
+  },
+  icons: {
+    icon: [
+      { url: "/icon", type: "image/png" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/icon",
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

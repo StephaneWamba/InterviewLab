@@ -1,0 +1,23 @@
+# Railway configuration file
+# This file is optional but can be used for service-specific settings
+
+[build]
+# Use Dockerfile for building
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Health check configuration
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+
+# Resource limits (adjust based on your Railway plan)
+[resources]
+# CPU: 0.5-2.0 vCPU
+cpu = 1.0
+# Memory: 512MB-4GB
+memory = 2048
+# Disk: 1GB-20GB
+disk = 10
+
+

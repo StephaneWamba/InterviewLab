@@ -4,6 +4,12 @@
 
 **Solution:** InterviewLab delivers AI-driven technical interviews using real-time voice conversations, live code execution, and in-depth feedback, powered by LangGraph and LiveKit.
 
+---
+
+**Python** `3.11+` **TypeScript** `5.0+` **LangGraph** `0.0.40+` **LiveKit** `0.11.0+` **OpenAI** `1.0.0+` **License** `GNU` **Status** `Portfolio-Project`
+
+Portfolio Project — Production-ready codebase demonstrating AI system architecture.
+
 ## Aim
 
 Provide candidates with realistic interview practice through:
@@ -124,66 +130,32 @@ sequenceDiagram
 ```
 InterviewLab/
 ├── src/                    # Backend (Python/FastAPI)
-│   ├── agents/            # LiveKit agent implementation
-│   │   ├── interview_agent.py      # Agent entrypoint
-│   │   ├── orchestrator_llm.py    # Custom LLM adapter
-│   │   └── resources.py            # Resource management
-│   ├── api/               # REST API endpoints
+│   ├── agents/            # LiveKit agent logic
+│   ├── api/               # REST API implementation
 │   │   └── v1/
-│   │       └── endpoints/ # Interviews, resumes, voice, sandbox
-│   ├── core/              # Core utilities
-│   │   ├── config.py     # Settings management
-│   │   ├── database.py   # SQLAlchemy setup
-│   │   └── security.py   # JWT authentication
-│   ├── models/            # Database models (User, Interview, Resume)
-│   ├── schemas/           # Pydantic request/response schemas
-│   └── services/          # Business logic
-│       ├── analysis/      # Response/code/feedback analysis
-│       ├── analytics/     # Analytics service
-│       ├── data/          # Checkpoints, state management
-│       ├── execution/     # Docker sandbox execution
-│       ├── logging/       # Interview logging
-│       ├── orchestrator/  # LangGraph orchestration
-│       │   ├── graph.py           # Graph definition
-│       │   ├── nodes.py           # Node handler
-│       │   ├── control_nodes.py   # Flow control nodes
-│       │   ├── action_nodes.py    # Response generation nodes
-│       │   └── types.py           # State schema
-│       └── voice/         # LiveKit voice services
-├── frontend/              # Frontend (Next.js/React)
-│   ├── app/              # Next.js App Router
-│   │   ├── (auth)/       # Login, register
-│   │   └── dashboard/    # Protected routes
-│   ├── components/       # React components
-│   │   ├── interview/    # Voice, sandbox, transcription
-│   │   ├── analytics/    # Charts and metrics
-│   │   └── ui/           # shadcn/ui components
-│   ├── lib/              # Utilities
-│   │   ├── api/          # API client & endpoints
-│   │   └── store/        # Zustand stores
+│   │       └── endpoints/ # Endpoints for interviews, resumes, voice, sandbox
+│   ├── core/              # Configuration, database, and authentication utilities
+│   ├── models/            # Database models for core entities
+│   ├── schemas/           # Pydantic schemas for data validation
+│   └── services/          # Business logic and subsystems
+│       ├── analysis/      # Interview response and code analysis
+│       ├── analytics/     # Analytics functionality
+│       ├── data/          # Checkpointing and state management
+│       ├── execution/     # Secure code sandboxing
+│       ├── logging/       # Interview activity logging
+│       ├── orchestrator/  # State orchestration using LangGraph
+│       └── voice/         # LiveKit voice management
+├── frontend/              # Frontend (Next.js + React)
+│   ├── app/              # App routing and authentication
+│   ├── components/       # UI components (interview, analytics, UI kit)
+│   ├── lib/              # API client and store utilities
 │   └── hooks/            # Custom React hooks
-├── docs/                  # Documentation
-│   ├── ARCHITECTURE.md   # System architecture
-│   ├── API.md            # API reference
-│   ├── FRONTEND.md       # Frontend guide
-│   ├── LANGGRAPH.md      # Orchestration guide
-│   └── ...               # Other docs
-├── alembic/              # Database migrations
-├── docker-compose.yml    # Local development
-├── Dockerfile            # Production image
-└── pyproject.toml        # Python dependencies
+├── docs/                  # Documentation and guides
+├── alembic/               # Database migration scripts
+├── docker-compose.yml     # Local dev orchestration
+├── Dockerfile             # Production build configuration
+└── pyproject.toml         # Backend dependencies and settings
 ```
-
-### Key Directories
-
-| Directory | Purpose | Key Files |
-|-----------|---------|-----------|
-| `src/agents/` | LiveKit agent | `interview_agent.py`, `orchestrator_llm.py` |
-| `src/services/orchestrator/` | LangGraph state machine | `graph.py`, `nodes.py`, `control_nodes.py`, `action_nodes.py` |
-| `src/services/analysis/` | LLM-based analysis | `response_analyzer.py`, `code_analyzer.py`, `feedback_generator.py` |
-| `src/services/execution/` | Code sandbox | `sandbox_service.py` |
-| `frontend/components/interview/` | Interview UI | `voice-video.tsx`, `sandbox.tsx` |
-| `frontend/lib/api/` | API integration | `client.ts`, `interviews.ts`, `voice.ts` |
 
 ## Documentation
 
@@ -216,17 +188,37 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 
 ## Tech Stack
 
-| Layer         | Technology                                 |
-| ------------- | ------------------------------------------ |
-| Frontend      | Next.js 14, React, TypeScript, TailwindCSS |
-| Backend       | FastAPI, Python 3.11, SQLAlchemy, Alembic  |
-| Voice         | LiveKit, OpenAI TTS/STT, Silero VAD        |
-| Orchestration | LangGraph, LangChain                       |
-| LLM           | OpenAI GPT-4o-mini, Instructor             |
-| Database      | PostgreSQL, Redis                          |
-| Execution     | Docker, Python, Node.js                    |
-| Deployment    | Railway (backend), Vercel (frontend)       |
+### Backend
+
+- **FastAPI** - Modern async web framework
+- **Python 3.11+** - Programming language
+- **LangGraph 0.0.40+** - State machine orchestration
+- **SQLAlchemy 2.0+** - ORM with async support
+- **Alembic** - Database migrations
+- **LiveKit Agents** - Real-time voice agents
+- **OpenAI GPT-4o-mini** - LLM for question generation
+- **Instructor** - Structured LLM outputs
+- **PostgreSQL** - Primary database
+- **Redis** - Caching and state management
+- **Docker** - Code sandbox execution
+
+### Frontend
+
+- **Next.js 16.1** - React framework
+- **TypeScript 5.0+** - Type safety
+- **React 19.2** - UI library
+- **Tailwind CSS 4** - Styling
+- **Zustand** - State management
+- **TanStack Query** - Data fetching
+- **Monaco Editor** - Code editor
+- **Framer Motion** - Animations
+- **LiveKit Client** - WebRTC integration
+
+### Deployment
+
+- **Railway** - Backend and agent hosting
+- **Vercel** - Frontend hosting
 
 ## License
 
-Free to use under GNU License
+GNU General Public License v3.0

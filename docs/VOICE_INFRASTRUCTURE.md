@@ -15,15 +15,17 @@ graph LR
     B -->|Audio Stream| A
 ```
 
+The agent acts as a bridge between LiveKit's WebRTC streams and the orchestrator. Audio flows bidirectionally: user speech is buffered, VAD detects speech boundaries, then STT transcribes. The orchestrator processes text and returns `next_message`, which TTS converts to audio and streams back through LiveKit. The agent uses non-streaming STT (OpenAI's default), so VAD is required to detect when to send audio chunks for transcription.
+
 ## Components
 
-| Component | Technology | Purpose | Latency |
-|-----------|-----------|---------|---------|
-| **LiveKit Server** | LiveKit Cloud/Self-hosted | WebRTC signaling, media routing | <100ms |
-| **Agent** | LiveKit Agents Python SDK | Voice agent orchestration | <50ms |
-| **STT** | OpenAI Whisper API | Speech-to-text | 200-500ms |
-| **TTS** | OpenAI TTS (tts-1-hd) | Text-to-speech | 300-800ms |
-| **VAD** | Silero VAD | Voice activity detection | <50ms |
+| Component          | Technology                | Purpose                         | Latency   |
+| ------------------ | ------------------------- | ------------------------------- | --------- |
+| **LiveKit Server** | LiveKit Cloud/Self-hosted | WebRTC signaling, media routing | <100ms    |
+| **Agent**          | LiveKit Agents Python SDK | Voice agent orchestration       | <50ms     |
+| **STT**            | OpenAI Whisper API        | Speech-to-text                  | 200-500ms |
+| **TTS**            | OpenAI TTS (tts-1-hd)     | Text-to-speech                  | 300-800ms |
+| **VAD**            | Silero VAD                | Voice activity detection        | <50ms     |
 
 ## Agent Lifecycle
 
@@ -35,32 +37,35 @@ sequenceDiagram
     participant STT as OpenAI STT
     participant TTS as OpenAI TTS
 
-    LK->>AG: JobContext (room metadata)
-    AG->>AG: Bootstrap (DB, TTS, STT, VAD)
+    LK->>AG: JobContext room metadata
+    AG->>AG: Bootstrap DB TTS STT VAD
     AG->>O: Initialize orchestrator
-    AG->>LK: Connect (handshake)
-    
+    AG->>LK: Connect handshake
+
     loop Interview Loop
-        LK->>AG: Audio stream (user speaks)
+        LK->>AG: Audio stream user speaks
         AG->>STT: Transcribe audio
         STT->>AG: Text response
-        AG->>O: execute_step(user_response)
+        AG->>O: execute_step user_response
         O->>AG: Response message
         AG->>TTS: Generate speech
         TTS->>AG: Audio bytes
         AG->>LK: Audio stream
         LK->>User: Play audio
     end
-    
+
     LK->>AG: Room closed
     AG->>O: Cleanup
 ```
+
+Bootstrap happens before connection to meet LiveKit's <100ms handshake requirement. Heavy imports (database, orchestrator) are deferred until after metadata extraction. The `OrchestratorLLM` adapter wraps the orchestrator, translating agent callbacks into `execute_step` calls with proper state loading and checkpointing. TTS/STT failures are handled gracefully—the agent continues with degraded functionality rather than crashing.
 
 ## Setup
 
 ### LiveKit Server
 
 **Cloud (Recommended):**
+
 - Sign up at [livekit.io](https://livekit.io)
 - Get API key, secret, and URL
 - Set environment variables:
@@ -71,6 +76,7 @@ sequenceDiagram
   ```
 
 **Self-Hosted:**
+
 ```bash
 docker run -d \
   -p 7880:7880 \
@@ -97,7 +103,8 @@ OPENAI_API_KEY = "your-openai-key"
 python -m src.agents.interview_agent dev
 
 # Production
-livekit-agents start src.agents.interview_agent
+python -m livekit.agents start src.agents.interview_agent
+# Alternative (if PATH is set correctly): livekit-agents start src.agents.interview_agent
 ```
 
 ## Voice Pipeline
@@ -105,6 +112,7 @@ livekit-agents start src.agents.interview_agent
 ### Speech-to-Text (STT)
 
 **Flow:**
+
 1. User speaks → Browser captures audio
 2. LiveKit routes audio to agent
 3. Agent buffers audio chunks
@@ -113,6 +121,7 @@ livekit-agents start src.agents.interview_agent
 6. Text returned to orchestrator
 
 **Configuration:**
+
 ```python
 from livekit.plugins import openai
 
@@ -125,6 +134,7 @@ stt = openai.STT(
 ### Text-to-Speech (TTS)
 
 **Flow:**
+
 1. Orchestrator generates response
 2. Agent receives `next_message`
 3. Text prepared for TTS (punctuation, pauses)
@@ -133,6 +143,7 @@ stt = openai.STT(
 6. Browser plays audio
 
 **Configuration:**
+
 ```python
 from livekit.plugins import openai
 
@@ -157,6 +168,7 @@ tts = openai.TTS(
 **Purpose:** Detect when user stops speaking to trigger STT
 
 **Implementation:**
+
 - Silero VAD model (lightweight, fast)
 - Loaded asynchronously to avoid blocking
 - Graceful degradation if loading fails
@@ -171,11 +183,11 @@ vad = await silero.VAD.load()  # Async loading
 
 ### Latency Reduction
 
-| Technique | Impact | Implementation |
-|-----------|--------|----------------|
-| **Streaming TTS** | -200ms | Stream audio chunks as generated |
-| **VAD Optimization** | -100ms | Lower threshold for speech end |
-| **Connection Pooling** | -50ms | Reuse OpenAI clients |
+| Technique               | Impact | Implementation                     |
+| ----------------------- | ------ | ---------------------------------- |
+| **Streaming TTS**       | -200ms | Stream audio chunks as generated   |
+| **VAD Optimization**    | -100ms | Lower threshold for speech end     |
+| **Connection Pooling**  | -50ms  | Reuse OpenAI clients               |
 | **Parallel Processing** | -150ms | STT + Intent detection in parallel |
 
 ### Resource Management
@@ -186,19 +198,19 @@ vad = await silero.VAD.load()  # Async loading
 
 ## Troubleshooting
 
-| Issue | Symptom | Solution |
-|-------|---------|----------|
-| **No audio** | Agent connects but no sound | Check TTS API key, verify audio output enabled |
-| **STT not working** | User speech not transcribed | Verify VAD loaded, check STT API key |
-| **High latency** | >1s delay | Check network, reduce TTS model (tts-1 vs tts-1-hd) |
-| **Agent crashes** | Connection drops | Check memory usage, verify database connection |
+| Issue               | Symptom                     | Solution                                            |
+| ------------------- | --------------------------- | --------------------------------------------------- |
+| **No audio**        | Agent connects but no sound | Check TTS API key, verify audio output enabled      |
+| **STT not working** | User speech not transcribed | Verify VAD loaded, check STT API key                |
+| **High latency**    | >1s delay                   | Check network, reduce TTS model (tts-1 vs tts-1-hd) |
+| **Agent crashes**   | Connection drops            | Check memory usage, verify database connection      |
 
 ## Monitoring
 
 **Key Metrics:**
+
 - STT latency: <500ms (p95)
 - TTS latency: <800ms (p95)
 - End-to-end latency: <1.5s (p95)
 - Agent uptime: >99.9%
 - Concurrent interviews: Track active rooms
-

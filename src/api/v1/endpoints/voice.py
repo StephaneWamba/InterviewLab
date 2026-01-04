@@ -29,10 +29,60 @@ router = APIRouter()
 async def get_voice_token(
     request: VoiceTokenRequest,
     user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
-    """Generate a LiveKit access token for a participant."""
+    """Generate a LiveKit access token for a participant.
+    
+    Also ensures the LiveKit room exists and the interview is in the correct state.
+    """
     try:
         livekit_service = LiveKitService()
+        
+        # Extract interview ID from room name (format: "interview-{id}")
+        try:
+            interview_id = int(request.room_name.replace("interview-", ""))
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid room name format: {request.room_name}. Expected format: 'interview-{{id}}'"
+            )
+        
+        # Verify interview exists and is accessible by user
+        result = await db.execute(
+            select(Interview).where(
+                Interview.id == interview_id,
+                Interview.user_id == user.id
+            )
+        )
+        interview = result.scalar_one_or_none()
+        
+        if not interview:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Interview {interview_id} not found"
+            )
+        
+        # Ensure interview is in_progress (should be started before getting token)
+        if interview.status != "in_progress":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Interview must be started before connecting. Current status: {interview.status}"
+            )
+        
+        # Create or ensure room exists in LiveKit
+        # This ensures the room exists before the agent tries to join
+        try:
+            await livekit_service.create_room(
+                room_name=request.room_name,
+                empty_timeout=300,
+                max_participants=2,
+            )
+        except Exception as e:
+            # Room might already exist, which is fine
+            # Log but don't fail - LiveKit will handle existing rooms
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Room {request.room_name} may already exist: {e}")
 
         token = livekit_service.create_access_token(
             room_name=request.room_name,

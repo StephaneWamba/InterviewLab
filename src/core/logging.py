@@ -40,5 +40,7 @@ def setup_logging() -> None:
     logging.getLogger("sqlalchemy.engine").setLevel(
         logging.INFO if settings.ENVIRONMENT == "development" else logging.WARNING
     )
+    # Suppress pdfminer warnings (non-critical, occurs with some PDFs)
+    logging.getLogger("pdfminer.pdfinterp").setLevel(logging.ERROR)
 
 

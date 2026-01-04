@@ -141,15 +141,17 @@ print(fibonacci(10))`;
         toast.error(data.error || 'Code execution failed');
       }
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to execute code');
+    onError: (error: Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Failed to execute code';
+      toast.error(message);
+      const errorMessage = error instanceof Error ? error.message : 'Execution failed';
       setResult({
         stdout: '',
-        stderr: error.message || 'Execution failed',
+        stderr: errorMessage,
         exit_code: 1,
         execution_time_ms: 0,
         success: false,
-        error: error.message,
+        error: errorMessage,
       });
     },
   });
@@ -167,8 +169,9 @@ print(fibonacci(10))`;
         toast.success('Code submitted to interviewer for review!');
       }
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to submit code to interviewer');
+    onError: (error: Error | unknown) => {
+      const message = error instanceof Error ? error.message : 'Failed to submit code to interviewer';
+      toast.error(message);
     },
   });
 
@@ -230,7 +233,7 @@ print(fibonacci(10))`;
             <div className="flex-1">
               <CardTitle className="flex items-center">
                 <Code className="mr-2 h-5 w-5" />
-                Code Sandbox
+                Code Editor
               </CardTitle>
               {exerciseDescription && (
                 <p className="text-sm text-muted-foreground mt-1">
