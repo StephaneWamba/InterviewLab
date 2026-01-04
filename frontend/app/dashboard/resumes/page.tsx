@@ -8,10 +8,20 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, FileText, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { Upload, FileText, CheckCircle2, XCircle, Loader2, AlertCircle } from 'lucide-react';
 import { resumesApi } from '@/lib/api/resumes';
 import { toast } from 'sonner';
 import Link from 'next/link';
+
+interface Resume {
+  id: number;
+  file_name: string;
+  file_size: number;
+  file_type: string;
+  analysis_status: 'pending' | 'processing' | 'completed' | 'failed';
+  created_at: string;
+  extracted_data?: any;
+}
 
 export default function ResumesPage() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
