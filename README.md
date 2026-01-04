@@ -1,8 +1,8 @@
 # InterviewLab
 
-**Voice-based technical interview platform powered by LangGraph and LiveKit**
+**Problem:** Traditional technical interview practice often lacks realism, immediate feedback, and interactive voice-based engagement.
 
-InterviewLab conducts AI-powered technical interviews through real-time voice conversations, code execution, and comprehensive feedback generation.
+**Solution:** InterviewLab delivers AI-driven technical interviews using real-time voice conversations, live code execution, and in-depth feedback, powered by LangGraph and LiveKit.
 
 ## Aim
 
@@ -120,7 +120,9 @@ sequenceDiagram
 
 ## Documentation
 
+- [Architecture](docs/ARCHITECTURE.md) - System architecture and component relationships
 - [API Reference](docs/API.md) - REST API endpoints
+- [Frontend](docs/FRONTEND.md) - Next.js frontend architecture and development
 - [Voice Infrastructure](docs/VOICE_INFRASTRUCTURE.md) - LiveKit setup and agent architecture
 - [User Guide](docs/USER_GUIDE.md) - How to use InterviewLab
 - [Local Development](docs/LOCAL_DEVELOPMENT.md) - Setup and development workflow
