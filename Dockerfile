@@ -1,19 +1,21 @@
-# Multi-stage Docker build for optimized image size
+# Single-stage Docker build for Railway compatibility
+FROM python:3.11-slim
 
-# Stage 1: Builder
-FROM python:3.11-slim as builder
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
+# Create non-root user
+RUN useradd -m -u 1000 appuser && mkdir -p /app && chown -R appuser:appuser /app
+
 # Set working directory
 WORKDIR /app
 
-# Copy dependency files first for better layer caching
-COPY pyproject.toml ./
-
-# Install dependencies using uv (extract dependencies from pyproject.toml)
-# This layer will be cached unless pyproject.toml changes
+# Install dependencies using uv
 RUN uv pip install --system --no-cache \
     fastapi>=0.104.1 \
     uvicorn[standard]>=0.24.0 \
@@ -27,7 +29,7 @@ RUN uv pip install --system --no-cache \
     python-multipart>=0.0.6 \
     pydantic>=2.5.0 \
     pydantic[email]>=2.5.0 \
-    pydantic-settings>=2.1.0 \
+    pydantic-settings>=2.5.0 \
     openai>=1.3.0 \
     instructor>=0.4.5 \
     langgraph>=0.0.40 \
@@ -37,27 +39,6 @@ RUN uv pip install --system --no-cache \
     livekit>=0.11.0 \
     livekit-agents>=0.7.0 \
     docker>=6.1.0
-
-# Stage 2: Runtime
-FROM python:3.11-slim
-
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    libpq5 \
-    && rm -rf /var/lib/apt/lists/*
-
-# Create non-root user
-RUN useradd -m -u 1000 appuser && mkdir -p /app && chown -R appuser:appuser /app
-
-# Set working directory
-WORKDIR /app
-
-# Copy uv from builder
-COPY --from=builder /usr/local/bin/uv /usr/local/bin/uv
-
-# Copy installed packages from builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
 
 # Copy only necessary application files (excludes frontend, tests, etc. via .dockerignore)
 # Copy source code last for better layer caching
@@ -78,4 +59,3 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Run migrations and start application
 # Railway will override PORT via $PORT environment variable
 CMD ["sh", "-c", "alembic upgrade head && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
-
