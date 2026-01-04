@@ -10,9 +10,12 @@ from src.core.config import settings
 
 class SkillFeedback(BaseModel):
     """Schema for individual skill feedback."""
-    strengths: List[str] = Field(default_factory=list, description="2-3 specific strengths for this skill")
-    weaknesses: List[str] = Field(default_factory=list, description="2-3 specific areas for improvement for this skill")
-    recommendations: List[str] = Field(default_factory=list, description="2-3 specific recommendations for this skill")
+    strengths: List[str] = Field(
+        default_factory=list, description="2-3 specific strengths for this skill")
+    weaknesses: List[str] = Field(
+        default_factory=list, description="2-3 specific areas for improvement for this skill")
+    recommendations: List[str] = Field(
+        default_factory=list, description="2-3 specific recommendations for this skill")
 
 
 class InterviewFeedback(BaseModel):
