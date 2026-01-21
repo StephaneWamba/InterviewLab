@@ -1,5 +1,13 @@
 # InterviewLab
 
+<div align="center">
+  <img src="frontend/public/landing-page.png" alt="Landing Page" width="100%"/>
+  <br/><br/>
+  <img src="frontend/public/interview.png" alt="Interview Interface" width="100%"/>
+  <br/><br/>
+  <img src="frontend/public/resumes.png" alt="Resumes Page" width="100%"/>
+</div>
+
 **Problem:** Traditional technical interview practice often lacks realism, immediate feedback, and interactive voice-based engagement.
 
 **Solution:** InterviewLab delivers AI-driven technical interviews using real-time voice conversations, live code execution, and in-depth feedback, powered by LangGraph and LiveKit.
@@ -222,3 +230,7 @@ See [Local Development](docs/LOCAL_DEVELOPMENT.md) for detailed setup.
 ## License
 
 GNU General Public License v3.0
+
+
+
+
